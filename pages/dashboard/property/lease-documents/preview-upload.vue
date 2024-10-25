@@ -428,13 +428,6 @@ onMounted(() => {
 const updateLeaseInLocalStorage = () => {
   const leaseContent = editor.value?.innerHTML;
   payload.value.body = leaseContent
-  // console.log(editor.value?.innerHTML, 'hee oooooo', leaseContent)
-  // const payload = {
-  //   body: leaseContent,
-  //   documentName: payload.value?.documentName || 'Lease Agreement',
-  // };
-
-  // localStorage.setItem('lease-template-payload', JSON.stringify(payload));
 };
 
 const setAlignment = (alignment: string) => {

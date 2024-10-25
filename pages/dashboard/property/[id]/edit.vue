@@ -1206,15 +1206,6 @@ const handleLocationSearch = (data: any) => {
 }
 
 const handleCommonAreas = (data: any) => {
-// console.log(data, 'sara')
-// const storedData = sessionStorage.getItem('property')
-// let propertyData = storedData ? JSON.parse(storedData) : {}
-
-// Update the session storage with new location data
-// propertyData = {
-//   ...propertyData, // merge with existing data
-//   commonAreas: data
-// }
 
 payload.commonAreas.value = data
 
@@ -1222,19 +1213,6 @@ payload.commonAreas.value = data
 // sessionStorage.setItem('property', JSON.stringify(propertyData))
 }
 const handlePropertyFurnished = (data: any) => {
-
-// Retrieve existing session data from sessionStorage (if any)
-// const storedData = sessionStorage.getItem('property')
-// let propertyData = storedData ? JSON.parse(storedData) : {}
-
-// // Update the session storage with new location data
-// propertyData = {
-//   ...propertyData, // merge with existing data
-//   isFurnishedCommonArea: data
-// }
-
-// // Store the updated data back to session storage
-// sessionStorage.setItem('property', JSON.stringify(propertyData))
 payload.isFurnishedCommonArea.value = data
 
 }
@@ -1250,20 +1228,6 @@ const handleRoomData = (room: any) => {
   } else {
     roomsArray.value.push(room);
   }
-
-  // console.log(roomsArray.value, 'room array')
-
-//   const storedData = sessionStorage.getItem('property')
-// let propertyData = storedData ? JSON.parse(storedData) : {}
-
-// // Update the session storage with new location data
-// propertyData = {
-//   ...propertyData, // merge with existing data
-//   rooms: roomsArray.value
-// }
-
-// // Store the updated data back to session storage
-// sessionStorage.setItem('property', JSON.stringify(propertyData))
 
 payload.rooms.value = roomsArray.value
 };

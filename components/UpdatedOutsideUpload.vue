@@ -1,61 +1,90 @@
 <template>
-    <div class="">
-      <div class="text-lg mb-4">
+  <div class="">
+    <div class="flex flex-col flex-start items-start">
+      <p class="text-gray-800 mb-1">
         Please upload images of the building's exterior and the surrounding street. This will help potential tenants understand the environment.
-      </div>
-      <p class="text-sm text-gray-500">Accepts jpg & png | 2MB size max/each</p>
-  
-      <!-- Drag-and-drop area and upload button -->
-      <div 
-        class="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer"
-        @drop.prevent="handleDrop($event)"
-        @dragover.prevent
-      >
-        <img src="@/assets/img/image-02.png" alt="Placeholder" class="w-16 h-16 mb-4">
-        <p class="text-gray-600">Drag and drop photos here</p>
-        <p class="text-gray-600 my-2">or</p>
-        <label class="bg-black text-white text-sm py-2.5 px-4 rounded cursor-pointer">
-          <input type="file" class="hidden" accept="image/*" multiple @change="handleFileUpload($event)">
-          Upload from computer
-        </label>
-      </div>
-  
-      <!-- Uploaded images carousel -->
-      <div v-if="images.length" class="mt-6">
-        <div class="relative">
-          <img :src="images[currentImage]" alt="Uploaded Image" class="w-full h-64 object-cover rounded-lg">
-          
-          <!-- Next and Previous buttons -->
-          <button 
-            v-if="images.length > 1" 
-            @click="prevImage" 
-            class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 px-2 py-1"
-          >
-            Prev
-          </button>
-          <button 
-            v-if="images.length > 1" 
-            @click="nextImage" 
-            class="absolute right-0 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 px-2 py-1"
-          >
-            Next
-          </button>
-        </div>
-  
-        <!-- Delete image button -->
-        <div class="text-center mt-4">
-          <button @click="deleteImage(currentImage)" class="text-red-500 underline">Delete Image</button>
-        </div>
-      </div>
-  
-      <!-- Loading spinner inside the card -->
-      <div v-if="isLoading" class="mt-6 flex justify-center">
-        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 w-full h-64 flex justify-center items-center relative">
+      </p>
+      <p class="text-gray-500 text-sm mb-6">
+        Accepts jpg & png | 2MB size max/each
+      </p>
+    </div>
+    <!-- Drag-and-drop area and upload button (hidden when images are uploaded) -->
+    <div 
+      v-if="!images.length && !isLoading" 
+      class="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer"
+      @drop.prevent="handleDrop($event)"
+      @dragover.prevent
+    >
+      <img src="@/assets/img/image-02.png" alt="Placeholder" class="w-16 h-16 mb-4">
+      <p class="text-gray-600">Drag and drop photos here</p>
+      <p class="text-gray-600 my-2">or</p>
+      <label class="bg-black text-white text-sm py-2.5 px-4 rounded cursor-pointer">
+        <input type="file" class="hidden" accept="image/*" multiple @change="handleFileUpload($event)">
+        Upload from computer
+      </label>
+    </div>
+
+    <!-- Uploaded images preview with loading spinner -->
+    <div v-if="images.length || isLoading" class="relative mt-6 border-2  border-gray-300 rounded-lg overflow-hidden">
+      <div class="relative h-[500px] w-full">
+        <!-- Full-width image preview (if images are available) -->
+        <img v-if="!isLoading && images.length" :src="images[currentImage]" alt="Uploaded Image" class="object-cover w-full h-[500px]">
+        
+        <!-- Loading spinner -->
+        <div v-if="isLoading" class="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <span class="loader"></span> <!-- Spinner is displayed here -->
         </div>
+        
+        <!-- Delete icon (top-right corner) -->
+        <button 
+          v-if="images.length" 
+          @click="deleteImage(currentImage)" 
+          class="absolute top-2 right-2 text-white  bg-opacity-50"
+        >
+        <svg width="34" height="34" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="28" height="28" rx="14" fill="black" fill-opacity="0.5"/>
+          <path d="M17.5 10.5L10.5 17.5M10.5 10.5L17.5 17.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          
+        </button>
+
+        <!-- Previous and Next buttons -->
+        <button 
+          v-if="images.length > 1 && !isLoading" 
+          @click="prevImage" 
+          class="absolute left-3 top-1/2 transform -translate-y-1/2  bg-opacity-50 "
+        >
+        <svg width="40" height="40" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="20" height="20" rx="10" fill="black" fill-opacity="0.5"/>
+          <path d="M11.5 7C11.5 7 8.50001 9.20945 8.5 10C8.5 10.7906 11.5 13 11.5 13" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          
+        </button>
+        <button 
+          v-if="images.length > 1 && !isLoading" 
+          @click="nextImage" 
+          class="absolute  right-3 top-1/2 transform -translate-y-1/2 bg-opacity-50 t"
+        >
+        <svg width="40" height="40" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="20" height="20" rx="10" fill="black" fill-opacity="0.5"/>
+          <path d="M8.50002 7C8.50002 7 11.5 9.20945 11.5 10C11.5 10.7906 8.5 13 8.5 13" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          
+        </button>
+      </div>
+
+      <!-- Image count and Add Photo button (bottom-left corner) -->
+      <div class="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white flex justify-between items-center px-4 py-2">
+        <span class="" v-if="images.length">{{ images.length }} {{ images.length > 1 ? 'images' : 'image' }}</span>
+        <label class="cursor-pointer bg-black inline-flex items-center px-3 py-2.5 rounded-lg space-x-2">
+          <input type="file" class="hidden" accept="image/*" multiple @change="handleFileUpload($event)">
+          <span class="text-white text-sm">+ Add photo</span>
+        </label>
       </div>
     </div>
-  </template>
+  </div>
+</template>
+
   
   
   <script setup lang="ts">

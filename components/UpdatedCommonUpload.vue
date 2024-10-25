@@ -1,46 +1,74 @@
 <template>
-  <div class="p-6">
-    <div class="text-lg font-semibold mb-4">
+  <div class="">
+    <div class="text-lg text-gray-600 mb-4">
       Click to add as many pictures as you want to for each common area or space.
     </div>
     <p class="text-sm text-gray-500">Accepts jpg & png | 2MB size max/each</p>
 
     <!-- Check if there are common areas -->
-    <div v-if="commonAreas.length" class="grid grid-cols-2 gap-4 mt-6">
-      <div v-for="area in commonAreas" :key="area.id" class="border rounded-lg p-4 relative">
-        <div class="flex justify-center items-center h-32 bg-gray-100 rounded">
-          <!-- Image preview carousel -->
-          <div v-if="area.images && area.images.length">
-            <img :src="area.images[currentImage[area.id]]" alt="Common Area Image" class="w-24 h-24 object-cover">
-            <!-- Next and previous buttons -->
-            <div v-if="area.images.length > 1">
-              <button @click="prevImage(area.id)" class="absolute left-0 px-2 py-1 text-gray-600">
-                Prev
-              </button>
-              <button @click="nextImage(area.id)" class="absolute right-0 px-2 py-1 text-gray-600">
-                Next
-              </button>
-            </div>
+    <div v-if="commonAreas.length" class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+      <div v-for="area in commonAreas" :key="area.id" class="relative rounded-lg overflow-hidden border border-gray-300">
+        
+        <!-- Image preview carousel -->
+        <div class="relative h-64 w-full">
+          <!-- Show uploaded images -->
+          <img 
+            v-if="area.images && area.images.length" 
+            :src="area.images[currentImage[area.id]]" 
+            alt="Common Area Image" 
+            class="object-cover w-full h-full">
+          
+          <!-- Show a placeholder when no image -->
+          <div v-else class="flex items-center justify-center h-full w-full bg-gray-100">
+            <img src="@/assets/img/image-02.png" alt="Placeholder" class="w-16 h-16">
           </div>
-          <!-- Placeholder icon for no image -->
-          <div v-else>
-            <img src="@/assets/img/image-02.png" alt="Placeholder" class="w-24 h-24">
+          
+          <!-- Loading spinner -->
+          <div v-if="isLoading[area.id]" class="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <span class="loader"></span>
           </div>
-        </div>
-        <!-- Common Area Label -->
-        <div class="text-center mt-2 text-gray-700">{{ area.name }} | {{ area.images ? area.images.length : 0 }} image</div>
-        <!-- Add photo button -->
-        <div class="mt-4">
-          <label class="cursor-pointer inline-flex items-center space-x-2">
-            <input type="file" class="hidden" accept="image/*" multiple @change="handleFileUpload($event, area.id)">
-            <span class="text-blue-500 underline">+ Add photo</span>
-          </label>
-        </div>
-        <!-- Delete all images button -->
-        <button @click="deleteAllImages(area.id)" class="absolute top-2 right-2 text-red-500 text-sm">Delete</button>
-        <!-- Loading spinner -->
-        <div v-if="isLoading[area.id]" class="absolute inset-0 flex justify-center items-center bg-gray-200 bg-opacity-50">
-          <span class="loader"></span> <!-- Add a spinner component or a simple CSS spinner -->
+
+          <!-- Delete icon (top-right corner) -->
+          <button 
+            @click="deleteAllImages(area.id)" 
+            class="absolute top-2 right-2 text-white  bg-opacity-50"
+          >
+          <svg width="34" height="34" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="28" height="28" rx="14" fill="black" fill-opacity="0.5"/>
+            <path d="M17.5 10.5L10.5 17.5M10.5 10.5L17.5 17.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <!-- Previous and Next buttons -->
+          <button 
+            v-if="area.images && area.images.length > 1 && !isLoading[area.id]" 
+            @click="prevImage(area.id)" 
+            class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-opacity-50 "
+          >
+          <svg width="40" height="40" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="20" rx="10" fill="black" fill-opacity="0.5"/>
+            <path d="M11.5 7C11.5 7 8.50001 9.20945 8.5 10C8.5 10.7906 11.5 13 11.5 13" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button 
+            v-if="area.images && area.images.length > 1 && !isLoading[area.id]" 
+            @click="nextImage(area.id)" 
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-opacity-50 "
+          >
+          <svg width="40" height="40" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="20" rx="10" fill="black" fill-opacity="0.5"/>
+            <path d="M8.50002 7C8.50002 7 11.5 9.20945 11.5 10C11.5 10.7906 8.5 13 8.5 13" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          
+          <!-- Common area label and image count (bottom-left corner) -->
+          <div class="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white flex justify-between items-center px-4 py-2">
+            <span class="text-sm">{{ area.name }} | {{ area.images ? area.images.length : 0 }} images</span>
+            <label class="cursor-pointer inline-flex items-center space-x-2 bg-black rounded-lg py-2.5 px-2">
+              <input type="file" class="hidden" accept="image/*" multiple @change="handleFileUpload($event, area.id)">
+              <span class="text-white text-xs">+ Add photo</span>
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -185,6 +213,26 @@ const prevImage = (areaId: string) => {
 // Load common areas from localStorage on mount
 loadFromLocalStorage();
 </script>
+
+<style scoped>
+.loader {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #3498db;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
 
 
   

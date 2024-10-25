@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6">
+  <div class="">
     <!-- Tabbed navigation for rooms -->
     <div class="flex space-x-2 mb-6">
       <button
@@ -12,7 +12,7 @@
       </button>
     </div>
 
-    <div class="text-lg font-semibold mb-4">
+    <div class="text-lg font- mb-4">
       Click to add as many pictures as you want for each room feature.
     </div>
     <p class="text-sm text-gray-500">Accepts jpg & png | 2MB size max/each</p>

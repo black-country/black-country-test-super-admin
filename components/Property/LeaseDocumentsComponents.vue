@@ -467,7 +467,7 @@ const groupedLeaseAgreements = computed(() => {
     signed: leaseAgreementList.value.filter(
       (lease) => lease.status === "SIGNED"
     ),
-    draft: leaseAgreementList.value.filter((lease) => lease.status === "draft"),
+    draft: leaseAgreementList.value.filter((lease) => lease.status === "DRAFT"),
   };
 });
 

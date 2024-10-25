@@ -27,7 +27,7 @@
             <button
               @click="handleSaveAndExit"
               :disabled="saving"
-              class="text-gray-900 bg-[#F9FAFB] disabled:cursor-not-allowed border-gray-100 border disabled:opacity-25 text-sm font-semibold px-4 py-3 rounded-md hover:bg-gray-800"
+              class="text-gray-900 bg-[#F9FAFB] disabled:cursor-not-allowed border-gray-100 border disabled:opacity-25 text-sm font-semibold px-4 py-3 rounded-md"
             >
               {{ saving ? "saving..." : "Save & exit" }}
             </button>
@@ -742,12 +742,20 @@
  <div class="container mx-auto w-full flex justify-between items-center">
  <button
  type="button"
+ v-if="!isPreviewMode"
    @click="handlePreviousStep"
    :disabled="activeParentStep === 1 && basicPropertyInformationStep === 1"
    class="bg-[#EBE5E0] text-[#292929] text-sm font-semibold px-4 py-2 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
  >
    Previous
  </button>
+ <button
+ v-if="isPreviewMode"
+ @click="isPreviewMode = false"
+ class="bg-[#EBE5E0] text-[#292929] text-sm font-semibold px-4 py-3 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
+>
+ Previous
+</button>
  <button
   v-if="!isPreviewMode"
    type="button"

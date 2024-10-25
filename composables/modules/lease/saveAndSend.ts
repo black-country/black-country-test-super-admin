@@ -19,11 +19,12 @@ export const useSaveAndSend = () => {
     tenantId: string | number,
     houseId: string | number
   ) => {
+    const localUser = JSON.parse(localStorage.getItem('user') || '{}');
     processingSaveAndSend.value = true;
     const res = (await lease_api.$_assign_lease_to_property(tenantId, houseId, {
       leaseAgreement: assignPayload.value.leaseAgreement,
       isPublished: true,
-      houseOwnerSigneeName: assignPayload.value.houseOwnerSigneeName || `${user?.value?.firstName} ${user?.value?.lastName}`,
+      houseOwnerSigneeName: `${localUser.firstName || ''} ${localUser.lastName || ''}`.trim() || assignPayload.value.houseOwnerSigneeName,
       houseOwnerSignatureUrl: leaseSignatureUrl || assignPayload.value.houseOwnerSignatureUrl
     })) as any;
 
@@ -50,9 +51,9 @@ export const useSaveAndSend = () => {
   };
 
   const setSaveAndSendPayloadObj = (data: any) => {
-    assignPayload.value.leaseAgreement = data.leaseAgreement;
-    assignPayload.value.houseOwnerSigneeName = data.houseOwnerSigneeName;
-    assignPayload.value.houseOwnerSignatureUrl = data.houseOwnerSignatureUrl;
+    assignPayload.value.leaseAgreement = data.leaseAgreement || '';
+        assignPayload.value.houseOwnerSigneeName = data.houseOwnerSigneeName || '';
+        assignPayload.value.houseOwnerSignatureUrl = data.houseOwnerSignatureUrl || '';
   };
 
   return {

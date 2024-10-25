@@ -16,12 +16,13 @@ const router = useRouter()
 
 export const useSaveAndExit = () => {
 	const handleSaveAndExit = async (tenantId: string | number, houseId: string | number) => {
+        const localUser = JSON.parse(localStorage.getItem('user') || '{}');
 		processingSaveAndExit.value = true
 		const res = await  lease_api.$_assign_lease_to_property(tenantId, houseId, {
             leaseAgreement: assignPayload.value.leaseAgreement,
             isPublished: false,
-            houseOwnerSigneeName: assignPayload.value.houseOwnerSigneeName || `${user?.value?.firstName} ${user?.value?.lastName}`,
-            houseOwnerSignatureUrl: leaseSignatureUrl
+            houseOwnerSigneeName: `${localUser.firstName || ''} ${localUser.lastName || ''}`.trim() || assignPayload.value.houseOwnerSigneeName,
+            houseOwnerSignatureUrl: leaseSignatureUrl || assignPayload.value.houseOwnerSignatureUrl
         }) as any
 
         if (res.type !== 'ERROR') {
@@ -44,7 +45,9 @@ export const useSaveAndExit = () => {
 	}
 
     const setSaveAndExitPayloadObj = (data: any) => {
-        assignPayload.value.leaseAgreement = data.leaseAgreement
+        assignPayload.value.leaseAgreement = data.leaseAgreement || '';
+        assignPayload.value.houseOwnerSigneeName = data.houseOwnerSigneeName || '';
+        assignPayload.value.houseOwnerSignatureUrl = data.houseOwnerSignatureUrl || leaseSignatureUrl;
 	}
 
 	return { handleSaveAndExit, processingSaveAndExit, assignPayload, setSaveAndExitPayloadObj }

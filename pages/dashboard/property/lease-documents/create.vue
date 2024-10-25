@@ -347,7 +347,7 @@
       </div>
     </LayoutWithoutSidebar>
   
-    <CoreModal :isOpen="isModalOpen" @close="isModalOpen = false">
+    <CoreModal title="Sign Lease Document" :isOpen="isModalOpen" @close="isModalOpen = false">
       <SignatureComponent @agreementData="handleAgreement" @close="closeModal" class="w-full" />
     </CoreModal>
   </main>

@@ -384,18 +384,36 @@ const setActiveRoom = (index: number) => {
 };
 
 // Load room data from localStorage when the component mounts
+// onMounted(() => {
+//   const storedRooms = localStorage.getItem('property_rooms');
+//   if (storedRooms) {
+//     rooms.value = JSON.parse(storedRooms);
+//     rooms.value.forEach((room: any) => {
+//       room.features.forEach((feature: any) => {
+//         currentImage.value[feature.name] = 0;
+//         loading.value[feature.name] = false; // Initialize loading state
+//       });
+//     });
+//   }
+// });
+// Load room data from localStorage when the component mounts
 onMounted(() => {
   const storedRooms = localStorage.getItem('property_rooms');
   if (storedRooms) {
     rooms.value = JSON.parse(storedRooms);
+
     rooms.value.forEach((room: any) => {
-      room.features.forEach((feature: any) => {
-        currentImage.value[feature.name] = 0;
-        loading.value[feature.name] = false; // Initialize loading state
-      });
+      // Check if room.features exists and is an array
+      if (room.features && Array.isArray(room.features)) {
+        room.features.forEach((feature: any) => {
+          currentImage.value[feature.name] = 0;
+          loading.value[feature.name] = false; // Initialize loading state
+        });
+      }
     });
   }
 });
+
 </script>
 
 <style scoped>

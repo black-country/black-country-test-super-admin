@@ -1160,26 +1160,9 @@ function handleSubmit() {
 const incomingData = ref({})
 
 function handleBasicPropertyInformationFormData(data: any) {
-  // handle the data emitted from the child component here
-  // console.log('Data received from child component:', data)
   incomingData.value = data
   // sessionStorage.setItem('property', JSON.stringify(incomingData.value))
 }
-
-// const neighbouringLandmarksArray = ref([]) as any
-// const handleSelectedAmenity = (item: any) => {
-//   const result  = neighbouringLandmarksArray.value.push({
-//         name: item.name,
-//         type: item.type,
-//         description: item.display_name,
-//         longitude: item.lat,
-//         latitude: item.lon,
-//         address: item.display_name,
-//   })
-//   console.log()
-//   payload.neighbouringLandmarks.value = result
-// }
-
 const neighbouringLandmarksArray = ref([]) as any;
 
 const handleSelectedAmenity = (item: any) => {
@@ -1208,9 +1191,6 @@ const handleLocationSearch = (data: any) => {
 const handleCommonAreas = (data: any) => {
 
 payload.commonAreas.value = data
-
-// // Store the updated data back to session storage
-// sessionStorage.setItem('property', JSON.stringify(propertyData))
 }
 const handlePropertyFurnished = (data: any) => {
 payload.isFurnishedCommonArea.value = data

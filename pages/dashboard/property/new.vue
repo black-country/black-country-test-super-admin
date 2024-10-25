@@ -232,11 +232,11 @@
                 v-if="activeParentStep === 3 && visualsStep === 1" />
                 <UpdatedCommonUpload  v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload"  />
                 <!-- <CommonAreasUpload v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload" /> -->
-                <AddVideoTours
+                <!-- <AddVideoTours
                 :payload="payload"
                 v-if="activeParentStep === 3 && visualsStep === 3"
               >
-              </AddVideoTours>
+              </AddVideoTours> -->
                 <CoreProgressStepper
                   v-if="activeParentStep === 4"
                   :titles="[
@@ -1016,38 +1016,6 @@
   //   updateQueryParams();
   // }
   
-  // function handleNextStep() {
-  //   if (activeParentStep.value === 1) {
-  //     if (basicPropertyInformationStep.value < 2) {
-  //       basicPropertyInformationStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 2) {
-  //     if (propertyDetailsStep.value < 2) {
-  //       propertyDetailsStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 3) {
-  //     if (visualsStep.value < 2) { // Allow for two sub-steps in visualsStep
-  //       visualsStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 4) {
-  //     if (finalizeStep.value < 3) {
-  //       finalizeStep.value += 1;
-  //     } else {
-  //       // This means we've reached the last step of the final stage, switch to preview mode
-  //       togglePreviewMode(true); // Instead of navigating to a new route, switch to preview mode
-  //       return;
-  //     }
-  //   }
-  
-  //   updateQueryParams();
-  // }
-  
   function handleNextStep() {
     if (activeParentStep.value === 1) {
       if (basicPropertyInformationStep.value < 2) {
@@ -1062,7 +1030,7 @@
         handleNextParentStep();
       }
     } else if (activeParentStep.value === 3) {
-      if (visualsStep.value < 3) { // Allow for three sub-steps in visualsStep
+      if (visualsStep.value < 2) { // Allow for two sub-steps in visualsStep
         visualsStep.value += 1;
       } else {
         handleNextParentStep();
@@ -1079,6 +1047,38 @@
   
     updateQueryParams();
   }
+  
+  // function handleNextStep() {
+  //   if (activeParentStep.value === 1) {
+  //     if (basicPropertyInformationStep.value < 2) {
+  //       basicPropertyInformationStep.value += 1;
+  //     } else {
+  //       handleNextParentStep();
+  //     }
+  //   } else if (activeParentStep.value === 2) {
+  //     if (propertyDetailsStep.value < 2) {
+  //       propertyDetailsStep.value += 1;
+  //     } else {
+  //       handleNextParentStep();
+  //     }
+  //   } else if (activeParentStep.value === 3) {
+  //     if (visualsStep.value < 3) { // Allow for three sub-steps in visualsStep
+  //       visualsStep.value += 1;
+  //     } else {
+  //       handleNextParentStep();
+  //     }
+  //   } else if (activeParentStep.value === 4) {
+  //     if (finalizeStep.value < 3) {
+  //       finalizeStep.value += 1;
+  //     } else {
+  //       // This means we've reached the last step of the final stage, switch to preview mode
+  //       togglePreviewMode(true); // Instead of navigating to a new route, switch to preview mode
+  //       return;
+  //     }
+  //   }
+  
+  //   updateQueryParams();
+  // }
   
   // function handleNextStep() {
   //   if (activeParentStep.value === 1) {

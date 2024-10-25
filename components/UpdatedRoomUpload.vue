@@ -1,77 +1,104 @@
 <template>
-  <div class="">
+  <div class="p-6">
     <!-- Tabbed navigation for rooms -->
-    <div class="flex space-x-2 mb-6">
+    <div class="flex space-x-4 mb-6">
       <button
         v-for="(room, index) in rooms"
         :key="index"
         @click="setActiveRoom(index)"
-        :class="['px-4 py-2 rounded', { 'bg-gray-200': activeRoom === index, 'bg-white': activeRoom !== index }]"
+        :class="[
+          'px-6 py-2 rounded-full border', 
+          { 'bg-gray-100 text-gray-700': activeRoom === index, 'bg-white text-gray-600 border-gray-300': activeRoom !== index }
+        ]"
       >
         {{ room.name }}
       </button>
     </div>
 
-    <div class="text-lg font- mb-4">
+    <div class="text-lg font-semibold mb-4">
       Click to add as many pictures as you want for each room feature.
     </div>
     <p class="text-sm text-gray-500">Accepts jpg & png | 2MB size max/each</p>
 
     <!-- Render features only if activeRoom exists -->
     <div v-if="rooms[activeRoom]" class="grid grid-cols-2 gap-4 mt-6">
-      <div v-for="feature in rooms[activeRoom].features" :key="feature.name" class="border rounded-lg p-4 relative">
-        <div class="flex justify-center items-center h-32 bg-gray-100 rounded">
-          <!-- Image preview carousel -->
-          <div v-if="feature.images.length">
-            <img :src="feature.images[currentImage[feature.name]]" alt="Feature Image" class="w-24 h-24 object-cover">
-            <!-- Next and previous buttons -->
-            <div v-if="feature.images.length > 1">
-              <button @click="prevImage(feature.name)" class="absolute left-0 px-2 py-1 text-gray-600">
-                Prev
-              </button>
-              <button @click="nextImage(feature.name)" class="absolute right-0 px-2 py-1 text-gray-600">
-                Next
-              </button>
-            </div>
+      <div
+        v-for="feature in rooms[activeRoom].features"
+        :key="feature.name"
+        class="relative rounded-lg overflow-hidden border border-gray-300 shadow-lg"
+      >
+        <!-- Image preview or loading spinner -->
+        <div class="relative h-56 w-full">
+          <!-- Show loading spinner if images are uploading -->
+          <div v-if="loading[feature.name]" class="absolute inset-0 flex justify-center items-center bg-gray-200 bg-opacity-50">
+            <span class="loader"></span>
           </div>
-          <!-- Placeholder icon for no image -->
-          <div v-else>
-            <img src="@/assets/img/image-02.png" alt="Placeholder" class="w-24 h-24">
-          </div>
-        </div>
-        <!-- Feature Label -->
-        <div class="text-center mt-2 text-gray-700">{{ feature.name }} | {{ feature.images.length }} image</div>
-        <!-- Add photo button -->
-        <div class="mt-4">
-          <label class="cursor-pointer inline-flex items-center space-x-2">
-            <input type="file" class="hidden" accept="image/*" multiple @change="handleFileUpload($event, feature.name)">
-            <span class="text-blue-500 underline">+ Add photo</span>
-          </label>
-        </div>
-        <!-- Delete all images button -->
-        <button @click="deleteAllImages(feature.name)" class="absolute top-2 right-2 text-red-500 text-sm">Delete</button>
-      </div>
-    </div>
 
-    <!-- Loading spinner -->
-    <div v-if="isLoading" class="flex justify-center items-center mt-4">
-      <span class="loader"></span> <!-- Add a simple CSS spinner here -->
+          <!-- Show uploaded images -->
+          <img
+            v-if="feature.images.length && !loading[feature.name]"
+            :src="feature.images[currentImage[feature.name]]"
+            alt="Feature Image"
+            class="object-cover w-full h-full"
+          />
+
+          <!-- Show a placeholder when no image -->
+          <div v-else-if="!loading[feature.name]" class="flex items-center justify-center h-full w-full bg-gray-100">
+            <img src="@/assets/img/image-02.png" alt="Placeholder" class="w-16 h-16" />
+          </div>
+
+          <!-- Delete icon (top-right corner) -->
+          <button
+            @click="deleteAllImages(feature.name)"
+            class="absolute top-2 right-2 text-white bg-black bg-opacity-50 p-2 rounded-full"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <!-- Previous and Next buttons -->
+          <button
+            v-if="feature.images.length > 1 && !loading[feature.name]"
+            @click="prevImage(feature.name)"
+            class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-3 py-1 rounded"
+          >
+            Prev
+          </button>
+          <button
+            v-if="feature.images.length > 1 && !loading[feature.name]"
+            @click="nextImage(feature.name)"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-3 py-1 rounded"
+          >
+            Next
+          </button>
+
+          <!-- Feature Label and Image Count (bottom-left corner) -->
+          <div class="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white flex justify-between items-center px-4 py-2">
+            <span>{{ feature.name }} | {{ feature.images.length }} {{ feature.images.length > 1 ? 'images' : 'image' }}</span>
+            <label class="cursor-pointer inline-flex items-center space-x-2">
+              <input type="file" class="hidden" accept="image/*" multiple @change="handleFileUpload($event, feature.name)" />
+              <span class="text-blue-500 underline">+ Add photo</span>
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 import { debounce } from 'lodash-es';
 import { useBatchUploadFile } from '@/composables/core/batchUpload'; // batch upload composable
 
-const { uploadFiles, uploadResponse } = useBatchUploadFile();
+const { uploadFiles, uploadResponse, loading } = useBatchUploadFile();
 
 // Initialize room data and set up reactive states
 const rooms = ref([]);  // Loaded from localStorage on mount
 const activeRoom = ref(0);  // Tracks the currently active room tab
-const currentImage = ref<Record<string, number>>({});  // Tracks the current image index for each feature
-const isLoading = ref(false);  // Global loading state for uploads
+const currentImage = ref<Record<string, number>>({});  // Tracks the current image index for each features
 
 // Load room data from localStorage on mount
 const loadFromLocalStorage = () => {
@@ -120,7 +147,7 @@ const handleFileUpload = async (event: Event, featureName: string) => {
 
   // Proceed with upload if FormData has files
   if (formData.has('images')) {
-    isLoading.value = true;
+    loading.value = true;
 
     try {
       await uploadFiles(formData);  // Batch upload files
@@ -136,7 +163,7 @@ const handleFileUpload = async (event: Event, featureName: string) => {
     } catch (error) {
       console.error('Failed to upload images:', error);
     } finally {
-      isLoading.value = false;
+      loading.value = false;
     }
   }
 };
@@ -187,3 +214,23 @@ onMounted(() => {
   loadFromLocalStorage();
 });
 </script>
+
+<style scoped>
+.loader {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #3498db;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>

@@ -8,7 +8,6 @@
         Accepts jpg & png | 2MB size max/each
       </p>
     </div>
-    <!-- Drag-and-drop area and upload button (hidden when images are uploaded) -->
     <div 
       v-if="!images.length && !isLoading" 
       class="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer"
@@ -23,19 +22,12 @@
         Upload from computer
       </label>
     </div>
-
-    <!-- Uploaded images preview with loading spinner -->
     <div v-if="images.length || isLoading" class="relative mt-6 border-2  border-gray-300 rounded-lg overflow-hidden">
       <div class="relative h-[500px] w-full">
-        <!-- Full-width image preview (if images are available) -->
         <img v-if="!isLoading && images.length" :src="images[currentImage]" alt="Uploaded Image" class="object-cover w-full h-[500px]">
-        
-        <!-- Loading spinner -->
         <div v-if="isLoading" class="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <span class="loader"></span> <!-- Spinner is displayed here -->
+          <span class="loader"></span> 
         </div>
-        
-        <!-- Delete icon (top-right corner) -->
         <button 
           v-if="images.length" 
           @click="deleteImage(currentImage)" 
@@ -47,8 +39,6 @@
           </svg>
           
         </button>
-
-        <!-- Previous and Next buttons -->
         <button 
           v-if="images.length > 1 && !isLoading" 
           @click="prevImage" 
@@ -72,8 +62,6 @@
           
         </button>
       </div>
-
-      <!-- Image count and Add Photo button (bottom-left corner) -->
       <div class="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white flex justify-between items-center px-4 py-2">
         <span class="" v-if="images.length">{{ images.length }} {{ images.length > 1 ? 'images' : 'image' }}</span>
         <label class="cursor-pointer bg-black inline-flex items-center px-3 py-2.5 rounded-lg space-x-2">

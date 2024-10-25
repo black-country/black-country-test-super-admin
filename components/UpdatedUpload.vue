@@ -24,7 +24,7 @@
             </div>
             <!-- Placeholder icon for no image -->
             <div v-else>
-              <img src="path_to_placeholder_image.png" alt="Placeholder" class="w-24 h-24">
+              <img src="@/assets/img/image-02.png" alt="Placeholder" class="w-24 h-24">
             </div>
           </div>
           <!-- Common Area Label -->

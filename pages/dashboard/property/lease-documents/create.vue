@@ -686,56 +686,7 @@ onMounted(() => {
 const updateLeaseInLocalStorage = () => {
   const leaseContent = editor.value?.innerHTML || leaseAgreementContent;
   payload.value.body = leaseContent
-  // console.log(editor.value?.innerHTML, 'hee oooooo', leaseContent)
-  // const payload = {
-  //   body: leaseContent,
-  //   documentName: payload.value?.documentName || 'Lease Agreement',
-  // };
-
-  // localStorage.setItem('lease-template-payload', JSON.stringify(payload));
 };
-
-
-// Example function to handle submission by retrieving data from local storage
-// const proceedSaveAndSend = () => {
-//     const localStorageObj = JSON.parse(localStorage.getItem('lease-template-payload'));
-//     if (localStorageObj) {
-//       console.log(localStorageObj, 'caught it')
-//       const payloadObj = {
-//         leaseAgreement: localStorageObj.body
-//       }
-//         setSaveAndSendPayloadObj(payloadObj);
-//         handleSaveAndSend(payload.value.tenantId, payload.value.propertyId);
-//     } else {
-//         showToast({
-//             title: "Error",
-//             message: 'No content found to submit.',
-//             toastType: "error",
-//             duration: 3000
-//         });
-//     }
-// };
-
-// // Proceed to save and exit (ensure the latest content is saved and signature is included)
-// const proceedSaveAndExit = () => {
-//     // updateLocalStorage();  // Update local storage with the latest content and signature
-//     const localStorageObj = JSON.parse(localStorage.getItem('lease-template-payload'));
-
-//     if (localStorageObj) {
-//       const payloadObj = {
-//         leaseAgreement: localStorageObj.body
-//       }
-//         setSaveAndExitPayloadObj(payloadObj);
-//         handleSaveAndExit(payload.value.tenantId, payload.value.propertyId);
-//     } else {
-//         showToast({
-//             title: "Error",
-//             message: 'No content found to save and exit.',
-//             toastType: "error",
-//             duration: 3000
-//         });
-//     }
-// };
 
 // Save and exit or send functionalities
 const proceedSaveAndExit = async () => {

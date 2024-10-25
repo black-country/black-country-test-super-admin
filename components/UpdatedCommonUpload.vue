@@ -52,8 +52,143 @@
   </div>
 </template>
 
-  
 <script setup lang="ts">
+import { ref, watch } from 'vue';
+import { debounce } from 'lodash-es';
+import { useBatchUploadFile } from '@/composables/core/batchUpload'; // batch upload composable
+
+const { uploadFiles, uploadResponse } = useBatchUploadFile();
+
+// Dynamically loaded common areas from localStorage
+const commonAreas = ref([]);
+
+// Track current image being displayed for each area (for carousel functionality)
+const currentImage = ref<Record<string, number>>({});
+
+// Loading state for uploads
+const isLoading = ref<Record<string, boolean>>({});
+
+// Progress state for each image upload
+const uploadProgress = ref<Record<string, number>>({});
+
+// File size limit (2MB)
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
+
+// Graceful fallback for requestIdleCallback (for browsers that don't support it)
+const requestIdleCallbackFallback = (cb: Function) => {
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(cb);
+  } else {
+    setTimeout(cb, 1); // Minimal delay fallback
+  }
+};
+
+// Load common areas from localStorage (property_commonAreas)
+const loadFromLocalStorage = () => {
+  const storedAreas = localStorage.getItem('property_commonAreas');
+  if (storedAreas) {
+    const parsedAreas = JSON.parse(storedAreas);
+    commonAreas.value = parsedAreas;
+
+    // Initialize currentImage and isLoading for each common area
+    parsedAreas.forEach((area: any) => {
+      currentImage.value[area.id] = 0;
+      isLoading.value[area.id] = false;
+      uploadProgress.value[area.id] = 0; // Initial progress
+      if (!area.images) area.images = [];
+    });
+  }
+};
+
+// Debounce localStorage writes to optimize performance
+const persistToLocalStorage = debounce(() => {
+  requestIdleCallbackFallback(() => {
+    localStorage.setItem('property_commonAreas', JSON.stringify(commonAreas.value));
+  });
+}, 500);
+
+// Watch for changes to commonAreas and persist to localStorage
+watch(commonAreas, persistToLocalStorage, { deep: true });
+
+// Handle multiple file upload for each common area
+const handleFileUpload = async (event: Event, areaId: string) => {
+  const files = (event.target as HTMLInputElement).files;
+  if (!files) return;
+
+  const formData = new FormData();
+
+  // Check each file size and append valid files to the FormData object
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    if (file.size > MAX_FILE_SIZE) {
+      alert(`File ${file.name} exceeds 2MB limit. Please choose a smaller file.`);
+      continue; // Skip files that exceed the size limit
+    }
+    formData.append('images', file); // Add each image to FormData
+  }
+
+  // Only proceed if there are valid files
+  if (formData.has('images')) {
+    isLoading.value[areaId] = true;
+
+    try {
+      // Use the batch upload composable to upload the files
+      await uploadFiles(formData, (progressEvent) => {
+        // Track upload progress for the current common area
+        const total = progressEvent.total ?? 1;
+        uploadProgress.value[areaId] = Math.round((progressEvent.loaded / total) * 100);
+      });
+
+      // Extract secure URLs from the response and add them to the area images
+      const areaIndex = commonAreas.value.findIndex((area: any) => area.id === areaId);
+      if (areaIndex !== -1) {
+        const uploadedImages = uploadResponse.value.map((response: { secure_url: string }) => response.secure_url);
+        const updatedImages = [...commonAreas.value[areaIndex].images, ...uploadedImages];
+        
+        // Replace the images array with the updated one (ensures reactivity)
+        commonAreas.value[areaIndex].images = updatedImages;
+      }
+    } catch (error) {
+      console.error("Failed to upload images", error);
+    } finally {
+      isLoading.value[areaId] = false;
+      uploadProgress.value[areaId] = 0; // Reset progress after completion
+    }
+  }
+};
+
+// Handle image deletion
+const deleteAllImages = (areaId: string) => {
+  const areaIndex = commonAreas.value.findIndex((area: any) => area.id === areaId);
+  if (areaIndex !== -1) {
+    commonAreas.value[areaIndex].images = [];
+  }
+};
+
+// Carousel next image
+const nextImage = (areaId: string) => {
+  const area = commonAreas.value.find((area: any) => area.id === areaId);
+  if (area && area.images.length) {
+    currentImage.value[areaId] = (currentImage.value[areaId] + 1) % area.images.length;
+  }
+};
+
+// Carousel previous image
+const prevImage = (areaId: string) => {
+  const area = commonAreas.value.find((area: any) => area.id === areaId);
+  if (area && area.images.length) {
+    currentImage.value[areaId] =
+      (currentImage.value[areaId] - 1 + area.images.length) % area.images.length;
+  }
+};
+
+// Load common areas from localStorage on mount
+loadFromLocalStorage();
+</script>
+
+
+  
+<!-- <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { debounce } from 'lodash-es';
 import { useBatchUploadFile } from '@/composables/core/batchUpload'; // batch upload composable
@@ -173,4 +308,4 @@ const prevImage = (areaId: string) => {
 
 // Load common areas from localStorage on mount
 loadFromLocalStorage();
-</script>
+</script> -->

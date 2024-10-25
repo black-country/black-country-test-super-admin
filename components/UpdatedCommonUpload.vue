@@ -216,21 +216,7 @@ loadFromLocalStorage();
 
 <style scoped>
 .loader {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #3498db;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  @apply animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500;
 }
 </style>
 

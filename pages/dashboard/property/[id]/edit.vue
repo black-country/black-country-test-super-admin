@@ -293,38 +293,21 @@
                   :totalSteps="2"
                   :currentStep="visualsStep"
                 />
-                <UploadPropertyExterior
+                <UpdatedOutsideUpload :payload="payload"
+                v-if="activeParentStep === 3 && visualsStep === 1" />
+                <UpdatedCommonUpload  v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload"  />
+                <UpdatedRoomUpload :payload="payload" v-if="activeParentStep === 3 && visualsStep === 3" />
+                <!-- <UploadPropertyExterior
                 :payload="payload"
                 v-if="activeParentStep === 3 && visualsStep === 1"
                 >
                 </UploadPropertyExterior>
                 <CommonAreasUpload v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload" />
-                <!-- <UploadPhotos
-                  :payload="payload"
-                  v-if="activeParentStep === 3 && visualsStep === 2"
-                >
-                </UploadPhotos> -->
                 <AddVideoTours
                   :payload="payload"
                   v-if="activeParentStep === 3 && visualsStep === 3"
                 >
-                  <!-- <template #action-buttons>
-                    <div class="flex justify-between mt-4">
-                      <button
-                        @click="handlePreviousStep"
-                        class="bg-[#EBE5E0] text-[#292929] text-sm font-semibold px-4 py-2 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
-                      >
-                        Previous
-                      </button>
-                      <button
-                        @click="handleNextParentStep"
-                        class="bg-[#292929] text-white text-sm font-semibold px-6 py-2.5 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </template> -->
-                </AddVideoTours>
+                </AddVideoTours> -->
                 <CoreProgressStepper
                   v-if="activeParentStep === 4"
                   :titles="[

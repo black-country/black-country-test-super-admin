@@ -236,6 +236,8 @@ onMounted(() => {
 import { ref, watch, onMounted } from 'vue';
 import { debounce } from 'lodash-es';
 import { useBatchUploadFile } from '@/composables/core/batchUpload'; // batch upload composable
+import { useCustomToast } from '@/composables/core/useCustomToast'
+const { showToast } = useCustomToast();
 
 const { uploadFiles, uploadResponse } = useBatchUploadFile();
 const props = defineProps({
@@ -299,7 +301,13 @@ const handleFileUpload = async (event: Event, featureName: string) => {
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     if (file.size > 2 * 1024 * 1024) {
-      alert('File size exceeds 2MB. Please upload a smaller file.');
+      showToast({
+          title: "Error",
+          message: "File size exceeds 2MB. Please upload a smaller file.",
+          toastType: "error",
+          duration: 3000
+        });
+      // alert('File size exceeds 2MB. Please upload a smaller file.');
       continue;
     }
     formData.append('images', file);

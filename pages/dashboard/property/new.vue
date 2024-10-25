@@ -1282,27 +1282,27 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
     if (visualsStep.value === 1 && !isPropertyCoverUploaded) {
       // Require property cover images in the first sub-step of visuals
       showToast({
-        title: "Warning",
+        title: "Error",
         message: "Please upload a property cover image before proceeding.",
-        toastType: "warning",
+        toastType: "error",
         duration: 3000
       });
       return;
     } else if (visualsStep.value === 2 && !isCommonAreaImagesUploaded) {
       // Require common area images in the second sub-step
       showToast({
-        title: "Warning",
+        title: "Error",
         message: "Please upload common area images before proceeding.",
-        toastType: "warning",
+        toastType: "error",
         duration: 3000
       });
       return;
     } else if (visualsStep.value === 3 && !isRoomImagesUploaded) {
       // Require room images in the third sub-step
       showToast({
-        title: "Warning",
+        title: "Error",
         message: "Please upload room images before proceeding.",
-        toastType: "warning",
+        toastType: "error",
         duration: 3000
       });
       return;

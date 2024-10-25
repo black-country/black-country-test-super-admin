@@ -228,7 +228,8 @@
                 v-if="activeParentStep === 3 && visualsStep === 1"
                 >
                 </UploadPropertyExterior>
-                <CommonAreasUpload v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload" />
+                <UpdatedUpload  v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload"  />
+                <!-- <CommonAreasUpload v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload" /> -->
                 <AddVideoTours
                 :payload="payload"
                 v-if="activeParentStep === 3 && visualsStep === 3"

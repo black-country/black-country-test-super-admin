@@ -80,12 +80,18 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { debounce } from 'lodash-es';
 import { useBatchUploadFile } from '@/composables/core/batchUpload'; // batch upload composable
 
 const { uploadFiles, uploadResponse } = useBatchUploadFile();
+
+const props = defineProps({
+    payload: {
+      type: Object
+    }
+  });
 
 // Dynamically loaded common areas from localStorage
 const commonAreas = ref([]);
@@ -212,31 +218,33 @@ const prevImage = (areaId: string) => {
 
 // Load common areas from localStorage on mount
 loadFromLocalStorage();
-</script>
+</script> -->
 
-<style scoped>
-.loader {
-  @apply animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500;
-}
-</style>
-
-
-  
-<!-- <script setup lang="ts">
+<script setup lang="ts">
 import { ref, watch } from 'vue';
 import { debounce } from 'lodash-es';
 import { useBatchUploadFile } from '@/composables/core/batchUpload'; // batch upload composable
 
 const { uploadFiles, uploadResponse } = useBatchUploadFile();
 
-// Dynamically loaded common areas from localStorage
-const commonAreas = ref([]);
+const props = defineProps({
+  payload: {
+    type: Object,
+    required: true
+  }
+});
+
+// Dynamically loaded common areas from props.payload and localStorage
+const commonAreas = ref(props.payload.commonAreas.value ?? []);
 
 // Track current image being displayed for each area (for carousel functionality)
 const currentImage = ref<Record<string, number>>({});
 
 // Loading state for uploads
 const isLoading = ref<Record<string, boolean>>({});
+
+// Progress state for each image upload
+const uploadProgress = ref<Record<string, number>>({});
 
 // File size limit (2MB)
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
@@ -257,21 +265,36 @@ const loadFromLocalStorage = () => {
     const parsedAreas = JSON.parse(storedAreas);
     commonAreas.value = parsedAreas;
 
-    // Initialize currentImage and isLoading for each common area
+    // Initialize currentImage, isLoading, and uploadProgress for each common area
     parsedAreas.forEach((area: any) => {
       currentImage.value[area.id] = 0;
       isLoading.value[area.id] = false;
+      uploadProgress.value[area.id] = 0; // Initial progress
       if (!area.images) area.images = [];
     });
   }
 };
 
-// Debounce localStorage writes to optimize performance
+// Watch for changes in props.payload.commonAreas and sync it with local commonAreas
+watch(
+  () => props.payload.commonAreas.value,
+  (newVal) => {
+    if (newVal) {
+      commonAreas.value = newVal;
+    }
+  },
+  { deep: true }
+);
+
+// Debounced localStorage writes to optimize performance
 const persistToLocalStorage = debounce(() => {
   requestIdleCallbackFallback(() => {
     localStorage.setItem('property_commonAreas', JSON.stringify(commonAreas.value));
   });
-}, 500);
+
+  // Sync commonAreas with props.payload.commonAreas
+  props.payload.commonAreas.value = commonAreas.value;
+}, 1000); // Increase debounce interval to optimize performance
 
 // Watch for changes to commonAreas and persist to localStorage
 watch(commonAreas, persistToLocalStorage, { deep: true });
@@ -296,30 +319,38 @@ const handleFileUpload = async (event: Event, areaId: string) => {
   // Only proceed if there are valid files
   if (formData.has('images')) {
     isLoading.value[areaId] = true;
+
     try {
       // Use the batch upload composable to upload the files
-      await uploadFiles(formData);
+      await uploadFiles(formData, (progressEvent) => {
+        // Track upload progress for the current common area
+        const total = progressEvent.total ?? 1;
+        uploadProgress.value[areaId] = Math.round((progressEvent.loaded / total) * 100);
+      });
 
       // Extract secure URLs from the response and add them to the area images
-      const area = commonAreas.value.find((area: any) => area.id === areaId);
-      if (area) {
-        uploadResponse.value.forEach((response: { secure_url: string }) => {
-          area.images.push(response.secure_url);
-        });
+      const areaIndex = commonAreas.value.findIndex((area: any) => area.id === areaId);
+      if (areaIndex !== -1) {
+        const uploadedImages = uploadResponse.value.map((response: { secure_url: string }) => response.secure_url);
+        const updatedImages = [...commonAreas.value[areaIndex].images, ...uploadedImages];
+
+        // Replace the images array with the updated one (ensures reactivity)
+        commonAreas.value[areaIndex].images = updatedImages;
       }
     } catch (error) {
       console.error("Failed to upload images", error);
     } finally {
       isLoading.value[areaId] = false;
+      uploadProgress.value[areaId] = 0; // Reset progress after completion
     }
   }
 };
 
 // Handle image deletion
 const deleteAllImages = (areaId: string) => {
-  const area = commonAreas.value.find((area: any) => area.id === areaId);
-  if (area) {
-    area.images = [];
+  const areaIndex = commonAreas.value.findIndex((area: any) => area.id === areaId);
+  if (areaIndex !== -1) {
+    commonAreas.value[areaIndex].images = [];
   }
 };
 
@@ -342,4 +373,14 @@ const prevImage = (areaId: string) => {
 
 // Load common areas from localStorage on mount
 loadFromLocalStorage();
-</script> -->
+</script>
+
+
+<style scoped>
+.loader {
+  @apply animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500;
+}
+</style>
+
+
+  

@@ -26,7 +26,7 @@
                   Cancel
                 </button>
                 <button
-                  @click="handleSaveAndExit"
+                  @click="handleSaveAndExAssiit"
                   :disabled="saving"
                   class="bg-gray-900 disabled:cursor-not-allowed disabled:opacity-25 text-sm text-white px-4 py-2 rounded-md hover:bg-gray-800"
                 >
@@ -228,6 +228,8 @@
                 v-if="activeParentStep === 3 && visualsStep === 1"
                 >
                 </UploadPropertyExterior> -->
+                <!-- <p>Hello</p> -->
+                <!-- {{payload?.commonAreas}} -->
                 <UpdatedOutsideUpload :payload="payload"
                 v-if="activeParentStep === 3 && visualsStep === 1" />
                 <UpdatedCommonUpload  v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload"  />
@@ -273,7 +275,6 @@
           <main class="pb-20" v-if="isPreviewMode">
             <div class="max-w-3xl mx-auto py-10 border border-gray-100 rounded-xl mt-6 p-10">
               <p class="text-[#1D2739] font-normal  text-2xl max-w-lg pb-10">Review property details and proceed to publish to the public</p>
-  
               <div class="flex justify-between items-center mb-10">
                 <p class="text-[#1D2739] font-normal">Basic property information</p>
                 <button @click="router.push('/dashboard/property/new')" class="text-[#326543] font-semibold">Edit</button>
@@ -283,13 +284,13 @@
                   <div class="space-y-2">
                     <!-- {{editPayload}} -->
                     <h4 class="font-normal text-sm text-[#667185]">Property name</h4>
-                    <p>{{payload?.name?.value}}</p>
+                    <p>{{payload?.name?.value || persistedPayload?.name}}</p>
                   </div>
                   <!-- <button @click="router.push('/dashboard/property/new')" class="text-green-600 font-semibold">Edit</button> -->
                 </div>
                 <div class="mt-4">
                   <h4 class="font-normal text-[#667185] text-sm">Brief description</h4>
-                  <p class="text-sm text-[#1D2739]">{{payload?.description?.value}}</p>
+                  <p class="text-sm text-[#1D2739]">{{payload?.description?.value || persistedPayload?.description }}</p>
                   <!-- <a href="#" class="text-blue-500">View more</a> -->
                 </div>                            
                 <div class="mt-4 space-y-6">
@@ -303,21 +304,21 @@
                   </div>
                   <div>
                     <h4 class="font-normal text-[#667185] text-sm">Property size</h4>
-                    <p class="text-sm text-[#1D2739]">{{ payload?.size?.value }} {{payload?.sizeUnit?.value}}</p>
+                    <p class="text-sm text-[#1D2739]">{{ payload?.size?.value || persistedPayload?.size }} {{payload?.sizeUnit?.value || persistedPayload?.sizeUnit }}</p>
                   </div>
               <div class="grid grid-cols-2 gap-6">
                 <div>
                   <h4 class="font-normal text-[#667185] text-sm">Number of bedrooms</h4>
-                  <p class="text-sm text-[#1D2739]">{{ payload?.bathroomCount?.value  }}</p>
+                  <p class="text-sm text-[#1D2739]">{{ payload?.bedroomCount?.value || persistedPayload?.bedroomCount  }}</p>
                 </div>
                 <div>
                   <h4 class="font-normal text-[#667185] text-sm">Number of bathrooms/Rest room</h4>
-                  <p class="text-sm text-[#1D2739]">{{ payload?.bathroomCount?.value }}</p>
+                  <p class="text-sm text-[#1D2739]">{{ payload?.bathroomCount?.value || persistedPayload?.bathroomCount }}</p>
                 </div>
               </div>
                   <div>
                     <h4 class="font-normal text-[#667185] text-sm">Property location</h4>
-                    <p class="text-sm text-[#1D2739]">{{ payload?.address?.value  }}</p>
+                    <p class="text-sm text-[#1D2739]">{{ payload?.address?.value || persistedPayload?.address }}</p>
                   </div>
                 </div>
               </div>
@@ -392,7 +393,7 @@
                   <div class="flex space-x-4 mb-6">
                     <!-- Room Tabs -->
                     <button
-                      v-for="room in payload.rooms.value"
+                      v-for="room in localStorageRooms"
                       :key="room.name"
                       :class="['px-6 py-2.5 rounded-lg text-sm', currentRoom.name === room.name ? 'bg-[#EBE5E0] text-[#1D2739]' : 'bg-white border border-gray-100 text-[#1D2739]']"
                       @click="selectRoom(room)"
@@ -474,8 +475,8 @@
   
               <div>    
                 <p class="text-sm font-medium my-6">Property Cover Images</p>    
-                <section v-if="Array.isArray(payload.images.value) && payload.images.value.length" class="grid grid-cols-2 gap-6">
-                  <div v-for="(item, index) in payload.images.value" :key="index" class="border p-2">
+                <section v-if="Array.isArray(localStoragePropertyImages) && localStoragePropertyImages?.length" class="grid grid-cols-2 gap-6">
+                  <div v-for="(item, index) in localStoragePropertyImages" :key="index" class="border p-2">
                     <img 
                       :src="item" 
                       :alt="'Image ' + (index + 1)" 
@@ -534,7 +535,7 @@
                 <h2 class="text-sm font-medium my-6">Common Area</h2>
                 <!-- Display common areas in a grid layout -->
                 <div class="grid grid-cols-2 gap-6">
-                  <div v-for="(area, index) in payload.commonAreas.value" :key="index" class="relative">
+                  <div v-for="(area, index) in localStorageCommonAreas" :key="index" class="relative">
                     <div class="relative rounded-lg overflow-hidden shadow-md bg-white border">
                       <div class="relative w-full h-52 flex items-center justify-center overflow-hidden">
                         <!-- Carousel Images -->
@@ -582,7 +583,7 @@
               <div class="bg-white rounded-lg shadow-sm mx-auto mt-6">
                 <h2 class="text-sm font-semibold">Rooms</h2>
               
-                <div v-for="(room, index) in payload.rooms.value" :key="index" class="mb-8 border-b pb-6 text-sm">
+                <div v-for="(room, index) in localStorageRooms" :key="index" class="mb-8 border-b pb-6 text-sm">
                   <!-- Room Name and Occupant Information -->
                   <h3 class="font-semibold mb-2">
                     {{ room?.name }}
@@ -635,7 +636,7 @@
                     Define your rules for potential tenants
                   </h3>
                   <div class="mt-4">
-                    <div v-for="(ruleObj, index) in payload.rules.value" :key="index" class="flex justify-between py-2">
+                    <div v-for="(ruleObj, index) in localRules" :key="index" class="flex justify-between py-2">
                       <div v-if="ruleObj.options" class="flex-1 mr-4">
                         <label class="block text-gray-700 text-sm font-normal mb-1">
                           {{ ruleObj.rule }}
@@ -660,7 +661,7 @@
               <div class="rounded-lg shadow-sm">
                 <p class="pb-3">Pre-screening questions</p>
                 <form @submit.prevent="submitAnswers">
-                  <div v-for="(questionObj, index) in payload?.questions.value" :key="index" class="mb-6">
+                  <div v-for="(questionObj, index) in localQuestions" :key="index" class="mb-6">
                     <label :for="'question-' + index" class="block text-gray-700 text-sm font-normal mb-2">
                       {{ questionObj?.question }}
                     </label>
@@ -684,12 +685,20 @@
     >
     <div class="container mx-auto w-full flex justify-between items-center">
     <button
+       v-if="!isPreviewMode"
       @click="handlePreviousStep"
       :disabled="activeParentStep === 1 && basicPropertyInformationStep === 1"
       class="bg-[#EBE5E0] text-[#292929] text-sm font-semibold px-4 py-2 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
     >
       Previous
     </button>
+    <button
+    v-if="isPreviewMode"
+    @click="isPreviewMode = false"
+    class="bg-[#EBE5E0] text-[#292929] text-sm font-semibold px-4 py-3 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
+  >
+    Previous
+  </button>
     <button
       v-if="!isPreviewMode"
       @click="handleNextStep"
@@ -738,7 +747,7 @@
   
   const { clearLocalStorage } = useClearLocalStorage();
   const { showToast } = useCustomToast();
-  const { payload, resetPayload, create_property, loading, saving,  save_property } = use_create_property()
+  const { payload, resetPayload, create_property, loading, saving,  save_property, persistedPayload } = use_create_property()
   const { agentsList, loading: loadingAgents } = useFetchAgents()
   const { loading: loadingCommonAreas, commonAreasList, interiorAreas, exteriorAreas, exteriorFurnishedAreas, exteriorUnfurnishedAreas, interiorFurnishedAreas, interiorUnfurnishedAreas } = useGetCommonAreas()
   const { loading: loadingRoomFeatures, roomFeaturesList } = useGetRoomFeatures()
@@ -748,6 +757,12 @@
     { id: 3, title: "Add Visuals", completed: false },
     { id: 4, title: "Finalize listing and publish", completed: false },
   ]);
+
+  const localStoragePropertyImages = JSON.parse(localStorage.getItem("property_images")) || [];
+  const localStorageCommonAreas = JSON.parse(localStorage.getItem("property_commonAreas")) || [];
+  const localStorageRooms = JSON.parse(localStorage.getItem("property_rooms")) || [];
+  const localQuestions = JSON.parse(localStorage.getItem("property_questions")) || [];
+  const localRules = JSON.parse(localStorage.getItem("property_rules")) || [];
   
   //Preview section code
   
@@ -760,14 +775,18 @@
     })
   
     const interiorAmenities = computed(() => {
-      return payload.commonAreas.value.filter((item: any) => item.type === 'interior')
+      return localStorageCommonAreas.filter((item: any) => item.type === 'interior')
     })
   
     const exteriorAmenities = computed(() => {
-      return payload.commonAreas.value.filter((item: any) => item.type === 'exterior')
+      return localStorageCommonAreas.filter((item: any) => item.type === 'exterior')
     })
   
-    const currentRoomImage = ref<number[]>(Array(payload.rooms?.value?.length || 0).fill(0));
+    // Current selected room
+// const currentRoom = ref(Array.isArray(localStorageRooms) && localStorageRooms.length > 0 ? localStorageRooms[0] : {});
+
+    // const currentRoomImage = ref<number[]>(Array(localStorageRooms?.length || 0).fill(0));
+      const currentRoomImage = ref<number[]>(Array.isArray(localStorageRooms) ? Array(localStorageRooms.length).fill(0) : []);
   
   // State to manage if we are in preview mode
   const isPreviewMode = ref(false);
@@ -809,7 +828,7 @@
     }
   };
   
-  const currentImageIndex = ref<number[]>(Array(payload.commonAreas.value.length).fill(0));
+  const currentImageIndex = ref<number[]>(Array(localStorageCommonAreas?.length).fill(0));
   // watch(
   //   () => payload.commonAreas.value,
   //   (newAreas) => {
@@ -822,7 +841,7 @@
   //   { immediate: true }
   // );
   watch(
-    () => payload.commonAreas.value,
+    () => localStorageCommonAreas,
     (newAreas) => {
       if (newAreas && newAreas.length > 0 && currentImageIndex.value.length !== newAreas.length) {
         currentImageIndex.value = Array(newAreas.length).fill(0);
@@ -833,7 +852,7 @@
   
   // Function to show the next image in the carousel
   const nextImage = (index: number) => {
-    const totalImages = payload.commonAreas.value[index]?.images?.length;
+    const totalImages = localStorageCommonAreas[index]?.images?.length;
     if (totalImages && totalImages > 1) {
       currentImageIndex.value[index] = (currentImageIndex.value[index] + 1) % totalImages;
     }
@@ -841,14 +860,14 @@
   
   // Function to show the previous image in the carousel
   const prevImage = (index: number) => {
-    const totalImages = payload.commonAreas.value[index]?.images?.length;
+    const totalImages = localStorageCommonAreas[index]?.images?.length;
     if (totalImages && totalImages > 1) {
       currentImageIndex.value[index] = (currentImageIndex.value[index] - 1 + totalImages) % totalImages;
     }
   };
   
   // Current selected room
-  const currentRoom = ref(payload.rooms.value[0] || {}); // Set the first room as the default selected room
+  const currentRoom = ref(localStorageRooms[0] || {}); // Set the first room as the default selected room
   
   // Function to select a room
   const selectRoom = (room) => {
@@ -1048,38 +1067,106 @@
   
   //   updateQueryParams();
   // }
-  
+
   function handleNextStep() {
-    if (activeParentStep.value === 1) {
-      if (basicPropertyInformationStep.value < 2) {
-        basicPropertyInformationStep.value += 1;
-      } else {
-        handleNextParentStep();
-      }
-    } else if (activeParentStep.value === 2) {
-      if (propertyDetailsStep.value < 2) {
-        propertyDetailsStep.value += 1;
-      } else {
-        handleNextParentStep();
-      }
-    } else if (activeParentStep.value === 3) {
-      if (visualsStep.value < 3) { // Allow for three sub-steps in visualsStep
-        visualsStep.value += 1;
-      } else {
-        handleNextParentStep();
-      }
-    } else if (activeParentStep.value === 4) {
-      if (finalizeStep.value < 3) {
-        finalizeStep.value += 1;
-      } else {
-        // This means we've reached the last step of the final stage, switch to preview mode
-        togglePreviewMode(true); // Instead of navigating to a new route, switch to preview mode
-        return;
-      }
+  if (activeParentStep.value === 1) {
+    if (basicPropertyInformationStep.value < 2) {
+      basicPropertyInformationStep.value += 1;
+    } else {
+      handleNextParentStep();
     }
-  
-    updateQueryParams();
+  } else if (activeParentStep.value === 2) {
+    if (propertyDetailsStep.value < 2) {
+      propertyDetailsStep.value += 1;
+    } else {
+      handleNextParentStep();
+    }
+  } else if (activeParentStep.value === 3) {
+    // Check for required images on each sub-step
+    const isPropertyCoverUploaded = payload?.images?.value?.length > 0;
+    const isCommonAreaImagesUploaded = payload?.commonAreas?.value?.length > 0;
+    const isRoomImagesUploaded = payload?.rooms?.value?.length > 0;
+
+    if (visualsStep.value === 1 && !isPropertyCoverUploaded) {
+      // Require property cover images in the first sub-step of visuals
+      showToast({
+        title: "Warning",
+        message: "Please upload a property cover image before proceeding.",
+        toastType: "warning",
+        duration: 3000
+      });
+      return;
+    } else if (visualsStep.value === 2 && !isCommonAreaImagesUploaded) {
+      // Require common area images in the second sub-step
+      showToast({
+        title: "Warning",
+        message: "Please upload common area images before proceeding.",
+        toastType: "warning",
+        duration: 3000
+      });
+      return;
+    } else if (visualsStep.value === 3 && !isRoomImagesUploaded) {
+      // Require room images in the third sub-step
+      showToast({
+        title: "Warning",
+        message: "Please upload room images before proceeding.",
+        toastType: "warning",
+        duration: 3000
+      });
+      return;
+    }
+
+    // Allow for three sub-steps in visualsStep
+    if (visualsStep.value < 3) {
+      visualsStep.value += 1;
+    } else {
+      handleNextParentStep();
+    }
+  } else if (activeParentStep.value === 4) {
+    if (finalizeStep.value < 3) {
+      finalizeStep.value += 1;
+    } else {
+      // This means we've reached the last step of the final stage, switch to preview mode
+      togglePreviewMode(true); // Instead of navigating to a new route, switch to preview mode
+      return;
+    }
   }
+
+  updateQueryParams();
+}
+
+  
+  // function handleNextStep() {
+  //   if (activeParentStep.value === 1) {
+  //     if (basicPropertyInformationStep.value < 2) {
+  //       basicPropertyInformationStep.value += 1;
+  //     } else {
+  //       handleNextParentStep();
+  //     }
+  //   } else if (activeParentStep.value === 2) {
+  //     if (propertyDetailsStep.value < 2) {
+  //       propertyDetailsStep.value += 1;
+  //     } else {
+  //       handleNextParentStep();
+  //     }
+  //   } else if (activeParentStep.value === 3) {
+  //     if (visualsStep.value < 3) { // Allow for three sub-steps in visualsStep
+  //       visualsStep.value += 1;
+  //     } else {
+  //       handleNextParentStep();
+  //     }
+  //   } else if (activeParentStep.value === 4) {
+  //     if (finalizeStep.value < 3) {
+  //       finalizeStep.value += 1;
+  //     } else {
+  //       // This means we've reached the last step of the final stage, switch to preview mode
+  //       togglePreviewMode(true); // Instead of navigating to a new route, switch to preview mode
+  //       return;
+  //     }
+  //   }
+  
+  //   updateQueryParams();
+  // }
   
   // function handleNextStep() {
   //   if (activeParentStep.value === 1) {
@@ -1374,12 +1461,12 @@
         if (roomValidationErrors.length > 0) {
           // Display all validation errors using the showToast composable
           roomValidationErrors.forEach(error => {
-            showToast({
-              title: "Error",
-              message: error,  // Dynamically set the error message
-              toastType: "error",
-              duration: 4000 // Adjust duration if needed
-            });
+            // showToast({
+            //   title: "Error",
+            //   message: error,  // Dynamically set the error message
+            //   toastType: "error",
+            //   duration: 4000 // Adjust duration if needed
+            // });
           });
           return false;
         }

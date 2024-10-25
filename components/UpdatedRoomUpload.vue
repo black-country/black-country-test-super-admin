@@ -98,12 +98,17 @@
 </template>
 
 
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 import { debounce } from 'lodash-es';
 import { useBatchUploadFile } from '@/composables/core/batchUpload'; // batch upload composable
 
 const { uploadFiles, uploadResponse } = useBatchUploadFile();
+const props = defineProps({
+    payload: {
+      type: Object
+    }
+  });
 
 // Initialize room data and set up reactive states
 const rooms = ref([]);  // Loaded from localStorage on mount
@@ -224,6 +229,164 @@ const setActiveRoom = (index: number) => {
 // Load room data from localStorage when the component mounts
 onMounted(() => {
   loadFromLocalStorage();
+});
+</script> -->
+
+<script setup lang="ts">
+import { ref, watch, onMounted } from 'vue';
+import { debounce } from 'lodash-es';
+import { useBatchUploadFile } from '@/composables/core/batchUpload'; // batch upload composable
+
+const { uploadFiles, uploadResponse } = useBatchUploadFile();
+const props = defineProps({
+  payload: {
+    type: Object,
+    required: true,
+  },
+});
+
+// Initialize room data and set up reactive states
+const rooms = ref([]); // Local state for rooms
+const activeRoom = ref(0); // Tracks the currently active room tab
+const currentImage = ref<Record<string, number>>({}); // Tracks the current image index for each feature
+const loading = ref<Record<string, boolean>>({}); // Tracks the loading state per feature
+
+// **Synchronizing props.payload.rooms.value with local rooms**
+// Watch for changes in the prop and update the local rooms value
+watch(
+  () => props.payload.rooms.value,
+  (newRooms) => {
+    if (newRooms) {
+      rooms.value = [...newRooms];
+      // Initialize currentImage and loading state for each feature in each room
+      rooms.value.forEach((room: any) => {
+        room.features.forEach((feature: any) => {
+          currentImage.value[feature.name] = 0;
+          loading.value[feature.name] = false; // Initialize loading state
+        });
+      });
+    }
+  },
+  { deep: true, immediate: true } // Ensure it syncs immediately and deeply
+);
+
+// Debounced localStorage persistence for room data
+const persistToLocalStorage = debounce(() => {
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      localStorage.setItem('property_rooms', JSON.stringify(rooms.value));
+    });
+  } else {
+    setTimeout(() => {
+      localStorage.setItem('property_rooms', JSON.stringify(rooms.value));
+    }, 500);
+  }
+}, 500);
+
+// Watch for changes in local room data and persist to localStorage
+watch(rooms, persistToLocalStorage, { deep: true });
+
+// Handle multiple file uploads for a feature
+const handleFileUpload = async (event: Event, featureName: string) => {
+  if (!rooms.value[activeRoom.value]) return; // Ensure activeRoom exists
+
+  const files = (event.target as HTMLInputElement).files;
+  if (!files) return;
+
+  const formData = new FormData();
+
+  // Validate each file and add to FormData if valid
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    if (file.size > 2 * 1024 * 1024) {
+      alert('File size exceeds 2MB. Please upload a smaller file.');
+      continue;
+    }
+    formData.append('images', file);
+  }
+
+  // Proceed with upload if FormData has files
+  if (formData.has('images')) {
+    loading.value[featureName] = true; // Set loading state for the feature
+
+    try {
+      await uploadFiles(formData); // Batch upload files
+      const room = rooms.value[activeRoom.value];
+      const feature = room.features.find((f: any) => f.name === featureName);
+
+      if (feature) {
+        // Add uploaded image URLs to both feature and room
+        const uploadedImages = uploadResponse.value.map((res: { secure_url: string }) => res.secure_url);
+        feature.images.push(...uploadedImages); // Update feature images
+        room.images.push(...uploadedImages); // Consolidate in room's images
+      }
+
+      // Sync the payload with the updated local rooms value
+      props.payload.rooms.value = [...rooms.value]; // Sync back to payload
+    } catch (error) {
+      console.error('Failed to upload images:', error);
+    } finally {
+      loading.value[featureName] = false; // Reset loading state for the feature
+    }
+  }
+};
+
+// Delete all images in a feature
+const deleteAllImages = (featureName: string) => {
+  const room = rooms.value[activeRoom.value];
+  if (!room) return;
+
+  const feature = room.features.find((f: any) => f.name === featureName);
+  if (feature) {
+    feature.images = []; // Clear feature images
+    room.images = room.images.filter((img: string) => !feature.images.includes(img)); // Remove from room
+
+    // Sync the payload with the updated local rooms value
+    props.payload.rooms.value = [...rooms.value]; // Sync back to payload
+  }
+};
+
+// Navigate to the next image in the carousel for a feature
+const nextImage = (featureName: string) => {
+  if (!rooms.value[activeRoom.value]) return;
+  const feature = findFeature(featureName);
+  if (feature && feature.images.length) {
+    currentImage.value[featureName] = (currentImage.value[featureName] + 1) % feature.images.length;
+  }
+};
+
+// Navigate to the previous image in the carousel for a feature
+const prevImage = (featureName: string) => {
+  if (!rooms.value[activeRoom.value]) return;
+  const feature = findFeature(featureName);
+  if (feature && feature.images.length) {
+    currentImage.value[featureName] = (currentImage.value[featureName] - 1 + feature.images.length) % feature.images.length;
+  }
+};
+
+// Find a feature by name in the current active room
+const findFeature = (featureName: string) => {
+  const room = rooms.value[activeRoom.value];
+  return room.features.find((f: any) => f.name === featureName);
+};
+
+// Set the active room based on the selected tab
+const setActiveRoom = (index: number) => {
+  activeRoom.value = index;
+};
+
+// Load room data from localStorage when the component mounts
+onMounted(() => {
+  const storedRooms = localStorage.getItem('property_rooms');
+  if (storedRooms) {
+    rooms.value = JSON.parse(storedRooms);
+    rooms.value.forEach((room: any) => {
+      room.features.forEach((feature: any) => {
+        currentImage.value[feature.name] = 0;
+        loading.value[feature.name] = false; // Initialize loading state
+      });
+    });
+  }
 });
 </script>
 

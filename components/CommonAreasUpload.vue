@@ -7,7 +7,7 @@
         class="relative border border-gray-25 rounded-lg bg-[#F7F6F3]"
       >
         <div class="relative w-full h-56 rounded-lg overflow-hidden bg-gray-25">
-          <template v-if="loadingStateCommonAreas[featureIndex]">
+        <template v-if="loadingStateCommonAreas[featureIndex]">
             <div class="absolute inset-0 flex items-center justify-center bg-opacity-50 bg-gray-300">
               <div class="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-gray-500"></div>
             </div>

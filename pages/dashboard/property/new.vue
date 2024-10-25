@@ -223,12 +223,14 @@
                   :totalSteps="2"
                   :currentStep="visualsStep"
                 />
-                <UploadPropertyExterior
+                <!-- <UploadPropertyExterior
                 :payload="payload"
                 v-if="activeParentStep === 3 && visualsStep === 1"
                 >
-                </UploadPropertyExterior>
-                <UpdatedUpload  v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload"  />
+                </UploadPropertyExterior> -->
+                <UpdatedOutsideUpload :payload="payload"
+                v-if="activeParentStep === 3 && visualsStep === 1" />
+                <UpdatedCommonUpload  v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload"  />
                 <!-- <CommonAreasUpload v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload" /> -->
                 <AddVideoTours
                 :payload="payload"

@@ -49,7 +49,6 @@
           ref="signaturePad"
           class="bg-[#F0F2F5]"
           :sigOption="{ ...state.option, penColor: selectedColor }"
-          :w="'600px'"
           :h="'100px'"
         />
         <div class="flex space-x-4 mt-2 p-3">
@@ -275,6 +274,10 @@ const base64ToFile = (base64: string, filename: string) => {
 
   return new File([u8arr], filename, { type: mime })
 }
+
+const selectColor = (color: string) => {
+    selectedColor.value = color
+  }
 
 // Save the drawn signature
 const saveSignature = async (type: string) => {

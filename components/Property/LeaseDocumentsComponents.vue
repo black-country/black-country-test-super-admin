@@ -118,6 +118,20 @@
                       <ul class="divide-y divide-gray-100">
                         <li class="p-2 text-sm cursor-pointer">
                           <button
+                            @click="editLeaseAgreement(lease)"
+                            class="flex py-1.5 text-[#1D2739] items-center font-medium gap-x-3"
+                          >
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13.5131 4.15199L14.6811 2.98386C15.3263 2.33871 16.3723 2.33871 17.0175 2.98386C17.6626 3.629 17.6626 4.67498 17.0175 5.32012L15.8493 6.48826M13.5131 4.15199L9.15147 8.51358C8.28041 9.38467 7.84485 9.82016 7.54828 10.3509C7.25169 10.8817 6.9533 12.1349 6.66797 13.3333C7.86638 13.048 9.11964 12.7496 9.65039 12.453C10.1811 12.1564 10.6166 11.7209 11.4877 10.8498L15.8493 6.48826M13.5131 4.15199L15.8493 6.48826" stroke="#326543" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M17.5 10C17.5 13.5355 17.5 15.3033 16.4017 16.4017C15.3033 17.5 13.5355 17.5 10 17.5C6.46447 17.5 4.6967 17.5 3.59835 16.4017C2.5 15.3033 2.5 13.5355 2.5 10C2.5 6.46447 2.5 4.6967 3.59835 3.59835C4.6967 2.5 6.46447 2.5 10 2.5" stroke="#326543" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            
+
+                            Edit
+                          </button>
+                        </li>
+                        <li class="p-2 text-sm cursor-pointer">
+                          <button
                             @click="viewTemplate(lease)"
                             class="flex py-1.5 text-[#1D2739] items-center font-medium gap-x-3"
                           >
@@ -341,26 +355,28 @@
       v-html="selectedLease?.leaseAgreementContent"
       class="p-4"
     ></div>
-    <div class="mt-6 px-6">
+    <div class="mt-2 px-6">
       <h2 class="text- font-medium mb-2">Signature</h2>
       <p class="text-gray-500 mb-6">
         The parties hereto have executed this Lease Agreement as of the
         date first above written.
       </p>
 
-      <div class="mb-4">
+      <div class="mb-2">
         <h3 class="text-sm font-medium mb-2">
           Landlord/Property Manager:
         </h3>
-        <label class="block text-sm text-gray-500 mb-1">Signature</label>
-        <img :src="selectedLease?.houseOwnerSignatureUrl" alt="Signature"
-        class="w-full border-b-2 border-dotted py-2 mb-4  bg-transparent outline-none placeholder-gray-400" />
+        <div class="border-b-2 border-dotted mb-3">
+          <label class="block text-sm text-gray-500 mb-1">Signature</label>
+          <img :src="selectedLease?.houseOwnerSignatureUrl" alt="Signature"
+          class="w-24 h-16 bg-transparent outline-none placeholder-gray-400 object-contain" />
+         </div>
         <label class="block text-sm text-gray-500 mb-1">Full Name</label>
         <div class="border-b-2 border-dotted text-gray-800 py-2 mb-4">
           {{ selectedLease?.houseOwnerSigneeName }}
         </div>
         <label class="block text-sm text-gray-500 mb-1">Date</label>
-        <div class="border-b-2 border-dotted text-gray-800 py-2 mb-8">
+        <div class="border-b-2 border-dotted text-gray-800 py-2 mb-4">
           {{ moment(selectedLease?.signedAt).format('DD MMMM YYYY, HH:mm:ss') }}
         </div>
       </div>
@@ -371,9 +387,11 @@
           <div class="border-b-2 border-dotted text-gray-800 py-2 mb-4">
               {{ selectedLease?.signeeName }}
             </div>
+       <div class="border-b-2 border-dotted mb-3">
         <label class="block text-sm text-gray-500 mb-1">Signature</label>
         <img :src="selectedLease?.signatureUrl" alt="Signature"
-          class="w-full border-b-2 border-dotted py-2 mb-4 bg-transparent outline-none placeholder-gray-400" />
+        class="w-24 h-16 bg-transparent outline-none placeholder-gray-400 object-contain" />
+       </div>
         <label class="block text-sm text-gray-500 mb-1">Date</label>
         <div class="border-b-2 border-dotted text-gray-800 py-2 mb-8">
           {{ moment(selectedLease?.createdAt).format('DD MMMM YYYY, HH:mm:ss') }}
@@ -551,6 +569,13 @@ const downloadTemplate = (item: any) => {
 
 const deleteLeaseAgreement = async (itm: any) => {
   await deleteLeaseTemplate(itm.id);
+  // dropdownVisible.value = null;
+};
+
+const editLeaseAgreement = async (itm: any) => {
+  // await deleteLeaseTemplate(itm.id);
+    localStorage.setItem('selected-agreement', JSON.stringify(itm))
+  router.push(`/dashboard/property/lease-documents/${itm.id}/edit`)
   // dropdownVisible.value = null;
 };
 

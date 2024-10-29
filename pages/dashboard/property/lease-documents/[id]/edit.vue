@@ -7,7 +7,7 @@
             <button @click="router.back()" class="text-gray-600 bg-gray-100 text-sm py-3 px-4 rounded-md hover:text-black">
               <span>&larr;</span> Back
             </button>
-            <h1 class="text-lg font-semibold">{{ templateTitle }}</h1>
+            <h1 class="text-base font-semibold">{{ templateTitle }}</h1>
           </div>
           <div class="relative">
             <!-- Preview and Use Template Buttons -->
@@ -15,64 +15,78 @@
               <button @click="previewDocument" class="bg-transparent text-green-600 hover:underline">
                 Preview
               </button>
-              <button @click="useTemplate" class="bg-black text-sm text-white px-4 py-3 rounded-md">
-                Use Template
-              </button>
-              <!-- More options button -->
-              <button
-                class="text-gray-600 hover:bg-gray-100 p-2 rounded-full"
-                @click="toggleDropdown"
-              >
-                &#8942;
-              </button>
-            </div>
-    
-            <!-- Dropdown modal -->
-            <div
-              v-if="dropdownVisible"
-              class="absolute right-0 z-50 mt-2 w-40 bg-white shadow-lg rounded-md overflow-hidden"
-            >
-              <ul>
-                <li
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                  @click="sendNow"
-                >
-                  Send now
-                </li>
-                <li
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                  @click="saveAndExit"
-                >
-                {{loading ? 'processing..' : ' Save and exit'}}
-                </li>
-                <li
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                  @click="duplicateTemplate"
-                >
-                  Duplicate
-                </li>
-                <li
-                  class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 cursor-pointer"
-                  @click="deleteTemplate"
-                >
-                  Delete
-                </li>
-              </ul>
+              <button type="button" @click="exitModal = true" class="bg-gray-400  disabled:cursor-not-allowed disabled:opacity-25 text-sm text-white px-4 py-2.5 rounded-md">
+                Exit
+             </button>
+              <button type="button" :disabled="processingSaveAndExit"  @click="proceedSaveAndExit" class="bg-gray-400  disabled:cursor-not-allowed disabled:opacity-25 text-sm text-white px-4 py-2.5 rounded-md">
+                {{ processingSaveAndExit ? 'processing...' : 'Save & Exit'}}
+             </button>
+             <button type="button" :disabled="processingSaveAndSend" @click="proceedSaveAndSend" class="bg-black disabled:cursor-not-allowed disabled:opacity-25 text-sm text-white px-4 py-2.5 rounded-md">
+                {{ processingSaveAndSend ? 'processing...' : 'Save & Send'}}
+             </button>
             </div>
           </div>
         </div>
       </div>
       <LayoutWithoutSidebar class="h-0 bg-gray-300">
-        <div class="flex min-h-screen bg-gray-25">
+        <div class="lg:flex space-y-10 lg:space-y-0 min-h-screen bg-gray-25">
           <!-- Left Side: Text Editor -->
-          <div class="flex-1 p-10 bg-gray-25">
+          <div class="flex-1 lg:p-10 bg-gray-25">
             <div contenteditable="true" class="border border-gray-300 px-10 bg-white p-4 outline-none border-none rounded-lg shadow-sm min-h-[500px]" ref="editor">
               Start editing your text here...
+            </div>
+            <div contenteditable="true" class="border border-gray-300 lg:px-10 bg-white pb-4 px-4 outline-none border-none rounded-lg shadow-sm min-h-[500px]" ref="signatureSection">
+              <h2 class="text-sm font-medium mb-2">Signature</h2>
+              {{emittedAgreementData?.signatureObj?.secure_url}}
+              <p class="text-gray-500 mb-6 text-sm">
+                The parties hereto have executed this Lease Agreement as of the date first above written.
+              </p>
+          
+              <div class="mb-4">
+                <h3 class="text-sm font-medium mb-2">Landlord/Property Manager:</h3>
+                <label class="block text-sm text-gray-500 mb-1">Signature</label>
+                <img :src="leaseParsedData?.houseOwnerSignatureUrl || emittedAgreementData?.signatureObj?.secure_url || leaseSignatureUrl" alt="Signature" class="w-full border-b-2 border-dotted py-2 mb-4 bg-transparent outline-none placeholder-gray-400" />
+                <label class="block text-sm text-gray-500 mb-1">Full Name</label>
+                <div class="border-b-2 border-dotted text-gray-800 py-2 mb-4">
+                  {{leaseParsedData?.houseOwnerSigneeName}}
+                </div>
+                <label class="block text-sm text-gray-500 mb-1">Date</label>
+                <div class="border-b-2 border-dotted text-gray-800 py-2 mb-8">
+                  <!-- {{new Date().toLocaleString()}} -->
+                  {{ moment(leaseParsedData?.createdAt).format("DD MMM, YYYY")}}
+                </div>
+              </div>
+          
+              <div class="mb-4 space-y-6">
+                <h3 class="text-base font-medium mb-2">Tenant:</h3>
+                <input
+                  type="text"
+                  disabled
+                  :value="emittedAgreementData.fullName"
+                  placeholder="Full name"
+                  class="w-full border-b-2 border-dotted py-2 mb-4 bg-transparent outline-none placeholder-gray-400"
+                />
+    
+                <input
+                type="text"
+                diabled
+                :value="emittedAgreementData.date"
+                placeholder="Signature"
+                class="w-full border-b-2 border-dotted py-2 mb-4 bg-transparent outline-none placeholder-gray-400"
+              />
+                <input
+                  type="text"
+                  diabled
+                  :value="emittedAgreementData.date"
+                  placeholder="Date"
+                  class="w-full border-b-2 border-dotted py-2 mb-4 bg-transparent outline-none placeholder-gray-400"
+                />
+              </div>
             </div>
           </div>
       
           <!-- Right Side: Settings Panel -->
-          <div class="w-1/3 p-6 bg-white rounded-lg mt-10 mr-10 ">
+          <div class="lg:w-1/3 p-6 bg-white rounded-lg mt-10 lg:mr-10 ">
             <h3 class="text-xl font-semibold text-gray-800 mb-4">Settings</h3>
             <p class="text-gray-500 mb-6">Edit template according to your liking</p>
       
@@ -257,6 +271,14 @@
               <div>
                 <p class="text-gray-500 text-sm mb-1">Insert</p>
                 <div class="flex space-x-2">
+                  <button @click="isModalOpen = true" class="p-2 border-[0.5px] border-gray-100 text-sm rounded-md px-5 bg-[#F9FAFB] flex justify-center items-center flex-col gap-y-2 hover:bg-gray-100">
+                    <svg class="flex justify-center items-center" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M22 13.1344C18 16.6465 17.4279 11.121 15.3496 11.5165C13 11.9637 11.5 16.9445 13 16.9445C14.5 16.9445 12.5 11 10.5 13.0556C8.5 15.1111 7.85936 17.7946 6.23526 15.8025C-1.5 6.31446 4.99998 -0.649937 8.16322 3.95685C10.1653 6.87256 6.5 17.4769 2 22.5" stroke="#1D2739" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M9 21.5H19" stroke="#141B34" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                     Signature              
+                      
+                  </button>
                   <button @click="insertImage" class="p-2 border rounded-md hover:bg-gray-100">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M11.5095 2.99023C7.02664 2.99023 4.78525 2.99023 3.39262 4.38232C2 5.77441 2 8.01494 2 12.496C2 16.977 2 19.2176 3.39262 20.6097C4.78525 22.0018 7.02664 22.0018 11.5095 22.0018C15.9922 22.0018 18.2336 22.0018 19.6263 20.6097C21.0189 19.2176 21.0189 16.977 21.0189 12.496V11.9957" stroke="#1D2739" stroke-width="2" stroke-linecap="round"/>
@@ -290,20 +312,79 @@
         <div v-if="showPreview" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
           <div class="bg-white p-6 rounded-lg max-w-2xl w-full">
             <h2 class="text- font-semibold mb-4">Preview Document</h2>
-            <div v-html="previewContent" class="p-4 rounded-lg shadow-sm min-h-[300px]"></div>
+            <div v-html="previewContent" class="p-4 rounded-lg shadow-sm h-[500px] overflow-y-auto min-h-[300px]"></div>
             <button @click="showPreview = false" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-md">Close</button>
           </div>
         </div>
       </LayoutWithoutSidebar>
+
+         <CoreModal title="Sign Lease Document" :isOpen="isModalOpen" @close="isModalOpen = false">
+      <SignatureComponent @agreementData="handleAgreement" @close="closeModal" class="w-full" />
+    </CoreModal>
+
+    <CoreModalWithoutCloseBtn
+    :isOpen="exitModal"
+    @close="exitModal = false"
+    >
+    <div
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+    @click.self="exitModal = false"
+  >
+    <div class="bg-white rounded-xl p-6 max-w-sm w-full text-center shadow-lg">
+      <div class="flex justify-center items-center bg-yellow-500 rounded-full w-16 h-16 mx-auto mb-4">
+        <svg width="65" height="64" viewBox="0 0 65 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.921875" width="63.1513" height="64" rx="31.5756" fill="#F3A218"/>
+          <path d="M42.2031 32.375C42.2031 26.8521 37.7259 22.375 32.2031 22.375C26.6803 22.375 22.2031 26.8521 22.2031 32.375C22.2031 37.8978 26.6803 42.375 32.2031 42.375C37.7259 42.375 42.2031 37.8978 42.2031 32.375Z" stroke="white" stroke-width="1.5"/>
+          <path d="M32.4453 37.375V32.375C32.4453 31.9036 32.4453 31.6679 32.2988 31.5214C32.1524 31.375 31.9167 31.375 31.4453 31.375" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M32.1953 28.377H32.2043" stroke="white" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          
+      </div>
+      <h2 class="text-lg font-semibold text-gray-700 mb-2">Exit Editing</h2>
+      <p class="text-gray-500 mb-6">Are you sure you want to exit, note that your changes would not be saved?</p>
+      <div class="space-y-3">
+        <button
+          type="button"
+          class="w-full disabled:cursor-not-allowed text-sm disabled:opacity-25 bg-[#292929] text-white py-3.5 rounded-md font-semibold"
+          @click="exitEdit"
+          :disabled="loading"
+        >
+          Yes, Exit
+        </button>
+        <button
+          type="button"
+          class="w-full bg-[#EBE5E0] text-gray-700 text-sm py-3.5 rounded-md font-semibold"
+          @click="exitModal = false"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+    </CoreModalWithoutCloseBtn>
     </main>
     </template>
     
     <script setup lang="ts">
+      import { useUser } from "@/composables/auth/user";
+  const { user } = useUser();
+      import { useSaveAndSend } from '@/composables/modules/lease/saveAndSend'
+      import { useSaveAndExit } from '@/composables/modules/lease/saveAndExit'
+
+    import moment from "moment";
     import LayoutWithoutSidebar from '@/layouts/dashboardWithoutSidebar.vue';
     import { useCustomToast } from '@/composables/core/useCustomToast'
     import { useCreateLeaseTemplate } from '@/composables/modules/lease/create'
     const {  createLeaseTemplate, loading, payload, setPayloadObj } = useCreateLeaseTemplate()
     const { showToast } = useCustomToast();
+    const signatureSection = ref<HTMLElement | null>(null);
+
+    const exitModal = ref(false)
+
+
+
+    const { setSaveAndSendPayloadObj, handleSaveAndSend, processingSaveAndSend  } = useSaveAndSend()
+  const { handleSaveAndExit, setSaveAndExitPayloadObj, processingSaveAndExit } = useSaveAndExit()
 
     const router = useRouter()
 
@@ -311,6 +392,38 @@
      middleware: 'auth'
 });
 
+const previewDocument = () => {
+    if (editor.value) {
+      previewContent.value = editor.value.innerHTML + signatureSection.value.innerHTML;
+      showPreview.value = true;
+    }
+  };
+
+  const emittedAgreementData = ref({}) as any;
+
+const handleAgreement = (data: any) => {
+    showToast({
+        title: "Success",
+        message: 'Signature was saved successfully.',
+        toastType: "success",
+        duration: 3000,
+    });
+    console.log(data, 'data here');
+    emittedAgreementData.value = data;
+};
+
+watch(
+    () => emittedAgreementData.value,
+    (updatedData) => {
+        console.log(updatedData, 'updated data');
+    }
+);
+
+  const isModalOpen = ref(false)
+
+  const closeModal = () => {
+      isModalOpen.value = false
+    }
     
     const editor = ref<HTMLElement | null>(null);
     const selectedFont = ref('Arial');
@@ -318,84 +431,84 @@
     const fontColor = ref('#z000000');
     const showPreview = ref(false);
     const previewContent = ref('');
-    const templateTitle = 'Lease Agreement';
+    const templateTitle = 'Update Lease Agreement';
     const dropdownVisible = ref(false);
     const alignmentPosition = ref('justify')
     const listingPosition = ref('ordered')
     const paragraphPosition = ref('p')
     
-    const leaseAgreementContent = `
-      <h2 style="font-size: 1.5rem; font-weight: 600; color: #2D3748; text-align: center; margin-bottom: 1rem;">Lease Agreement</h2>
-      <p style="text-align: center; color: #718096; margin-bottom: 1.5rem;">
-        This is a legally binding agreement. If not understood, consult an Attorney.
-      </p>
-      <ol style="list-style-type: decimal; margin-left: 1rem; space-y: 1.5rem;">
-        <li>
-          <strong>Parties:</strong>
-          This Lease Agreement is entered into on [Date] between: [Homeowner's Name], hereinafter referred to as the "Landlord", and [Tenant's Name], hereinafter referred to as the "Tenant".
-        </li>
-        <li>
-          <strong>Property:</strong>
-          The Landlord agrees to lease to the Tenant, and the Tenant agrees to rent from the Landlord, located at [Property location].
-        </li>
-        <li>
-          <strong>Terms of Lease:</strong>
-          The lease shall commence on [Start Date] and continue until [End Date], unless terminated earlier as provided in this agreement.
-        </li>
-        <li>
-          <strong>Rent and Payments:</strong>
-          <ul style="list-style-type: disc; margin-left: 1rem;">
-            <li>The Tenant agrees to pay rent in the amount of [Monthly Rent] per month, due on the [Day of the Month] of each month.</li>
-            <li>Rent payments shall be made by [Accepted Payment Method], to be delivered to the Landlord or as directed by the Landlord.</li>
-          </ul>
-        </li>
-        <li>
-          <strong>Security Deposit:</strong>
-          <ul style="list-style-type: disc; margin-left: 1rem;">
-            <li>The Tenant shall provide a security deposit in the amount of [Security Deposit Amount] upon execution of this agreement.</li>
-            <li>The security deposit shall be held by the Landlord as security for the performance of the Tenant's obligations under this lease.</li>
-          </ul>
-        </li>
-        <li>
-          <strong>Use of Property:</strong>
-          <ul style="list-style-type: disc; margin-left: 1rem;">
-            <li>The Tenant shall use the property solely for residential purposes and shall not engage in any illegal activities on the premises.</li>
-            <li>The Tenant shall comply with all applicable laws, rules, and regulations governing the use of the property.</li>
-          </ul>
-        </li>
-        <li>
-          <strong>Maintenance and Repairs:</strong>
-          Details of maintenance and repair responsibilities.
-        </li>
-      </ol>
-    `;
+    // const leaseAgreementContent = `
+    //   <h2 style="font-size: 1.5rem; font-weight: 600; color: #2D3748; text-align: center; margin-bottom: 1rem;">Lease Agreement</h2>
+    //   <p style="text-align: center; color: #718096; margin-bottom: 1.5rem;">
+    //     This is a legally binding agreement. If not understood, consult an Attorney.
+    //   </p>
+    //   <ol style="list-style-type: decimal; margin-left: 1rem; space-y: 1.5rem;">
+    //     <li>
+    //       <strong>Parties:</strong>
+    //       This Lease Agreement is entered into on [Date] between: [Homeowner's Name], hereinafter referred to as the "Landlord", and [Tenant's Name], hereinafter referred to as the "Tenant".
+    //     </li>
+    //     <li>
+    //       <strong>Property:</strong>
+    //       The Landlord agrees to lease to the Tenant, and the Tenant agrees to rent from the Landlord, located at [Property location].
+    //     </li>
+    //     <li>
+    //       <strong>Terms of Lease:</strong>
+    //       The lease shall commence on [Start Date] and continue until [End Date], unless terminated earlier as provided in this agreement.
+    //     </li>
+    //     <li>
+    //       <strong>Rent and Payments:</strong>
+    //       <ul style="list-style-type: disc; margin-left: 1rem;">
+    //         <li>The Tenant agrees to pay rent in the amount of [Monthly Rent] per month, due on the [Day of the Month] of each month.</li>
+    //         <li>Rent payments shall be made by [Accepted Payment Method], to be delivered to the Landlord or as directed by the Landlord.</li>
+    //       </ul>
+    //     </li>
+    //     <li>
+    //       <strong>Security Deposit:</strong>
+    //       <ul style="list-style-type: disc; margin-left: 1rem;">
+    //         <li>The Tenant shall provide a security deposit in the amount of [Security Deposit Amount] upon execution of this agreement.</li>
+    //         <li>The security deposit shall be held by the Landlord as security for the performance of the Tenant's obligations under this lease.</li>
+    //       </ul>
+    //     </li>
+    //     <li>
+    //       <strong>Use of Property:</strong>
+    //       <ul style="list-style-type: disc; margin-left: 1rem;">
+    //         <li>The Tenant shall use the property solely for residential purposes and shall not engage in any illegal activities on the premises.</li>
+    //         <li>The Tenant shall comply with all applicable laws, rules, and regulations governing the use of the property.</li>
+    //       </ul>
+    //     </li>
+    //     <li>
+    //       <strong>Maintenance and Repairs:</strong>
+    //       Details of maintenance and repair responsibilities.
+    //     </li>
+    //   </ol>
+    // `;
+
+    const leaseParsedData = JSON.parse(localStorage.getItem("selected-agreement"));
+    let leaseSignatureUrl;
+    try {
+        leaseSignatureUrl = JSON.parse(localStorage.getItem("lease-signature-url"));
+    } catch (error) {
+        leaseSignatureUrl = localStorage.getItem("lease-signature-url");
+    }
     
     onMounted(() => {
-        const parsedData = JSON.parse(localStorage.getItem("templateObj"));
       if (editor.value) {
-        editor.value.innerHTML = parsedData.body || leaseAgreementContent;
+        editor.value.innerHTML = leaseParsedData?.leaseAgreementContent
       }
     });
-
-//     const templateObj = ref({}) as any;
-// const router = useRouter()
-// onMounted(() => {
-//   const parsedData = JSON.parse(localStorage.getItem("templateObj"));
-//   templateObj.value = parsedData;
-// });
     
-    const deleteTemplate = () => {
-      if (editor.value) {
-        editor.value.innerHTML = leaseAgreementContent;
-      }
+    // const deleteTemplate = () => {
+    //   if (editor.value) {
+    //     editor.value.innerHTML = leaseAgreementContent;
+    //   }
     
-      showToast({
-              title: "Success",
-              message: 'Lease Template was reset successfully',
-              toastType: "success",
-              duration: 3000
-            });
-    }
+    //   showToast({
+    //           title: "Success",
+    //           message: 'Lease Template was reset successfully',
+    //           toastType: "success",
+    //           duration: 3000
+    //         });
+    // }
     
     const setAlignment = (alignment: string) => {
       if (editor.value) {
@@ -466,13 +579,6 @@
       }
     };
     
-    const previewDocument = () => {
-      if (editor.value) {
-        previewContent.value = editor.value.innerHTML;
-        showPreview.value = true;
-      }
-    };
-    
     const useTemplate = () => {
       if (editor.value) {
         const htmlContent = editor.value.innerHTML;
@@ -504,30 +610,77 @@
         dropdownVisible.value = !dropdownVisible.value;
       };
       
-      const sendNow = () => {
-        const payload = {
-          body: previewContent.value || leaseAgreementContent,
-          documentName: 'TEST'
-        }
-        setPayloadObj(payload)
-        createLeaseTemplate()
-      };
+      // const sendNow = () => {
+      //   const payload = {
+      //     body: previewContent.value || leaseAgreementContent,
+      //     documentName: 'TEST'
+      //   }
+      //   setPayloadObj(payload)
+      //   createLeaseTemplate()
+      // };
       
-      const saveAndExit = () => {
-        const payload = {
-          body: previewContent.value || leaseAgreementContent,
-          documentName: 'TEST'
-        }
-        setPayloadObj(payload)
-        createLeaseTemplate()
-      };
+      // const saveAndExit = () => {
+      //   const payload = {
+      //     body: previewContent.value || leaseAgreementContent,
+      //     documentName: 'TEST'
+      //   }
+      //   setPayloadObj(payload)
+      //   createLeaseTemplate()
+      // };
       
       const duplicateTemplate = () => {
         // Logic to handle duplicating the template
       };
-    </script>
-    
-    <style scoped>
-    /* Custom styles as needed */
-    </style>
-    
+
+      // Save and exit or send functionalities
+const proceedSaveAndExit = async () => {
+  const signatureUrl = emittedAgreementData?.value?.signatureObj?.secure_url || leaseSignatureUrl;
+  const reqPayload = {
+    leaseAgreement: `<html>${editor.value?.innerHTML}</html>` || `<html>${leaseAgreementContent}</html>`,
+    isPublished: false,
+    houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
+    houseOwnerSignatureUrl: signatureUrl,
+  };
+  setSaveAndExitPayloadObj(reqPayload);
+  await handleSaveAndExit(leaseParsedData?.rentalApplication?.tenant?.id, leaseParsedData?.rentalApplication?.house?.id);
+};
+
+const proceedSaveAndSend = async () => {
+  const signatureUrl = leaseSignatureUrl || emittedAgreementData?.value?.signatureObj?.secure_url
+
+  if (!signatureUrl) {
+    showToast({
+      title: "Error",
+      message: 'You need to sign before you can send the lease agreement.',
+      toastType: "error",
+      duration: 3000,
+    });
+    return;
+  }
+
+  const reqPayload = {
+    leaseAgreement:`<html>${editor.value?.innerHTML}</html>`,
+    isPublished: true,
+    houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
+    houseOwnerSignatureUrl: signatureUrl,
+  };
+
+  setSaveAndSendPayloadObj(reqPayload);
+  await handleSaveAndSend(leaseParsedData?.rentalApplication?.tenant?.id, leaseParsedData?.rentalApplication?.house?.id);
+};
+
+
+const exitEdit = () => {
+  localStorage.removeItem('selected-lease-document')
+  localStorage.removeItem('lease-signature-url')
+  router.back()
+}
+
+onUnmounted(() => {
+  exitModal.value = true
+  localStorage.removeItem('selected-lease-document')
+  localStorage.removeItem('lease-signature-url')
+  router.back()
+});
+
+</script>

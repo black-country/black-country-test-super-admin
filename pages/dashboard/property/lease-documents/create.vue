@@ -73,8 +73,10 @@
         
             <div class="mb-4">
               <h3 class="text-sm font-medium mb-2">Landlord/Property Manager:</h3>
+             <div class="border-b-2 border-dotted mb-3">
               <label class="block text-sm text-gray-500 mb-1">Signature</label>
-              <img :src="emittedAgreementData?.signatureObj?.secure_url || leaseSignatureUrl" alt="Signature" class="w-full border-b-2 border-dotted py-2 mb-4 bg-transparent outline-none placeholder-gray-400" />
+              <img :src="emittedAgreementData?.signatureObj?.secure_url || leaseSignatureUrl" alt="Signature" class="w-24 h-16 bg-transparent outline-none placeholder-gray-400 object-contain"  />
+             </div>
               <label class="block text-sm text-gray-500 mb-1">Full Name</label>
               <div class="border-b-2 border-dotted text-gray-800 py-2 mb-4">
                 {{user.firstName}}  {{user.lastName}}
@@ -308,7 +310,7 @@
                    Signature              
                     
                 </button>
-                <button @click="insertImage" class="p-2 border-[0.5px] border-gray-100 text-sm rounded-md px-5 bg-[#F9FAFB] flex justify-center flex-col items-center gap-y-2 hover:bg-gray-100">
+                <button @click="insertImage" class="p-2 border1-[0.5px] border-gray-100 text-sm rounded-md px-5 bg-[#F9FAFB] flex justify-center flex-col items-center gap-y-2 hover:bg-gray-100">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M11.5095 2.99023C7.02664 2.99023 4.78525 2.99023 3.39262 4.38232C2 5.77441 2 8.01494 2 12.496C2 16.977 2 19.2176 3.39262 20.6097C4.78525 22.0018 7.02664 22.0018 11.5095 22.0018C15.9922 22.0018 18.2336 22.0018 19.6263 20.6097C21.0189 19.2176 21.0189 16.977 21.0189 12.496V11.9957" stroke="#1D2739" stroke-width="2" stroke-linecap="round"/>
                     <path d="M5 20.9902C9.20998 16.2389 13.9412 9.9377 21 14.6636" stroke="#1D2739" stroke-width="2"/>

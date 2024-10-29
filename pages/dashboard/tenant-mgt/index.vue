@@ -476,7 +476,6 @@ const handleDropdownClick = (action: any, item: any) => {
     return router.push(`/dashboard/tenant-mgt/${item.id}`);
   }
   closeDropdown();
-  emit(action, item);
 };
 
 const toggleDropdown = (index: number) => {

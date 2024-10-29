@@ -257,7 +257,7 @@ export default {
       this.markers = [];
       const request = {
         location: this.center,
-        radius: 1500,
+        radius: 15000,
         type: [
           "restaurant",
           "cafe",

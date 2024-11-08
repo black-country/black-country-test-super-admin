@@ -136,26 +136,6 @@ const downloadAgreement = () => {
   }
 };
 
-// // Function to trigger PDF download
-// const downloadAgreement = () => {
-//   downloadPdf('.lease-agreement-content', 'lease-agreement'); // Call the composable function
-// };
-
-// // Function to trigger PDF download
-// const downloadAgreement = () => {
-//   if (leaseDocsObj.value.leaseAgreementContent) {
-//     downloadPdf(leaseDocsObj.value.leaseAgreementContent, 'lease-agreement'); // Pass the content directly
-//   } else {
-//     showToast({
-//           title: "Error",
-//           message: "No lease agreement content available",
-//           toastType: "error",
-//           duration: 3000
-//         });
-//     console.error('No lease agreement content available');
-//   }
-// };
-
 
 const editLeaseAgreement = () => {
     router.push(`/dashboard/property/lease-documents/${leaseDocsObj?.value?.id}/edit`)

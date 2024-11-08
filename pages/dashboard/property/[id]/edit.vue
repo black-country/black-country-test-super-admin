@@ -27,7 +27,7 @@
             <button
               @click="handleSaveAndExit"
               :disabled="saving"
-              class="text-gray-900 bg-[#F9FAFB] disabled:cursor-not-allowed border-gray-100 border disabled:opacity-25 text-sm font-semibold px-4 py-3 rounded-md hover:bg-gray-800"
+              class="text-gray-900 bg-[#F9FAFB] disabled:cursor-not-allowed border-gray-100 border disabled:opacity-25 text-sm font-semibold px-4 py-3 rounded-md"
             >
               {{ saving ? "saving..." : "Save & exit" }}
             </button>
@@ -293,37 +293,21 @@
                   :totalSteps="2"
                   :currentStep="visualsStep"
                 />
-                <UploadPropertyExterior
+                <UpdatedOutsideUpload :payload="payload"
+                v-if="activeParentStep === 3 && visualsStep === 1" />
+                <UpdatedCommonUpload  v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload"  />
+                <UpdatedRoomUpload :payload="payload" v-if="activeParentStep === 3 && visualsStep === 3" />
+                <!-- <UploadPropertyExterior
                 :payload="payload"
                 v-if="activeParentStep === 3 && visualsStep === 1"
                 >
                 </UploadPropertyExterior>
-                <UploadPhotos
-                  :payload="payload"
-                  v-if="activeParentStep === 3 && visualsStep === 2"
-                >
-                </UploadPhotos>
+                <CommonAreasUpload v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload" />
                 <AddVideoTours
                   :payload="payload"
                   v-if="activeParentStep === 3 && visualsStep === 3"
                 >
-                  <!-- <template #action-buttons>
-                    <div class="flex justify-between mt-4">
-                      <button
-                        @click="handlePreviousStep"
-                        class="bg-[#EBE5E0] text-[#292929] text-sm font-semibold px-4 py-2 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
-                      >
-                        Previous
-                      </button>
-                      <button
-                        @click="handleNextParentStep"
-                        class="bg-[#292929] text-white text-sm font-semibold px-6 py-2.5 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </template> -->
-                </AddVideoTours>
+                </AddVideoTours> -->
                 <CoreProgressStepper
                   v-if="activeParentStep === 4"
                   :titles="[
@@ -758,12 +742,20 @@
  <div class="container mx-auto w-full flex justify-between items-center">
  <button
  type="button"
+ v-if="!isPreviewMode"
    @click="handlePreviousStep"
    :disabled="activeParentStep === 1 && basicPropertyInformationStep === 1"
    class="bg-[#EBE5E0] text-[#292929] text-sm font-semibold px-4 py-2 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
  >
    Previous
  </button>
+ <button
+ v-if="isPreviewMode"
+ @click="isPreviewMode = false"
+ class="bg-[#EBE5E0] text-[#292929] text-sm font-semibold px-4 py-3 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
+>
+ Previous
+</button>
  <button
   v-if="!isPreviewMode"
    type="button"
@@ -1159,26 +1151,9 @@ function handleSubmit() {
 const incomingData = ref({})
 
 function handleBasicPropertyInformationFormData(data: any) {
-  // handle the data emitted from the child component here
-  // console.log('Data received from child component:', data)
   incomingData.value = data
   // sessionStorage.setItem('property', JSON.stringify(incomingData.value))
 }
-
-// const neighbouringLandmarksArray = ref([]) as any
-// const handleSelectedAmenity = (item: any) => {
-//   const result  = neighbouringLandmarksArray.value.push({
-//         name: item.name,
-//         type: item.type,
-//         description: item.display_name,
-//         longitude: item.lat,
-//         latitude: item.lon,
-//         address: item.display_name,
-//   })
-//   console.log()
-//   payload.neighbouringLandmarks.value = result
-// }
-
 const neighbouringLandmarksArray = ref([]) as any;
 
 const handleSelectedAmenity = (item: any) => {
@@ -1205,35 +1180,10 @@ const handleLocationSearch = (data: any) => {
 }
 
 const handleCommonAreas = (data: any) => {
-// console.log(data, 'sara')
-// const storedData = sessionStorage.getItem('property')
-// let propertyData = storedData ? JSON.parse(storedData) : {}
-
-// Update the session storage with new location data
-// propertyData = {
-//   ...propertyData, // merge with existing data
-//   commonAreas: data
-// }
 
 payload.commonAreas.value = data
-
-// // Store the updated data back to session storage
-// sessionStorage.setItem('property', JSON.stringify(propertyData))
 }
 const handlePropertyFurnished = (data: any) => {
-
-// Retrieve existing session data from sessionStorage (if any)
-// const storedData = sessionStorage.getItem('property')
-// let propertyData = storedData ? JSON.parse(storedData) : {}
-
-// // Update the session storage with new location data
-// propertyData = {
-//   ...propertyData, // merge with existing data
-//   isFurnishedCommonArea: data
-// }
-
-// // Store the updated data back to session storage
-// sessionStorage.setItem('property', JSON.stringify(propertyData))
 payload.isFurnishedCommonArea.value = data
 
 }
@@ -1249,20 +1199,6 @@ const handleRoomData = (room: any) => {
   } else {
     roomsArray.value.push(room);
   }
-
-  // console.log(roomsArray.value, 'room array')
-
-//   const storedData = sessionStorage.getItem('property')
-// let propertyData = storedData ? JSON.parse(storedData) : {}
-
-// // Update the session storage with new location data
-// propertyData = {
-//   ...propertyData, // merge with existing data
-//   rooms: roomsArray.value
-// }
-
-// // Store the updated data back to session storage
-// sessionStorage.setItem('property', JSON.stringify(propertyData))
 
 payload.rooms.value = roomsArray.value
 };

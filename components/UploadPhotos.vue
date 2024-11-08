@@ -5,7 +5,6 @@
           <h2 class="text-[#1D2739] font-light">Click to add as as much pictures as you want to for each common area or space.</h2>
           <p class="text-sm">Accepts <span class="font-semibold text-[#1D2739]">jpg</span> & <span class="font-semibold text-[#1D2739]">png</span> <span class="font-semibold text-[#1D2739]">2MB</span> size max/each</p>
         </div>
-        <!-- Image Upload Sections for Each Room -->
         <section class="mt-3">
           <div class="grid  lg:grid-cols-2 gap-4">
             <ImageUpload
@@ -19,7 +18,6 @@
           </div>
         </section>
       </div>
-      <slot name="action-buttons"></slot>
     </main>
   </template>
   
@@ -39,8 +37,9 @@
   
   // Ensure `payload.commonAreas` is handled correctly
   onMounted(() => {
-    if (props.payload && Array.isArray(props.payload.commonAreas.value)) {
-      commonAreas.value = props.payload.commonAreas.value // Assign the array directly
+    console.log(props.payload.commonAreas, 'common areas')
+    if (props?.payload && Array.isArray(props?.payload?.commonAreas?.value)) {
+      commonAreas.value = props?.payload?.commonAreas?.value // Assign the array directly
     }
   })
   

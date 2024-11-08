@@ -614,7 +614,6 @@ const selectedRoomObj = ref({});
 // Handling tab switch
 const handleSelectedTab = (item: any, itemType: string | null = null) => {
   if (itemType === 'dynamic') {
-    console.log(selectedRoomObj.value, 'room obj jee', item);
     activeTab.value = item.name;
     selectedRoomObj.value = item.details;
   } else {

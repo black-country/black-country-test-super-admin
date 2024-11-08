@@ -53,58 +53,15 @@
     <!-- Hidden File Input -->
     <input type="file" accept="image/png, image/jpeg" multiple ref="fileInput" @change="handleFileUpload" class="hidden" />
   </div>
-  <!-- <div class="w-full h-full bg-[#EBE5E0] border rounded-lg flex flex-col items-center justify-center">
-    <div v-if="loading" class="w-full h-4 rounded-lg bg-gray-200 mb-6">
-      <div :class="{'bg-red-500': uploadFailed, 'bg-green-500': uploadSuccess, 'bg-[#292929]': !uploadFailed && !uploadSuccess}"
-        :style="{ width: `${progress}%` }"
-        class="h-full transition-all duration-300 ease-in-out rounded-lg">
-      </div>
-    </div>
-    <div v-if="images.length === 0" class="flex flex-col h-64 bg-[#EBE5E0] rounded-lg p-3 w-full relative">
-      <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-lg">
-        <div class="loader"></div>
-      </div>
-      <div v-if="!loading" class="flex justify-center items-center flex-grow">
-        <img src="@/assets/img/image-02.png" alt="Placeholder" class="w-16 h-16" />
-      </div>
-      <div id="cardLabel" class="flex justify-between items-center mt-4 w-full">
-        <div class="text-sm text-gray-600">{{ label }} | {{ images.length }} image</div>
-        <button @click="triggerFileUpload" :disabled="loading" class="bg-[#7D7D7D] text-white py-1 px-3 rounded-md text-sm">
-          + Add photo
-        </button>
-      </div>
-    </div>
-
-    <div v-else class="relative w-full">
-      <div v-if="images.length > 1" class="absolute left-0 top-1/2 transform -translate-y-1/2 z-10">
-        <button @click="prevImage" class="bg-gray-300 p-1 rounded-full">&larr;</button>
-      </div>
-      <img :src="images[currentImageIndex]" alt="Uploaded Image" class="w-full h-44 object-cover rounded-t-md" />
-      <div v-if="images.length > 1" class="absolute right-0 top-1/2 transform -translate-y-1/2 z-10">
-        <button @click="nextImage" class="bg-gray-300 p-1 rounded-full">&rarr;</button>
-      </div>
-      <div class="absolute top-2 right-2">
-        <button @click="removeImage" class="p-1 rounded-full">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="28" height="28" rx="14" fill="black" fill-opacity="0.5"/>
-            <path d="M17.5 10.5L10.5 17.5M10.5 10.5L17.5 17.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </button>
-      </div>
-    </div>
-
-    <div v-if="images.length > 0" class="flex items-center justify-between w-full mt-2 px-3 pb-3">
-      <div class="text-sm text-gray-600">{{ label }} | {{ images.length }} {{ images.length === 1 ? 'image' : 'images' }}</div>
-      <button @click="triggerFileUpload" :disabled="loading" class="bg-gray-200 text-gray-800 py-1 px-3 rounded-md">+ Add photo</button>
-    </div>
-
-    <input type="file" accept="image/png, image/jpeg" multiple ref="fileInput" @change="handleFileUpload" class="hidden" />
-  </div> -->
 </template>
 
 <script setup lang="ts">
+// import { debounce } from 'lodash-es';
+import debounce from 'lodash-es/debounce';
 import { useBatchUploadFile } from '@/composables/core/batchUpload'
 const { uploadFiles, uploadResponse, loading } = useBatchUploadFile()
+import { useCustomToast } from '@/composables/core/useCustomToast'
+const { showToast } = useCustomToast();
 
 const progress = ref(1);  // Initial progress set to 1%
   const uploadFailed = ref(false);
@@ -136,9 +93,13 @@ const images = reactive<string[]>([])
 const currentImageIndex = ref(0)
 
 // Emit the images array whenever it is updated
-watch(images, (newImages) => {
-  emit('update:images', newImages)
-})
+// watch(images, (newImages) => {
+//   emit('update:images', newImages)
+// })
+
+watch(images, debounce((newImages) => {
+  emit('update:images', newImages);
+}, 300));  // 300ms debounce
 
 // Populate images if the location is "common-areas" and the label matches
 onMounted(() => {
@@ -162,6 +123,21 @@ function triggerFileUpload() {
 async function handleFileUpload(event: Event) {
   const target = event.target as HTMLInputElement
   if (target && target.files && target.files.length > 0) {
+    const files = Array.from(target.files);
+    
+    // Filter out files larger than 2MB
+    const validFiles = files.filter(file => file.size <= 2 * 1024 * 1024);
+
+    if (validFiles.length === 0) {
+      showToast({
+          title: "Error",
+          message: "All selected files exceed the 2MB size limit",
+          toastType: "error",
+          duration: 3000
+        });
+      // useNuxtApp().$toast.error('All selected files exceed the 2MB size limit');
+      return;
+    }
     try {
       progress.value = 1;  // Reset progress
       uploadFailed.value = false;
@@ -186,56 +162,57 @@ async function handleFileUpload(event: Event) {
         images.push(...uploadedUrls) // Add the URLs to the images array to display in the UI
         
         // Update session storage for common areas if necessary
-        if (props.location === 'common-areas') {
-          const propertyData = props.payload
-          if (propertyData) {
-            // Ensure commonAreas exists and find the specific commonArea
-            if (propertyData.commonAreas.value) {
-              const commonArea = propertyData.commonAreas.value.find((area: any) => area.name === props.label)
+        updateSessionStorage();
+        // if (props.location === 'common-areas') {
+        //   const propertyData = props.payload
+        //   if (propertyData) {
+        //     // Ensure commonAreas exists and find the specific commonArea
+        //     if (propertyData.commonAreas.value) {
+        //       const commonArea = propertyData.commonAreas.value.find((area: any) => area.name === props.label)
               
-              if (commonArea) {
-                commonArea.images = [...(commonArea.images || []), ...uploadedUrls]
-                // sessionStorage.setItem('property', JSON.stringify(property)) // Save back to session storage
-              } else {
-                console.warn('Common area not found')
-              }
-            } else {
-              console.warn('No common areas in property')
-            }
-          } else {
-            console.warn('No property data in sessionStorage')
-          }
-        }
+        //       if (commonArea) {
+        //         commonArea.images = [...(commonArea.images || []), ...uploadedUrls]
+        //         // sessionStorage.setItem('property', JSON.stringify(property)) // Save back to session storage
+        //       } else {
+        //         console.warn('Common area not found')
+        //       }
+        //     } else {
+        //       console.warn('No common areas in property')
+        //     }
+        //   } else {
+        //     console.warn('No property data in sessionStorage')
+        //   }
+        // }
 
-        if (props.location === 'rooms') {
-            const propertyData = props.payload
-            if (propertyData) {              
-              // Ensure rooms exist and find the specific room
-              if (propertyData.rooms.value) {
-                const room = propertyData.rooms.value.find((r: any) => r.name === props.roomName) // Find the room by name
-                if (room) {
-                  // Find the specific feature within the room by matching the feature name
-                  const feature = room.features.find((f: any) => f.name === props.label) // Find the feature by name
+        // if (props.location === 'rooms') {
+        //     const propertyData = props.payload
+        //     if (propertyData) {              
+        //       // Ensure rooms exist and find the specific room
+        //       if (propertyData.rooms.value) {
+        //         const room = propertyData.rooms.value.find((r: any) => r.name === props.roomName) // Find the room by name
+        //         if (room) {
+        //           // Find the specific feature within the room by matching the feature name
+        //           const feature = room.features.find((f: any) => f.name === props.label) // Find the feature by name
                   
-                  if (feature) {
-                    // Add the uploaded images to the feature's images array
-                    feature.images = [...(feature.images || []), ...uploadedUrls]
+        //           if (feature) {
+        //             // Add the uploaded images to the feature's images array
+        //             feature.images = [...(feature.images || []), ...uploadedUrls]
                     
-                    // Update the session storage with the updated property data
-                    // sessionStorage.setItem('property', JSON.stringify(property))
-                  } else {
-                    console.warn('Feature not found in room')
-                  }
-                } else {
-                  console.warn('Room not found')
-                }
-              } else {
-                console.warn('No rooms in property')
-              }
-            } else {
-              console.warn('No property data in sessionStorage')
-            }
-          }
+        //             // Update the session storage with the updated property data
+        //             // sessionStorage.setItem('property', JSON.stringify(property))
+        //           } else {
+        //             console.warn('Feature not found in room')
+        //           }
+        //         } else {
+        //           console.warn('Room not found')
+        //         }
+        //       } else {
+        //         console.warn('No rooms in property')
+        //       }
+        //     } else {
+        //       console.warn('No property data in sessionStorage')
+        //     }
+        //   }
       }
     } catch (error) {
       progress.value = 100;
@@ -290,6 +267,26 @@ function removeImage() {
       if (feature) {
         feature.images = images; // Update the feature images
       }
+    }
+  }
+}
+
+
+function updateSessionStorage() {
+  if (props.location === 'common-areas') {
+    const propertyData = props.payload;
+    const commonArea = propertyData?.commonAreas?.value?.find((area: any) => area.name === props.label);
+    if (commonArea) {
+      commonArea.images = images;  // Only update once the images array is fully populated
+      sessionStorage.setItem('property', JSON.stringify(propertyData));
+    }
+  } else if (props.location === 'rooms') {
+    const propertyData = props.payload;
+    const room = propertyData?.rooms?.value?.find((r: any) => r.name === props.roomName);
+    const feature = room?.features?.find((f: any) => f.name === props.label);
+    if (feature) {
+      feature.images = images;
+      sessionStorage.setItem('property', JSON.stringify(propertyData));
     }
   }
 }

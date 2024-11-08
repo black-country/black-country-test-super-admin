@@ -45,8 +45,6 @@ export const useInviteMember = () => {
             if (error.response) {
                 const errorMessage = error.response.data?.message || 'An error occurred while sending the invites.';
                 const errorDetails = error.response.data?.errors || [];
-                
-                console.error('Error details:', errorDetails);
                 $toast.error(errorMessage, {
                     autoClose: 5000,
                     dangerouslyHTMLString: true,

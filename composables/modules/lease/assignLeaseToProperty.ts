@@ -10,7 +10,6 @@ const router = useRouter()
 
 export const useAssignLeaseToProperty = () => {
 	const assignLeaseToProperty = async (tenantId: string | number, houseId: string | number) => {
-        console.log(tenantId, houseId, 'cauhght from composable')
 		loading.value = true
 		const res = await  lease_api.$_assign_lease_to_property(tenantId, houseId, {
             leaseAgreement: `<html>${assignPayload.value.leaseAgreement}</html>`,

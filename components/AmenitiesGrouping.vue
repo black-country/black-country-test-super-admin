@@ -102,13 +102,11 @@ const props = defineProps({
 const selectedRoomObj = ref('')
 
 const handleSelectedTab = (item: any, itemType: any) => {
-  console.log(itemType, 'here op')
   activeTab.value = item
 
   if(itemType === 'dynamic'){
     activeTab.value = item.name
     selectedRoomObj.value = item
-    console.log(selectedRoomObj.value, 'ghjkljhgf')
   }
 }
 

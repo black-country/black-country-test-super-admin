@@ -32,7 +32,7 @@ const persistedPayload = {
   commonAreas: useStorage('property_commonAreas', []),
   neighbouringLandmarks: useStorage('property_neighbouringLandmarks', []),
   rooms: useStorage('property_rooms', []),
-  agentId: useStorage('property_agentId', null),
+  agentId: useStorage('property_agentId', ""),
   rules: useStorage('property_rules', []),
   questions: useStorage('property_questions', []),
 };
@@ -56,7 +56,7 @@ const runtimePayload = {
   commonAreas: ref([]),
   neighbouringLandmarks: ref([]),
   rooms: ref([]),
-  agentId: ref(null),
+  agentId: ref(""),
   rules: ref([]),
   questions: ref([])
 };
@@ -270,5 +270,5 @@ export const use_create_property = () => {
     }
   };
 
-  return { payload: runtimePayload, create_property, loading, saving, save_property, resetPayload };
+  return { payload: runtimePayload, create_property, loading, saving, save_property, resetPayload, persistedPayload };
 };

@@ -428,13 +428,6 @@ onMounted(() => {
 const updateLeaseInLocalStorage = () => {
   const leaseContent = editor.value?.innerHTML;
   payload.value.body = leaseContent
-  // console.log(editor.value?.innerHTML, 'hee oooooo', leaseContent)
-  // const payload = {
-  //   body: leaseContent,
-  //   documentName: payload.value?.documentName || 'Lease Agreement',
-  // };
-
-  // localStorage.setItem('lease-template-payload', JSON.stringify(payload));
 };
 
 const setAlignment = (alignment: string) => {
@@ -521,11 +514,12 @@ watch(fontColor, (newColor) => {
 // Save and exit or send functionalities
 const proceedSaveAndExit = async () => {
   // const signatureUrl = emittedAgreementData?.value?.signatureObj?.secure_url || leaseSignatureUrl.value;
+  const leaseSignature = localStorage.getItem('lease-signature-url')
   const reqPayload = {
     leaseAgreement: editor.value?.innerHTML,
     isPublished: false,
     houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
-    houseOwnerSignatureUrl: leaseSignatureUrl
+    houseOwnerSignatureUrl: leaseSignature
   };
   setSaveAndExitPayloadObj(reqPayload);
   await handleSaveAndExit(payload.value.tenantId, payload.value.propertyId);
@@ -535,8 +529,8 @@ const proceedSaveAndSend = async () => {
   // const signatureUrl = leaseSignatureUrl.value || emittedAgreementData?.value?.signatureObj?.secure_url
 
   // const signatureUrl = leaseSignatureUrl.value
-
-  if (!leaseSignatureUrl) {
+  const leaseSignature = localStorage.getItem('lease-signature-url')
+  if (!leaseSignature) {
     showToast({
       title: "Error",
       message: 'You need to sign before you can send the lease agreement.',
@@ -550,7 +544,7 @@ const proceedSaveAndSend = async () => {
     leaseAgreement: editor.value?.innerHTML,
     isPublished: true,
     houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
-    houseOwnerSignatureUrl: leaseSignatureUrl
+    houseOwnerSignatureUrl: leaseSignature
   };
 
   setSaveAndSendPayloadObj(reqPayload);

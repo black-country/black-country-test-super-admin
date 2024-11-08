@@ -123,36 +123,6 @@
       handleSearch();
     }, 300);
 
-    // Fetch location suggestions from Google Places API
-// const handleSearch = async () => {
-//   if (!searchQuery.value) {
-//     suggestions.value = [];
-//     return;
-//   }
-
-//   loading.value = true;
-//   errorMessage.value = '';
-  
-//   try {
-//     const response = await axios.get(`https://maps.googleapis.com/maps/api/place/autocomplete/json`, {
-//       params: {
-//         input: searchQuery.value,
-//         key: 'AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg',
-//       },
-//     });
-
-//     // Log the response data to check if suggestions are coming through
-//     console.log('API Response:', response.data);
-    
-//     suggestions.value = response.data.predictions || [];
-//   } catch (error) {
-//     console.error('Error fetching suggestions:', error); // Log the error for debugging
-//     errorMessage.value = 'Error fetching suggestions. Please try again.';
-//   } finally {
-//     loading.value = false;
-//   }
-// };
-
 const handleSearch = async () => {
   if (!searchQuery.value) {
     suggestions.value = [];
@@ -192,15 +162,6 @@ const handleSearch = async () => {
     loading.value = false;
   }
 };
-
-
-    
-// Select a location from suggestions
-// const selectLocation = (suggestion) => {
-//   selectedObj.value = suggestion;
-//   searchQuery.value = suggestion.description;
-//   suggestions.value = [];
-// };
     // Clear selection
     const handleClose = () => {
       selectedObj.value = {};
@@ -224,26 +185,6 @@ const handleSearch = async () => {
         infowindow.open(map.value, marker);
       });
     };
-
-//     const selectLocation = (suggestion) => {
-//   console.log("Selected Suggestion:", suggestion); // Log the suggestion for debugging
-//   selectedObj.value = suggestion;
-//   searchQuery.value = suggestion.description;
-//   suggestions.value = [];
-
-//   // Check if geometry exists
-//   if (suggestion.geometry && suggestion.geometry.location) {
-//     const location = {
-//       lat: suggestion.geometry.location.lat(),
-//       lng: suggestion.geometry.location.lng(),
-//     };
-
-//     // Fly to the location
-//     flyToLocation(location);
-//   } else {
-//     console.error('Selected suggestion does not have valid geometry:', suggestion);
-//   }
-// };
 
 const selectLocation = async (suggestion) => {
   console.log("Selected Suggestion:", suggestion); // Log the suggestion for debugging
@@ -302,23 +243,7 @@ const selectSuggestion = (suggestion) => {
   search.value = suggestion.description;
   suggestions.value = [];
   // Handle the selected suggestion as needed
-};
-
-// Select a location from suggestions
-// const selectLocation = (suggestion) => {
-//   selectedObj.value = suggestion;
-//   searchQuery.value = suggestion.description;
-//   suggestions.value = [];
-
-//   // Extract the location details
-//   const location = {
-//     lat: suggestion.geometry.location.lat(),
-//     lng: suggestion.geometry.location.lng(),
-//   };
-
-//   // Fly to the location
-//   flyToLocation(location);
-// };
+};2
 
 // Fly to the specified location with animation
 const flyToLocation = (location) => {

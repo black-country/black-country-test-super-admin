@@ -26,7 +26,6 @@ export const usePropertyDeactivate = () => {
   };
 
   const updateProperty = async (id: any, updatedData: any) => {
-    console.log(selectedProperty.value, 'hello world')
     const successRoute = selectedProperty.value.status === 'published'
     ? `/dashboard/property/${selectedProperty.value.id}/deactivate-success`
     : `/dashboard/property/${selectedProperty.value.id}/activate-success`;

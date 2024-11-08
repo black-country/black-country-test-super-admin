@@ -46,6 +46,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.3",
     "leaflet": "^1.9.4",
+    "lodash-es": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "mammoth": "^1.8.0",
     "mapbox-gl": "^3.6.0",

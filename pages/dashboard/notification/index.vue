@@ -750,9 +750,7 @@ const onConfirm = () => {
 };
 
 const onCancel = () => {
-  showBLogoutModal.value = false;
-  // Logic to close the modal
-  console.log("Cancelled");
+  showBLogoutModal.value = false
 };
 
 definePageMeta({

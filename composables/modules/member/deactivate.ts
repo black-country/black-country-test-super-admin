@@ -23,7 +23,6 @@ export const useDeactivateMember = () => {
         await getProperties();
       }
     } catch (error) {
-      console.error("Error updating Member", error);
     } finally {
       loading.value = false;
     }

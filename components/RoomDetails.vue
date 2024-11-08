@@ -553,6 +553,11 @@ function onInput(event) {
 onMounted(() => {
   initializeRoomData();
   loadRoomData(activeRoom.value);
+
+  if (rooms.value.length > 0) {
+    activeRoom.value = rooms.value[0].name; // Set the first room as active
+    loadRoomData(activeRoom.value); // Load data for the active room
+  }
 });
 </script>
 

@@ -1,6 +1,6 @@
  <template>
     <main>
-      <div class="flex items-center p-4 bg-gray-100 border-t relative border-gray-200">
+      <div class="flex items-center p-4 border-gray-25  border-t-[0.5px] relative border-gray-200">
         <button
           class="bg-gray-200 p-3 rounded-full hover:bg-gray-300 transition-colors absolute top-7 left-12"
         >

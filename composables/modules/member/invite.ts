@@ -1,5 +1,7 @@
 import { member_api } from "@/api_factory/modules/member";
 import { useRouter, useNuxtApp } from '#imports';
+import { useCustomToast } from '@/composables/core/useCustomToast'
+const { showToast } = useCustomToast();
 
 // Define TypeScript interfaces for better type checking
 interface Invitee {
@@ -15,10 +17,12 @@ export const useInviteMember = () => {
 
     const handleInvite = async () => {
         if (memberList.value.length === 0) {
-            $toast.error('Please add at least one member to invite.', {
-                autoClose: 5000,
-                dangerouslyHTMLString: true,
-            });
+            showToast({
+                title: "Error",
+                message: "Please add at least one member to invite.",
+                toastType: "error",
+                duration: 3000
+              });
             return;
         }
 
@@ -28,39 +32,46 @@ export const useInviteMember = () => {
             const response = await member_api.$_invite_member({ invitees: memberList.value });
             
             if (response?.type !== "ERROR") {
-                $toast.success('Invite was sent successfully', {
-                    autoClose: 5000,
-                    dangerouslyHTMLString: true,
-                });
+
+                showToast({
+                    title: "Success",
+                    message: "Invite was sent successfully.",
+                    toastType: "success",
+                    duration: 3000
+                  });
                 router.push("/dashboard/members/invite-success");
                 window.location.href = "/dashboard/members/invite-success"
             } else {
-                // Handle API error response
-                $toast.error('Failed to send invites. Please try again.', {
-                    autoClose: 5000,
-                    dangerouslyHTMLString: true,
-                });
+                showToast({
+                    title: "Error",
+                    message: "Failed to send invites. Please try again.",
+                    toastType: "error",
+                    duration: 3000
+                  });
             }
         } catch (error: any) {
             if (error.response) {
                 const errorMessage = error.response.data?.message || 'An error occurred while sending the invites.';
-                const errorDetails = error.response.data?.errors || [];
-                $toast.error(errorMessage, {
-                    autoClose: 5000,
-                    dangerouslyHTMLString: true,
-                });
+                showToast({
+                    title: "Error",
+                    message: errorMessage,
+                    toastType: "error",
+                    duration: 3000
+                  });
             } else if (error.request) {
-                console.error('No response received:', error.request);
-                $toast.error('No response from the server. Please check your network connection.', {
-                    autoClose: 5000,
-                    dangerouslyHTMLString: true,
-                });
+                showToast({
+                    title: "Error",
+                    message: 'No response from the server. Please check your network connection.',
+                    toastType: "error",
+                    duration: 3000
+                  });
             } else {
-                console.error('Error:', error.message);
-                $toast.error(`Unexpected error: ${error.message}`, {
-                    autoClose: 5000,
-                    dangerouslyHTMLString: true,
-                });
+                showToast({
+                    title: "Error",
+                    message: `Unexpected error: ${error.message}`,
+                    toastType: "error",
+                    duration: 3000
+                  });
             }
         } finally {
             loading.value = false;

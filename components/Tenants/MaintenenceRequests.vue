@@ -57,10 +57,6 @@
     name: string;
     isActive: boolean;
   }
-
-  definePageMeta({
-     layout: 'dashboard'
-})
   
   const tabs = ref<Tab[]>([
     { name: 'All', isActive: true },

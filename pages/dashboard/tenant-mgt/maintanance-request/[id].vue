@@ -1,10 +1,10 @@
 <template>
-<main>
-    <div class="space-y-6">
-        <div class="flex items-center justify-between py-4 px-6 bg-white shadow-md">
+<Layout class="bg-red-500">
+    <template #header-content>
+      <div class="flex items-center justify-between w-full">
             <!-- Back Button -->
             <div class="flex gap-x-6">
-                <button class="flex bg-gray-50 px-6 py-0 rounded-lg items-center space-x-2 text-gray-700 hover:text-gray-900 font-medium">
+                <button @click="router.back()" class="flex bg-gray-50 px-6 py-0 rounded-lg items-center space-x-2 text-gray-700 hover:text-gray-900 font-medium">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
@@ -16,23 +16,25 @@
             </div>
         
             <!-- Assign Request Button -->
-            <button @click="openModal" class="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800">
+      <div>
+        <button @click="openModal" class="px-4 py-3 text-sm bg-black text-white rounded-md hover:bg-gray-800">
               Assign request
             </button>
+      </div>
           </div>
+    </template>
+    <div class="space-y-6 max-w-3xl mx-auto">
           <TenantProfileAndDescription class="max-w-4xl mx-auto"  />
     </div>      
     <TenantAssignModal v-if="isModalOpen" @close="isModalOpen = false" />
-</main>
+  </Layout>
   </template>
   
   <script lang="ts" setup>
+  import Layout from '@/layouts/dashboard.vue';
+  const router = useRouter()
     // Modal control
     const isModalOpen = ref(false);
-
-    definePageMeta({
-     layout: 'dashboard'
-})
   
   const openModal = () => {
     isModalOpen.value = true;

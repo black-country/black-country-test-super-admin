@@ -110,7 +110,7 @@
                     <!-- {{column}} -->
                     <p class="absolute left-0 top-10" v-if="column.label === 'Status'">
                       <span :class="[ member.isActive ? 'bg-green-500' : 'bg-red-500']" class="rounded-full  px-3 py-2 text-white text-sm">
-                       {{ member.isActive ? 'active' : 'In Active'}}
+                       {{ member.isActive ? 'active' : 'Pending'}}
                       </span>
                     </p>
                     <!-- <p v-if="column.key === 'isPublished'">{{ property.isPublished ? 'Published' : 'Draft' }}</p> -->

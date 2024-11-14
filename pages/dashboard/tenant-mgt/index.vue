@@ -108,15 +108,18 @@
         </div>
       </div>
     </template>
+    {{  }}
     <TenantsList v-if="activeTab === 'tenants'" />
-    <TenantsMaintenenceRequests v-if="activeTab === 'maintenance-request'" />
+    <TenantsMaintenenceRequests :maintenanceRequests="maintenanceRequests" :loading="loading" v-if="activeTab === 'maintenance-request'" />
   </Layout>
 </template>
 
 <script lang="ts" setup>
 import { useUserInitials } from "@/composables/core/useUserInitials";
+import { useFetchMaintenanceRequests } from '@/composables/modules/maintenance/useFetchMaintenanceRequests'
 import { useUser } from "@/composables/auth/user";
 import Layout from "@/layouts/dashboard.vue";
+const { maintenanceRequests, loading } = useFetchMaintenanceRequests()
 const { user } = useUser();
 const router = useRouter();
 const route = useRoute();

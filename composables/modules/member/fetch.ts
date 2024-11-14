@@ -24,6 +24,9 @@ function debounce(fn: Function, delay: number) {
 export const useGetMembers = () => {
     const loadingMembers = ref(false);
     const membersList = ref([] as any);
+    const admins = ref([])
+    const agents = ref([])
+    const serviceProviders = ref([])
     const searchQuery = ref<string>("");
     const metadata = ref({
         page: 1,
@@ -50,6 +53,9 @@ export const useGetMembers = () => {
                 membersList.value = (res?.data?.allMembers ?? []).sort((a: any, b: any) => {
                     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
                 });
+                serviceProviders.value = res?.data?.result.serviceProviders
+                agents.value = res?.data?.result.agents
+                admins.value = res?.data?.result.admins
                 metadata.value = res?.data?.metadata;
             }
         } catch (error) {
@@ -107,6 +113,9 @@ export const useGetMembers = () => {
         searchQuery,
         metadata,
         filters,
+        serviceProviders,
+        agents,
+        admins,
         setPaginationObj,
         applyFilters
     };

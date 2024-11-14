@@ -7,6 +7,7 @@ const loading = ref(false);
 export const useAssignMaintenanceRequest = () => {
   const { showToast } = useCustomToast();
   const router = useRouter(); // Initialize router
+  const route = useRoute()
 
   // Function to handle rental action (either cancel or approve)
   const assignMaintenenceRequest = async (reqId: string, spid: string) => {
@@ -22,7 +23,7 @@ export const useAssignMaintenanceRequest = () => {
           toastType: "success",
           duration: 3000
         });
-        // router.push('/dashboard/property/rental-applications/decline-success')
+        router.back()
       } else {
         showToast({
           title: "Error",

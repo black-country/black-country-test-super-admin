@@ -9,14 +9,20 @@
             'px-4 py-2 whitespace-nowrap focus:outline-none',
             activeTab === tab ? 'border-b-4 border-[#326543] text-[#326543]' : 'text-[#475367] hover:text-gray-700',
           ]"
-          @click="activeTab = tab"
+          @click="updateActiveTab(tab)"
         >
           {{ tab }}
         </button>
       </div>
-      <section v-if="!loading && filteredRequests && Object.keys(filteredRequests).length">
-        <!-- Maintenance Requests -->
-        <div v-if="activeTab !== 'Payment & Invoice'" class="space-y-4">
+  
+      <!-- Conditional UI for Payment & Invoice Tab -->
+      <section v-if="activeTab === 'Payment & Invoice'">
+        <TenantPaymentTable />
+      </section>
+  
+      <!-- Maintenance Requests for Other Tabs -->
+      <section v-else-if="!loading && filteredRequests && Object.keys(filteredRequests).length">
+        <div class="space-y-4">
           <div
             v-for="(requests, date) in filteredRequests"
             :key="date"
@@ -64,8 +70,6 @@
             </div>
           </div>
         </div>
-        <!-- Payment & Invoice Tab -->
-        <TenantPaymentTable v-else />
       </section>
   
       <section v-else-if="loading && !maintenanceRequests?.length">
@@ -100,67 +104,57 @@
             </filter>
             </defs>
             </svg>
-            <h2 class="text-[#1D2739]">No Mainttennace request found</h2>
-
+        <h2 class="text-[#1D2739]">No Maintenance request found</h2>
       </section>
     </div>
   </template>
   
   <script lang="ts" setup>
-  import { useFetchMaintenanceRequest } from '@/composables/modules/maintenance/useFetchMaintenenceRequest';
+  import { useFetchMaintenanceRequests } from '@/composables/modules/maintenance/useFetchMaintenanceRequests';
   import { ref, computed } from 'vue';
   import { useRouter } from 'vue-router';
   
-  const { handleMaintenanceRequest, maintenanceRequest } = useFetchMaintenanceRequest();
+  const { maintenanceRequests, loading, queryObj } = useFetchMaintenanceRequests();
   const router = useRouter();
   
-  interface Request {
-    id: string;
-    type: string;
-    status: string;
-    createdAt: string;
-    tenant: {
-      profilePicture: string | null;
-    };
-    house: {
-      address: string;
-    };
-  }
-  
-  const props = defineProps({
-    maintenanceRequests: {
-      type: Array,
-      required: true,
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-  });
-  
-  const handleSelectedRequest = (item: Request) => {
-    handleMaintenanceRequest(item);
-    localStorage.setItem('selected-request', JSON.stringify(item));
-    router.push(`/dashboard/tenant-mgt/maintanance-request/${item.id}`);
-  };
-  
   const activeTab = ref<string>('All');
-  const tabs = ['All', 'Accepted', 'Pending', 'Completed', 'Declined', 'Payment & Invoice'];
+  const tabs = ['All', 'Pending', 'Assigned', 'In Progress', 'Completed', 'Cancelled', 'Declined', 'Payment & Invoice'];
   
   const statusLabels: { [key: string]: string } = {
     pending: 'Pending',
-    accepted: 'Accepted',
-    declined: 'Cancelled',
+    assigned: 'Assigned',
+    in_progress: 'In Progress',
     completed: 'Completed',
-    done: 'Done',
+    cancelled: 'Cancelled',
+    declined: 'Declined'
   };
   
   const statusClasses: { [key: string]: string } = {
     pending: 'bg-[#FEF6E7] text-[#DD900D]',
-    accepted: 'bg-[#E8EDFB] text-[#1D4ED8]',
-    declined: 'bg-[#FBEAE9] text-[#BA110B]',
+    assigned: 'bg-[#E8EDFB] text-[#1D4ED8]',
+    in_progress: 'bg-[#FBEAE9] text-[#BA110B]',
     completed: 'bg-[#E7F6EC] text-[#099137]',
-    done: 'bg-[#E7F6EC] text-[#099137]',
+    cancelled: 'bg-[#FBEAE9] text-[#BA110B]',
+    declined: 'bg-[#FBEAE9] text-[#BA110B]'
+  };
+  
+  const updateActiveTab = (tab: string) => {
+    activeTab.value = tab;
+  
+    if (tab === 'Payment & Invoice') {
+      // Skip setting queryObj.status for Payment & Invoice
+      queryObj.value.status = '';
+    } else {
+      const statusMap: { [key: string]: string } = {
+        Pending: 'pending',
+        Assigned: 'assigned',
+        'In Progress': 'in_progress',
+        Completed: 'completed',
+        Cancelled: 'cancelled',
+        Declined: 'declined'
+      };
+      queryObj.value.status = statusMap[tab] || 'pending';
+    }
   };
   
   const formatDate = (dateString: string): string => {
@@ -169,11 +163,14 @@
   };
   
   const filteredRequests = computed(() => {
-    const groupedRequests: { [date: string]: Request[] } = props.maintenanceRequests.reduce(
-      (acc: { [key: string]: Request[] }, request: Request) => {
+    const groupedRequests: { [date: string]: any[] } = maintenanceRequests.value.reduce(
+      (acc: { [key: string]: any[] }, request: any) => {
         const date = new Date(request.createdAt).toDateString();
         if (!acc[date]) acc[date] = [];
-        if (activeTab.value === 'All' || request.status.toLowerCase() === activeTab.value.toLowerCase()) {
+        if (
+          activeTab.value === 'All' ||
+          request.status.toLowerCase() === queryObj.value.status
+        ) {
           acc[date].push(request);
         }
         return acc;
@@ -182,6 +179,11 @@
     );
     return groupedRequests;
   });
+  
+  const handleSelectedRequest = (item: any) => {
+    localStorage.setItem('selected-request', JSON.stringify(item))
+    router.push(`/dashboard/tenant-mgt/maintanance-request/${item.id}`);
+  };
   </script>
   
   <style scoped>

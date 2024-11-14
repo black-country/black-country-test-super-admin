@@ -5,22 +5,23 @@ export const useFetchMaintenanceRequests = () => {
   const loading = ref(false)
   const maintenanceRequests = ref([])
 
-
-  const tenantId = ref('')
-  const houseId = ref('')
-  const page = ref(1)
-  const perPage = ref(20)
-  const status = ref('pending') // To store the sort type
+  const queryObj = ref({
+    tenantId: '',
+    houseId : '',
+    page: 1,
+    perPage: 20,
+    status: 'pending'
+  })
 
   const fetchMaintenanceRequests = async () => {
     loading.value = true
   
       const res = await maintenance_api.$_fetch_maitenence_request(
-        page.value,
-        perPage.value,
-        status.value,
-        tenantId.value,
-        houseId.value
+        queryObj.value.page,
+        queryObj.value.perPage,
+        queryObj.value.status,
+        queryObj.value.tenantId,
+        queryObj.value.houseId
       ) as any
 
       console.log(res, 'here')
@@ -32,10 +33,14 @@ export const useFetchMaintenanceRequests = () => {
 
   }
 
-    // Watch searchQuery to trigger the search when it changes
-    watch(status, () => {
-        fetchMaintenanceRequests() 
-    })
+  watch(
+    () => queryObj.value.status,
+    (newStatus, oldStatus) => {
+      if (newStatus !== oldStatus) {
+        fetchMaintenanceRequests();
+      }
+    }
+  );
 
   onMounted(() => {
     fetchMaintenanceRequests()
@@ -44,6 +49,7 @@ export const useFetchMaintenanceRequests = () => {
   return {
     fetchMaintenanceRequests,
     loading,
-    maintenanceRequests
+    maintenanceRequests,
+    queryObj
   }
 }

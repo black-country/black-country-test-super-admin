@@ -30,7 +30,7 @@ export const useInviteMember = () => {
 
         try {
             const response = await member_api.$_invite_member({ invitees: memberList.value });
-            
+             console.log(response, 'response here')
             if (response?.type !== "ERROR") {
 
                 showToast({
@@ -44,7 +44,7 @@ export const useInviteMember = () => {
             } else {
                 showToast({
                     title: "Error",
-                    message: "Failed to send invites. Please try again.",
+                    message: response?.data?.error || "Failed to send invites. Please try again.",
                     toastType: "error",
                     duration: 3000
                   });

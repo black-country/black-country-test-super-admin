@@ -1280,6 +1280,7 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
     const isRoomImagesUploaded = payload?.rooms?.value?.length > 0;
 
     if (visualsStep.value === 1 && !isPropertyCoverUploaded) {
+      console.log(payload, 'images here')
       // Require property cover images in the first sub-step of visuals
       showToast({
         title: "Error",
@@ -1437,6 +1438,7 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
   const openCancelModal = ref(false)
   
   const handleConfirm = () => {
+    clearLocalStorage();
     openCancelModal.value = false
   
   }

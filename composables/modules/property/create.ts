@@ -68,13 +68,6 @@ Object.keys(runtimePayload).forEach((key) => {
   }, { deep: true });
 });
 
-// Load initial data from persistedPayload into runtimePayload
-// (() => {
-//   Object.keys(runtimePayload).forEach((key) => {
-//     runtimePayload[key].value = persistedPayload[key].value;
-//   });
-// })();
-
 // Function to reset the payloads to their initial state
 const resetPayload = () => {
   Object.keys(runtimePayload).forEach((key) => {
@@ -137,8 +130,8 @@ export const use_create_property = () => {
           toastType: "success",
           duration: 3000
         });
-        Router.push("/dashboard/property/success");
         clearLocalStorage()
+        Router.push("/dashboard/property/success");
       } else {
         showToast({
           title: "Error",

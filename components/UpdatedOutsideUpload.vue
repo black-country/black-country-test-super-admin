@@ -8,6 +8,9 @@
         Accepts jpg & png | 2MB size max/each
       </p>
     </div>
+    <!-- {{ payload }} -->
+<!-- {{ props.payload }} -->
+<!-- {{props.payload.value.images}} -->
     <div 
       v-if="!images.length && !isLoading" 
       class="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer"
@@ -22,8 +25,8 @@
         Upload from computer
       </label>
     </div>
-    <div v-if="images.length || isLoading" class="relative mt-6 border-2  border-gray-300 rounded-lg overflow-hidden">
-      <div class="relative h-[500px] w-full">
+    <div v-if="images.length || isLoading" class="relative mt-6 border-2 -mt-2  border-gray-300 rounded-lg overflow-hidden">
+      <div class="relative h-[300px] w-full">
         <img v-if="!isLoading && images.length" :src="images[currentImage]" alt="Uploaded Image" class="object-cover w-full h-[500px]">
         <div v-if="isLoading" class="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <span class="loader"></span> 
@@ -118,7 +121,7 @@ const persistToLocalStorage = debounce(() => {
       localStorage.setItem('property_images', JSON.stringify(images.value));
     });
   } else {
-    setTimeout(() => {
+    setTimeout(() => {                                 
       localStorage.setItem('property_images', JSON.stringify(images.value));
     }, 500);
   }
@@ -167,6 +170,7 @@ const handleFileUpload = async (event: Event) => {
       // Add the uploaded images' secure URLs to the `images` array
       uploadResponse.value.forEach((response: { secure_url: string }) => {
         images.value.push(response.secure_url);
+        props.payload.images.value.push(response.secure_url)
       });
     } catch (error) {
       console.error("Image upload failed", error);
@@ -204,6 +208,7 @@ const handleDrop = async (event: DragEvent) => {
       // Add uploaded images to the local state
       uploadResponse.value.forEach((response: { secure_url: string }) => {
         images.value.push(response.secure_url);
+        props.payload.images.value.push(response.secure_url)
       });
     } catch (error) {
       console.error("Drag-and-drop upload failed", error);

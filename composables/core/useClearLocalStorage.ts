@@ -5,14 +5,15 @@ export function useClearLocalStorage() {
 
   const clearLocalStorage = () => {
     try {
-      // Get the user and token values before clearing
+      // Fetch user and token from localStorage before clearing
       const user = localStorage.getItem('user');
       const token = localStorage.getItem('token');
 
-      // Clear all localStorage items
-      localStorage.clear();
+      // Clear specific items or reset the required ones
+      localStorage.removeItem('someOtherData'); // Example for specific items
+      localStorage.removeItem('unnecessaryKey'); // Remove more as needed
 
-      // Restore user and token
+      // Restore the user and token if they exist
       if (user) {
         localStorage.setItem('user', user);
       }
@@ -20,15 +21,14 @@ export function useClearLocalStorage() {
         localStorage.setItem('token', token);
       }
 
-      // Ensure router is available before using push
+      // Safely redirect the user
       if (router && typeof router.push === 'function') {
-        // Redirect the user to the specified page
         router.push('/dashboard/property');
       } else {
-        console.error('Router is not available');
+        console.error('Router is not available or push is not a function');
       }
     } catch (error) {
-      console.error('An error occurred while clearing localStorage:', error);
+      console.error('An error occurred while clearing localStorage:', error.message);
     }
   };
 

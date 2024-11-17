@@ -947,16 +947,16 @@ const addManually = () => {
     return Array.isArray(payload.value?.questions) ? payload.value?.questions : [];
   });
   
-  // Store answers in a reactive array based on the number of questions
+
   const answers = ref<(string | null)[]>(questions.value.map(() => null));
   
-  // Function to handle form submission
+
   const submitAnswers = () => {
     // You can handle the submission logic here
     console.log("User Answers:", answers.value);
   };
 
-//End preview code /////////////////////
+
 const router = useRouter();
 const openCancelModal = ref(false)
 

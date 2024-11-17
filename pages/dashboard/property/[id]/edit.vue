@@ -182,56 +182,7 @@
                 v-if="activeParentStep === 1 && basicPropertyInformationStep === 2">
               
               </CoreGoogleMapSearch>
-                <!-- <CoreMapboxSearch
-                class="z-10"
-                :payload="payload"
-                v-if="
-                activeParentStep === 1 && basicPropertyInformationStep === 2
-              "
-                >
-                  <template #action-buttons>
-                    <div class="flex justify-between mt-4 z-50">
-                      <button
-                        @click="handlePreviousStep"
-                        class="bg-[#EBE5E0] text-[#292929] text-sm font-semibold px-4 py-2 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
-                      >
-                        Previous
-                      </button>
-                      <button
-                        @click="handleNextParentStep"
-                        class="bg-[#292929] text-white text-sm font-semibold px-6 disabled:opacity-25 disabled:cursor-not-allowed py-2.5 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </template> 
-                </CoreMapboxSearch> -->
-                <!-- <MapSection
-                  class="z-10"
-                  :payload="payload"
-                  @searchResult="handleLocationSearch"
-                  @selectedAmenity="handleSelectedAmenity"
-                  v-if="
-                    activeParentStep === 1 && basicPropertyInformationStep === 2
-                  "
-                >
-                  <template #action-buttons>
-                    <div class="flex justify-between mt-4 z-50">
-                      <button
-                        @click="handlePreviousStep"
-                        class="bg-[#EBE5E0] text-[#292929] text-sm font-semibold px-4 py-2 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
-                      >
-                        Previous
-                      </button>
-                      <button
-                        @click="handleNextParentStep"
-                        class="bg-[#292929] text-white text-sm font-semibold px-6 disabled:opacity-25 disabled:cursor-not-allowed py-2.5 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </template>                                                       2
-                </MapSection> -->
+              
                 <CoreProgressStepper
                   v-if="activeParentStep === 2"
                   :titles="[

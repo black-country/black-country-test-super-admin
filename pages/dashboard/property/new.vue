@@ -383,24 +383,9 @@
                   </div>
                 </div>
   
-                <!-- <div class="flex justify-between items-center mt-4">
-                  <p class="text-[#1D2739] font-normal text-sm">Is the room furnished?</p>
-  
-                  <button :class="[payload.isFurnishedCommonArea.value ? 'bg-[#292929] py-3 px-4 rounded-lg' : 'border-[0.5px] border-[#292929] px-5 py-2.5 rounded-lg']" @click="router.push('/dashboard/property/new')" class="font-semibold">{{payload.isFurnishedCommonArea.value ? 'Yes' : 'No'}}</button>
-                </div> -->
   
                 <div class="bg-white rounded-lg shadow-sm mt-9">
-                  <!-- <div class="flex space-x-4 mb-6">
-                    <button
-                      v-for="room in payload?.rooms?.value || localStorageRooms"
-                      :key="room.name"
-                      :class="['px-6 py-2.5 rounded-lg text-sm', currentRoom.name === room.name ? 'bg-[#EBE5E0] text-[#1D2739]' : 'bg-white border border-gray-100 text-[#1D2739]']"
-                      @click="selectRoom(room)"
-                    >
-                      {{ room.name }}
-                    </button>
-                  </div> -->
-
+        
                   <div class="flex space-x-4 mb-6">
                     <!-- Room Tabs -->
                     <button
@@ -508,128 +493,11 @@
                 <!-- Display a fallback message when no images are available -->
                 <p v-else>No images available.</p>
               </div>
-  
-              <!-- <div class="bg-white rounded- shadow-sm">
-                <h2 class="text-sm font-medium my-6">Common Area</h2>
-                {{payload.commonAreas.value}}
-                <div class="grid grid-cols-2 gap-6">
-                  <div v-for="(area, index) in payload.commonAreas.value" :key="index" class="relative">
-                    <div class="relative rounded-lg overflow-hidden shadow-md bg-white border">
-                      <div class="relative w-full h-52 flex items-center justify-center overflow-hidden">
-                        <img
-                          v-if="area?.images?.length > 0"
-                          :src="area.images[currentImageIndex[index]]"
-                          alt="common area image"
-                          class="w-full h-full object-cover transition-opacity"
-                        />
-                        <img v-else src="@/assets/icons/image-unavailable.svg" alt="" class="h-20 w-20" />
-                        <button
-                          v-if="area?.images?.length > 1"
-                          @click="prevImage(index)"
-                          class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow hover:bg-gray-200"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                          </svg>
-                        </button>
-                        <button
-                          v-if="area?.images?.length > 1"
-                          @click="nextImage(index)"
-                          class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow hover:bg-gray-200"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </button>
-                      </div>
-                      <div class="absolute bottom-0 left-0 w-full bg-gray-700 bg-opacity-70 text-white p-2 flex justify-between items-center">
-                        <span class="text-sm">{{ area?.name }}</span>
-                        <span class="text-sm">{{ area?.images?.length }} {{ area?.images?.length > 1 ? 'images' : 'image' }}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> -->
-  
+
               <div class="bg-white rounded-lg shadow-sm">
                 <h2 class="text-sm font-medium my-6">Common Area</h2>
                 <!-- Display common areas in a grid layout -->
                 <div class="grid grid-cols-2 gap-6">
-                  <!-- <div v-for="(area, index) in localStorageCommonAreas" :key="index" class="relative">
-                    <div class="relative rounded-lg overflow-hidden shadow-md bg-white border">
-                      <div class="relative w-full h-52 flex items-center justify-center overflow-hidden">
-                        <img
-                          v-if="area?.images?.length > 0"
-                          :src="area.images[currentImageIndex[index]]"
-                          alt="common area image"
-                          class="w-full h-full object-cover transition-opacity"
-                        />
-                        <img v-else src="@/assets/icons/image-unavailable.svg" alt="No image available" class="h-20 w-20" />
-                        <button
-                          v-if="area?.images?.length > 1"
-                          @click="prevImage(index)"
-                          class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow hover:bg-gray-200"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                          </svg>
-                        </button>
-                        <button
-                          v-if="area?.images?.length > 1"
-                          @click="nextImage(index)"
-                          class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow hover:bg-gray-200"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </button>
-                      </div>
-                      <div class="absolute bottom-0 left-0 w-full bg-gray-700 bg-opacity-70 text-white p-2 flex justify-between items-center">
-                        <span class="text-sm">{{ area?.name }}</span>
-                        <span class="text-sm">{{ area?.images?.length }} {{ area?.images?.length > 1 ? 'images' : 'image' }}</span>
-                      </div>
-                    </div>
-                  </div> -->
-                  <!-- {{payload.commonAreas.value[0].images}} -->
-                  <!-- <div 
-  v-for="(area, index) in (Array.isArray(payload?.commonAreas?.value) && payload.commonAreas.value.length > 0 ? payload.commonAreas.value : localStorageCommonAreas)" 
-  :key="index" 
-  class="relative"
->
-  <div class="relative rounded-lg overflow-hidden shadow-md bg-white border">
-    <div class="relative w-full h-52 flex items-center justify-center overflow-hidden">
-      <img
-        v-if="Array.isArray(area?.images) && area?.images.length > 0"
-        :src="area.images[currentImageIndex[index]]"
-        alt="common area image"
-        class="w-full h-full object-cover transition-opacity"
-      />
-      <img v-else src="@/assets/icons/image-unavailable.svg" alt="No image available" class="h-20 w-20" />
-      <button
-        v-if="Array.isArray(area?.images) && area.images.length > 1"
-        @click="prevImage(index)"
-        class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow hover:bg-gray-200"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-      <button
-        v-if="Array.isArray(area?.images) && area.images.length > 1"
-        @click="nextImage(index)"
-        class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow hover:bg-gray-200"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-    </div>
-    <div class="absolute bottom-0 left-0 w-full bg-gray-700 bg-opacity-70 text-white p-2 flex justify-between items-center">
-      <span class="text-sm">{{ area?.name }}</span>
-      <span class="text-sm">{{ Array.isArray(area?.images) ? area.images.length : 0 }} {{ area?.images?.length > 1 ? 'images' : 'image' }}</span>
-    </div>
-  </div>
-</div> -->
 
 <div 
   v-for="(area, index) in (Array.isArray(payload?.commonAreas?.value) && payload.commonAreas.value.length > 0 ? payload.commonAreas.value : localStorageCommonAreas)" 
@@ -721,36 +589,7 @@
 </div>
 
               
-                <!-- <div v-for="(room, index) in localStorageRooms" :key="index" class="mb-8 border-b pb-6 text-sm">
-                  <h3 class="font-semibold mb-2">
-                    {{ room?.name }}
-                    <span v-if="room?.isMaster" class="text-sm font-normal">(Master Room)</span>
-                  </h3>
-              
-                  <div class="mt-4">
-                    <h3 class="text-gray-500 font-normal mb-2">Interior Area</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div
-                        v-for="(feature, fIndex) in room?.features || []"
-                        :key="fIndex"
-                        class="relative rounded-lg overflow-hidden shadow-md bg-white border"
-                      >
-                        <div class="relative w-full h-44 flex items-center justify-center overflow-hidden">
-                          <img
-                            v-if="feature?.images?.length > 0"
-                            :src="feature.images[0]"
-                            alt="Feature image"
-                            class="w-full h-full object-cover transition-opacity"
-                          />
-                          <img v-else src="@/assets/icons/image-unavailable.svg" class="h-20 w-20 mb-3" alt="No image available" />
-                        </div>
-                        <p class="absolute bottom-0 left-0 w-full bg-gray-700 bg-opacity-70 text-white p-2 text-sm">
-                          {{ feature.name }}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
+            
               </div>
   
               <div class="bg-white rounded-lg">
@@ -764,24 +603,7 @@
                     Define your rules for potential tenants
                   </h3>
                   <div class="mt-4">
-                    <!-- <div v-for="(ruleObj, index) in localRules" :key="index" class="flex justify-between py-2">
-                      <div v-if="ruleObj.options" class="flex-1 mr-4">
-                        <label class="block text-gray-700 text-sm font-normal mb-1">
-                          {{ ruleObj.rule }}
-                        </label>
-                      </div>
-                      <div v-else class="flex-1">
-                        <span class="block text-gray-700 flex items-center gap-x-3">
-                          <svg width="16" height="16" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1.29675 1.29724C1.7605 0.833496 2.50689 0.833496 3.99967 0.833496C5.49244 0.833496 6.23884 0.833496 6.70261 1.29724C7.16634 1.76099 7.16634 2.50738 7.16634 4.00016C7.16634 5.49293 7.16634 6.23933 6.70261 6.7031C6.23884 7.16683 5.49244 7.16683 3.99967 7.16683C2.50689 7.16683 1.7605 7.16683 1.29675 6.7031C0.833008 6.23933 0.833008 5.49293 0.833008 4.00016C0.833008 2.50738 0.833008 1.76099 1.29675 1.29724Z" fill="#292929" stroke="#292929" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            
-                          {{ ruleObj.rule }}</span>
-                      </div>
-                      <div v-if="ruleObj.answer" class="ml-4 text-gray-900 font-normal">
-                        {{ ruleObj.answer }}
-                      </div>
-                    </div> -->
+                
                     <div 
   v-for="(ruleObj, index) in (Array.isArray(payload?.rules?.value) && payload.rules.value.length > 0 ? payload.rules.value : localRules)" 
   :key="index" 
@@ -1021,17 +843,6 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
   };
   
   const currentImageIndex = ref<number[]>(Array(localStorageCommonAreas?.length).fill(0));
-  // watch(
-  //   () => payload.commonAreas.value,
-  //   (newAreas) => {
-  //     if (newAreas && newAreas.length > 0) {
-  //       currentImageIndex.value = Array(newAreas.length).fill(0); // Reset index array based on new data
-  //     } else {
-  //       currentImageIndex.value = [];
-  //     }
-  //   },
-  //   { immediate: true }
-  // );
   watch(
     () => localStorageCommonAreas,
     (newAreas) => {
@@ -1167,98 +978,6 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
     }
   }
   
-  // function handleNextStep() {
-  //   if (activeParentStep.value === 1) {
-  //     if (basicPropertyInformationStep.value < 2) {
-  //       basicPropertyInformationStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 2) {
-  //     if (propertyDetailsStep.value < 2) {
-  //       propertyDetailsStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 3) {
-  //     if (visualsStep.value < 2) { // Ensure this is correctly checking for up to step 3
-  //       visualsStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 4) {
-  //     if (finalizeStep.value < 3) {
-  //       finalizeStep.value += 1;
-  //     } else {
-  //      // This means we've reached the last step of the final stage, switch to preview mode
-  //      togglePreviewMode(true); // Instead of navigating to a new route, switch to preview mode
-  //       return;
-  //     }
-  //   }
-  
-  //   updateQueryParams();
-  // }
-  
-  // function handleNextStep() {
-  //   if (activeParentStep.value === 1) {
-  //     if (basicPropertyInformationStep.value < 2) {
-  //       basicPropertyInformationStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 2) {
-  //     if (propertyDetailsStep.value < 2) {
-  //       propertyDetailsStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 3) {
-  //     // VisualsStep has only one sub-step, so we move to the next parent step immediately
-  //     handleNextParentStep();
-  //   } else if (activeParentStep.value === 4) {
-  //     if (finalizeStep.value < 3) {
-  //       finalizeStep.value += 1;
-  //     } else {
-  //       // This means we've reached the last step of the final stage, switch to preview mode
-  //       togglePreviewMode(true); // Instead of navigating to a new route, switch to preview mode
-  //       return;
-  //     }
-  //   }
-  
-  //   updateQueryParams();
-  // }
-  
-  // function handleNextStep() {
-  //   if (activeParentStep.value === 1) {
-  //     if (basicPropertyInformationStep.value < 2) {
-  //       basicPropertyInformationStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 2) {
-  //     if (propertyDetailsStep.value < 2) {
-  //       propertyDetailsStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 3) {
-  //     if (visualsStep.value < 2) { // Allow for two sub-steps in visualsStep
-  //       visualsStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 4) {
-  //     if (finalizeStep.value < 3) {
-  //       finalizeStep.value += 1;
-  //     } else {
-  //       // This means we've reached the last step of the final stage, switch to preview mode
-  //       togglePreviewMode(true); // Instead of navigating to a new route, switch to preview mode
-  //       return;
-  //     }
-  //   }
-  
-  //   updateQueryParams();
-  // }
 
   function handleNextStep() {
   if (activeParentStep.value === 1) {
@@ -1280,6 +999,7 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
     const isRoomImagesUploaded = payload?.rooms?.value?.length > 0;
 
     if (visualsStep.value === 1 && !isPropertyCoverUploaded) {
+      console.log(payload, 'images here')
       // Require property cover images in the first sub-step of visuals
       showToast({
         title: "Error",
@@ -1327,73 +1047,7 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
   updateQueryParams();
 }
 
-  
-  // function handleNextStep() {
-  //   if (activeParentStep.value === 1) {
-  //     if (basicPropertyInformationStep.value < 2) {
-  //       basicPropertyInformationStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 2) {
-  //     if (propertyDetailsStep.value < 2) {
-  //       propertyDetailsStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 3) {
-  //     if (visualsStep.value < 3) { // Allow for three sub-steps in visualsStep
-  //       visualsStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 4) {
-  //     if (finalizeStep.value < 3) {
-  //       finalizeStep.value += 1;
-  //     } else {
-  //       // This means we've reached the last step of the final stage, switch to preview mode
-  //       togglePreviewMode(true); // Instead of navigating to a new route, switch to preview mode
-  //       return;
-  //     }
-  //   }
-  
-  //   updateQueryParams();
-  // }
-  
-  // function handleNextStep() {
-  //   if (activeParentStep.value === 1) {
-  //     if (basicPropertyInformationStep.value < 2) {
-  //       basicPropertyInformationStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 2) {
-  //     if (propertyDetailsStep.value < 2) {
-  //       propertyDetailsStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 3) {
-  //     if (visualsStep.value < 2) { // Allow for two sub-steps in visualsStep
-  //       visualsStep.value += 1;
-  //     } else {
-  //       handleNextParentStep();
-  //     }
-  //   } else if (activeParentStep.value === 4) {
-  //     if (finalizeStep.value < 3) {
-  //       finalizeStep.value += 1;
-  //     } else {
-  //       togglePreviewMode(true); 
-  //       return;
-  //     }
-  //   }
-  
-  //   updateQueryParams();
-  // }
-  
-  
-  
-  
+
   
   function handlePreviousStep() {
     if (activeParentStep.value === 1 && basicPropertyInformationStep.value > 1) {
@@ -1437,6 +1091,7 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
   const openCancelModal = ref(false)
   
   const handleConfirm = () => {
+    clearLocalStorage();
     openCancelModal.value = false
   
   }
@@ -1653,12 +1308,7 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
         if (roomValidationErrors.length > 0) {
           // Display all validation errors using the showToast composable
           roomValidationErrors.forEach(error => {
-            // showToast({
-            //   title: "Error",
-            //   message: error,  // Dynamically set the error message
-            //   toastType: "error",
-            //   duration: 4000 // Adjust duration if needed
-            // });
+    
           });
           return false;
         }
@@ -1668,74 +1318,6 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
     }
     return true;
   };
-  
-  
-  // const validateDetailedPropertyInformationStep = () => {
-  //   if (propertyDetailsStep.value === 1) {
-  //     return payload.commonAreas.value.length > 0;
-  //   } else if (propertyDetailsStep.value === 2) {
-  //     if (payload.rooms.value.length > 0) {
-  //       const roomValidationErrors = validateRooms(payload.rooms.value);
-        
-  //       if (roomValidationErrors.length > 0) {
-  //         // Display all validation errors using the showToast composable
-  //         roomValidationErrors.forEach(error => {
-  //           showToast({
-  //             title: "Error",
-  //             message: error,  // Dynamically set the error message
-  //             toastType: "error",
-  //             duration: 4000 // Adjust duration if needed
-  //           });
-  //         });
-  //         return false;
-  //       }
-        
-  //       return true;
-  //     }
-  //   }
-  //   return true;
-  // };
-  
-  // Watcher to automatically trigger validation when `rooms` change
-  // watch(
-  //   () => payload.rooms.value, 
-  //   (newRooms) => {
-  //     console.log('Rooms data changed:', newRooms);
-  //     validateDetailedPropertyInformationStep(); // Automatically validate when rooms change
-  //   },
-  //   { deep: false }
-  // );
-  
-  // watch(
-  //   () => currentRoom.value,
-  //   (newRoom, oldRoom) => {
-  //     if (newRoom !== oldRoom) {
-  //       // Validate rooms only when a new room is selected
-  //       validateDetailedPropertyInformationStep();
-  //     }
-  //   },
-  //   { immediate: false } // Ensure the validation does not run on page load
-  // );
-  
-  // watch(
-  //   () => currentRoom.value,
-  //   (newRoom, oldRoom) => {
-  //     if (newRoom !== oldRoom) {
-  //       // Validate rooms only when a new room is selected
-  //       const isValid = validateDetailedPropertyInformationStep();
-  //       isNextButtonDisabled.value = !isValid; // Set the button state based on validation
-  //     }
-  //   },
-  //   { immediate: true }  // Ensure the validation runs when the page loads
-  // );
-  
-  // const validateAddVisualsStep = () => {
-  //   if (visualsStep.value === 1) {
-  //     // Validate "Upload images of the common area"
-  //     return payload.images.value.length > 0;
-  //   }
-  //   return true;
-  // };
   
   // Function to skip visuals validation
   const validateAddVisualsStep = () => {

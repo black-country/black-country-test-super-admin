@@ -1,57 +1,120 @@
 <template>
-    <div v-for="item in 4" :key="item" class="flex justify-between items-center border border-gray-50 rounded-lg bg-white p-5">
-        <div class="flex items-center gap-x-4">
-          <svg
-            width="44"
-            height="44"
-            viewBox="0 0 44 44"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect width="44" height="44" rx="22" fill="#F0F5FD" />
-            <path
-              d="M15.5028 24.4214C15.5254 24.2059 15.6816 24.0323 15.9938 23.685L16.6812 22.9165C16.8492 22.7038 16.9685 22.3333 16.9685 21.9998C16.9685 21.6666 16.8492 21.2959 16.6812 21.0833L15.9938 20.3148C15.6816 19.9675 15.5254 19.7939 15.5028 19.5784C15.4801 19.3629 15.5968 19.1605 15.83 18.7556L16.1591 18.1846C16.408 17.7527 16.5324 17.5367 16.7441 17.4506C16.9558 17.3645 17.1953 17.4325 17.6742 17.5684L18.4877 17.7975C18.7934 17.868 19.1142 17.828 19.3933 17.6846L19.6179 17.555C19.8573 17.4017 20.0414 17.1756 20.1434 16.9099L20.366 16.2449C20.5124 15.8049 20.5856 15.5849 20.7598 15.4591C20.9341 15.3333 21.1656 15.3333 21.6284 15.3333H22.3716C22.8346 15.3333 23.066 15.3333 23.2402 15.4591C23.4145 15.5849 23.4877 15.8049 23.6341 16.2449L23.8567 16.9099C23.9586 17.1756 24.1428 17.4017 24.3822 17.555L24.6068 17.6846C24.8859 17.828 25.2067 17.868 25.5124 17.7975L26.3259 17.5684C26.8048 17.4325 27.0442 17.3645 27.256 17.4506C27.4677 17.5367 27.5921 17.7527 27.841 18.1846L28.17 18.7556C28.4033 19.1605 28.5199 19.3629 28.4973 19.5784C28.4746 19.7939 28.3185 19.9675 28.0062 20.3148L27.3188 21.0833C27.1509 21.2959 27.0316 21.6666 27.0316 21.9998C27.0316 22.3333 27.1508 22.7038 27.3188 22.9165L28.0062 23.685C28.3185 24.0323 28.4746 24.2059 28.4973 24.4214C28.5199 24.6369 28.4033 24.8393 28.17 25.2441L27.841 25.8152C27.5921 26.2471 27.4677 26.4631 27.256 26.5491C27.0442 26.6353 26.8048 26.5673 26.3259 26.4314L25.5124 26.2023C25.2066 26.1317 24.8858 26.1718 24.6066 26.3153L24.3821 26.4449C24.1427 26.5982 23.9586 26.8242 23.8568 27.0899L23.6341 27.7549C23.4877 28.1949 23.4145 28.4149 23.2402 28.5407C23.066 28.6666 22.8346 28.6666 22.3716 28.6666H21.6284C21.1656 28.6666 20.9341 28.6666 20.7598 28.5407C20.5856 28.4149 20.5124 28.1949 20.366 27.7549"
-              stroke="#6A9AEB"
-              stroke-linecap="round"
+  <main>
+    <!-- Maintenance Requests Section -->
+    <section v-if="!loading && maintenanceRequests && maintenanceRequests.length">
+      <div class="space-y-4">
+        <div
+          v-for="request in limitedRequests"
+          @click="handleSelectedRequest(request)"
+          :key="request.id"
+          class="text-sm font-medium cursor-pointer text-gray-700 mb-4 bg-white rounded-lg px-4 py-3.5 p-4 border-[0.5px] border-gray-50 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0"
+        >
+          <!-- Request Info -->
+          <div class="flex items-center space-x-4">
+            <img
+              v-if="request.tenant.profilePicture"
+              :src="request.tenant.profilePicture"
+              class="w-12 h-12 rounded-full object-cover"
+              alt="Profile"
             />
-            <path
-              d="M15.8259 26.5198C16.5459 25.7998 18.9939 23.3758 19.2339 23.0958C19.4877 22.7998 19.2819 22.3998 19.4043 21.1598C19.4636 20.5598 19.5926 20.1103 19.9619 19.7758C20.4019 19.3598 20.7619 19.3598 22.0019 19.3318C23.0819 19.3598 23.2099 19.2398 23.3219 19.5198C23.4019 19.7198 23.1619 19.8398 22.8739 20.1598C22.2339 20.7998 21.8579 21.1198 21.8219 21.3198C21.5619 22.1998 22.5859 22.7198 23.1459 22.1598C23.3577 21.948 24.3379 20.9598 24.4339 20.8798C24.5059 20.8158 24.6783 20.8189 24.7619 20.9198C24.8339 20.9905 24.8419 20.9998 24.8339 21.3198C24.8265 21.616 24.8298 22.0413 24.8307 22.4798C24.8319 23.048 24.8019 23.6798 24.5619 23.9998C24.0819 24.7198 23.2819 24.7598 22.5619 24.7918C21.8819 24.8318 21.3219 24.7598 21.1459 24.8878C21.0019 24.9598 20.2419 25.7598 19.3219 26.6798L17.6819 28.3198C16.3219 29.3998 14.8259 27.7198 15.8259 26.5198Z"
-              fill="white"
-              stroke="#6A9AEB"
-              stroke-linecap="round"
-            />
-          </svg>
-          <div class="text-[#667185]">
-            <h4 class="text-[#1D2739] pb-1">Plumbing Service</h4>
-            <p class="flex items-center text-sm gap-x-2">
-              <svg
-                width="14"
-                height="15"
-                viewBox="0 0 14 15"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.94366 12.9642C7.69072 13.201 7.35257 13.3334 7.00064 13.3334C6.64872 13.3334 6.31062 13.201 6.05762 12.9642C3.74093 10.7819 0.636277 8.34411 2.15032 4.80488C2.96895 2.89126 4.93403 1.66675 7.00064 1.66675C9.06727 1.66675 11.0323 2.89126 11.851 4.80488C13.3631 8.33967 10.2661 10.7894 7.94366 12.9642Z"
-                  fill="#5B8469"
-                  stroke="#5B8469"
-                />
-                <path
-                  d="M9.04036 6.91667C9.04036 8.04425 8.12628 8.95833 6.9987 8.95833C5.87111 8.95833 4.95703 8.04425 4.95703 6.91667C4.95703 5.78908 5.87111 4.875 6.9987 4.875C8.12628 4.875 9.04036 5.78908 9.04036 6.91667Z"
-                  fill="white"
-                  stroke="#5B8469"
-                />
-              </svg>
-
-              Iconic Tower, off Ajose Adegun VI, Lagos.
-            </p>
+            <svg v-else width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- SVG content here -->
+            </svg>
+            <div>
+              <p class="font-medium text-[#1D2739] text-base">{{ request.type }}</p>
+              <p class="text-[#667185] font-light text-sm flex items-center gap-x-2">
+                <!-- Location icon and address -->
+                <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- SVG path here -->
+                </svg>
+                {{ request.house.address }}
+              </p>
+            </div>
           </div>
-        </div>
-        <div class="space-y-5">
-          <div>
-            <span class="text-[#DD900D] px-5 py-2.5 bg-[#FEF6E7] rounded-full text-xs font-semibold">Upcoming</span>
+          <!-- Status and Date -->
+          <div class="space-y-3">
+            <span
+              :class="statusClasses[request.status]"
+              class="text-xs font-semibold px-3 py-2 rounded-full"
+            >
+              {{ statusLabels[request.status] }}
+            </span>
+            <p class="text-gray-400 text-xs">{{ formatDate(request.createdAt) }}</p>
           </div>
-          <p class="text-sm text-[#667185]">03/04/2024</p>
         </div>
       </div>
+    </section>
+
+    <!-- Loading State -->
+    <section v-else-if="loading">
+      <div class="rounded-md p-4 w-full mx-auto">
+        <div class="animate-pulse flex space-x-4">
+          <div class="flex-1 space-y-6 py-1">
+            <div class="h-44 bg-slate-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- No Maintenance Requests -->
+    <section v-else class="flex flex-col justify-between items-center space-y-2 mt-10">
+      <svg width="152" height="124" viewBox="0 0 152 124" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="76" cy="58" r="52" fill="#EAEAEA"/>
+        <circle cx="21" cy="25" r="5" fill="#BDBDBD"/>
+        <circle cx="18" cy="109" r="7" fill="#BDBDBD"/>
+        <circle cx="145" cy="41" r="7" fill="#BDBDBD"/>
+        <circle cx="134" cy="14" r="4" fill="#BDBDBD"/>
+        <g filter="url(#filter0_b_6853_118795)">
+          <rect x="52" y="34" width="48" height="48" rx="24" fill="#9D9D9D"/>
+          <path d="M85.9598 56.9707C86.0134 57.8009 86.0134 58.6607 85.9598 59.4909C85.6856 63.7332 82.3536 67.1125 78.1706 67.3905C76.7435 67.4854 75.2536 67.4852 73.8294 67.3905C73.339 67.3579 72.8044 67.2409 72.344 67.0513C71.8318 66.8403 71.5756 66.7348 71.4454 66.7508C71.3153 66.7668 71.1264 66.9061 70.7487 67.1846C70.0827 67.6757 69.2437 68.0285 67.9994 67.9982C67.3703 67.9829 67.0557 67.9752 66.9148 67.7351C66.774 67.495 66.9494 67.1626 67.3002 66.4978C67.7867 65.5758 68.095 64.5203 67.6279 63.6746C66.8234 62.4666 66.1401 61.036 66.0402 59.4909C65.9866 58.6607 65.9866 57.8009 66.0402 56.9707C66.3144 52.7284 69.6464 49.3491 73.8294 49.0711C75.0318 48.9911 75.2812 48.9786 76.5 49.0337" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M72.5 61H79.5M72.5 56H76" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M86 51.5C86 53.433 84.433 55 82.5 55C80.567 55 79 53.433 79 51.5C79 49.567 80.567 48 82.5 48C84.433 48 86 49.567 86 51.5Z" stroke="white" stroke-width="1.5"/>
+        </g>
+      </svg>
+      <h2 class="text-[#1D2739]">No Maintenance request found</h2>
+    </section>
+  </main>
 </template>
+
+
+
+<script lang="ts" setup>
+import { useFetchMaintenanceRequests } from '@/composables/modules/maintenance/useFetchMaintenanceRequests';
+import { useRouter } from 'vue-router';
+
+const { maintenanceRequests, loading } = useFetchMaintenanceRequests();
+const router = useRouter();
+
+const statusLabels: { [key: string]: string } = {
+  pending: 'Pending',
+  assigned: 'Assigned',
+  in_progress: 'In Progress',
+  completed: 'Completed',
+  cancelled: 'Cancelled',
+  declined: 'Declined'
+};
+
+// Limit to 5 requests
+const limitedRequests = computed(() => maintenanceRequests.value.slice(0, 5));
+
+const statusClasses: { [key: string]: string } = {
+  pending: 'bg-[#FEF6E7] text-[#DD900D]',
+  assigned: 'bg-[#E8EDFB] text-[#1D4ED8]',
+  in_progress: 'bg-[#FBEAE9] text-[#BA110B]',
+  completed: 'bg-[#E7F6EC] text-[#099137]',
+  cancelled: 'bg-[#FBEAE9] text-[#BA110B]',
+  declined: 'bg-[#FBEAE9] text-[#BA110B]'
+};
+
+// Format date
+const formatDate = (dateString: string): string => {
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+// Handle request selection
+const handleSelectedRequest = (item: any) => {
+  localStorage.setItem('selected-request', JSON.stringify(item));
+  router.push(`/dashboard/tenant-mgt/maintanance-request/${item.id}`);
+};
+</script>

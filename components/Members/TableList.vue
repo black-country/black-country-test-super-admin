@@ -100,21 +100,52 @@
                   v-for="(member, index) in processedData"
                   :key="member.id"
                 >
-                  <td
+                <td
+                    @click.prevent="handleDropdownClick('view', member)"
+                    v-for="column in visibleColumns"
+                    :key="column.key"
+                    class="py-5 px-5 whitespace-nowrap text-sm text-[#667185] font-semibold relative"
+                  >
+                    <!-- Handle Full Name -->
+                    <p v-if="column.label === 'Full Name'">
+                      {{ `${member.firstName ?? "--"} ${member.lastName ?? "--"}` }}
+                    </p>
+
+                    <!-- Handle other columns except Role and Status -->
+                    <p v-if="column.label !== 'Status' && column.label !== 'Role' && column.label !== 'Full Name'">
+                      {{ getPropertyValue(member, column.key) }}
+                    </p>
+
+                    <!-- Handle Role column -->
+                    <p v-if="column.label === 'Role'">
+                      {{ member.group === 'INVITATION' ? member.role : member.group }}
+                    </p>
+
+                    <!-- Handle Status column -->
+                    <p class="absolute left-0 top-10" v-if="column.label === 'Status'">
+                      <span :class="[member.isActive ? 'bg-green-500' : 'bg-red-500']" class="rounded-full px-3 py-2 text-white text-sm">
+                        {{ member.isActive ? 'active' : 'Pending' }}
+                      </span>
+                    </p>
+                  </td>
+
+                  <!-- <td
                     @click.prevent="handleDropdownClick('view', member)"
                     v-for="column in visibleColumns"
                     :key="column.key"
                     class="py-5 px-5 whitespace-nowrap text-sm text-[#667185] font-semibold relative"
                   >
                     <p v-if="column.label !== 'Status'">{{ getPropertyValue(member, column.key) }}</p>
-                    <!-- {{column}} -->
+          
+                    <p v-if="column.label === 'Role'">
+                      {{ member.group === 'INVITATION' ? member.role : member.group }}
+                    </p>
                     <p class="absolute left-0 top-10" v-if="column.label === 'Status'">
                       <span :class="[ member.isActive ? 'bg-green-500' : 'bg-red-500']" class="rounded-full  px-3 py-2 text-white text-sm">
-                       {{ member.isActive ? 'active' : 'In Active'}}
+                       {{ member.isActive ? 'active' : 'Pending'}}
                       </span>
                     </p>
-                    <!-- <p v-if="column.key === 'isPublished'">{{ property.isPublished ? 'Published' : 'Draft' }}</p> -->
-                  </td>
+                  </td> -->
                   <td class="py-5 px-5 whitespace-nowrap text-sm text-right">
                     <button
                       @click="toggleDropdown(index)"
@@ -422,7 +453,7 @@
   
   const showModal = ref(false);
   
-  // Columns data
+  // // Columns data
   const columns = ref([
     { label: "Full Name", key: "fullName", visible: true },
     { label: "Email", key: "email", visible: true },
@@ -433,6 +464,26 @@
     { label: "Date Added", key: "createdAt", visible: false },
   ]);
 
+// // Columns data
+// const columns = ref([
+//   { label: "Full Name", key: "fullName", visible: true },
+//   { label: "Email", key: "email", visible: true },
+//   {
+//     label: "Role",
+//     key: checkKey("group", "role"),
+//     visible: true,
+//   },
+//   { label: "Status", key: "isActive", visible: true },
+//   { label: "Last Active", key: "lastActive", visible: false },
+//   { label: "Group", key: "group", visible: false },
+//   { label: "Date Added", key: "createdAt", visible: false },
+// ]);
+
+// // Helper function to check key availability
+// function checkKey(primaryKey, fallbackKey) {
+//   const sampleMember = members.value[0];
+//   return sampleMember && primaryKey in sampleMember ? primaryKey : fallbackKey;
+// }
 
   // Concatenate firstName and lastName into fullName
 const processedData = computed(() => {

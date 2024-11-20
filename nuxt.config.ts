@@ -1,3 +1,4 @@
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 export default {
   ssr: false,
   target: "static",
@@ -37,13 +38,12 @@ export default {
   plugins: [],
   vite: {
     optimizeDeps: {
-      include: ['fast-deep-equal']
+      include: ['fast-deep-equal'],
     }
+  },
+  resolve: {
+    alias: {
+      fsevents: false, // Ignore fsevents
+    },
   }
-  // buildModules: [
-  //   '@nuxtjs/moment'
-  // ]
-  // alias: {
-  // 	'@': '/'
-  // },
 };

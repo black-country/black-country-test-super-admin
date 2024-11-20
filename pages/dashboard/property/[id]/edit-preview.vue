@@ -77,6 +77,7 @@ const { clearLocalStorage } = useClearLocalStorage();
   }
   
   const handleClose = () => {
+    clearLocalStorage();
     router.push('/dashboard/property')
     openCancelModal.value = false
   }

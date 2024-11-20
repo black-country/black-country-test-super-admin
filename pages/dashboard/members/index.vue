@@ -166,57 +166,6 @@ const closeModal = () => {
   isModalOpen.value = false;
 };
 
-const transactions = ref([
-  {
-    tenantName: "Viola Gottlieb",
-    email: "VG73@hotmail.com",
-    role: "Super Admin",
-    status: "Active",
-    lastActive: "11/03/2024",
-  },
-  {
-    tenantName: "Forrest Bosco",
-    email: "Jake.Koelpin@yahoo.com",
-    role: "Property Manager",
-    status: "Invite Pending",
-    lastActive: "11/03/2024",
-  },
-  {
-    tenantName: "Veronica Harber",
-    email: "Antoinette82@yahoo.com",
-    role: "Service Provider",
-    status: "Active",
-    lastActive: "N/A",
-  },
-  {
-    tenantName: "Antoinette Marquardt",
-    email: "Veronica14@hotmail.com",
-    role: "Legal Compliance",
-    status: "Invite Pending",
-    lastActive: "11/03/2024",
-  },
-  {
-    tenantName: "Jake Koelpin",
-    email: "jk4@hotmail.com",
-    role: "Finance Admin",
-    status: "Active",
-    lastActive: "11/03/2024",
-  },
-  {
-    tenantName: "Ernest McCullough",
-    email: "Ernest95@yahoo.com",
-    role: "Tenant relations",
-    status: "Active",
-    lastActive: "11/03/2024",
-  },
-  {
-    tenantName: "Katherine Kunde",
-    email: "Katherine_Kunde@gmail.com",
-    role: "Agent",
-    status: "Invite Pending",
-    lastActive: "N/A",
-  },
-]);
 
 // State to manage which dropdown is active
 const activeDropdown = ref<number | null>(null);

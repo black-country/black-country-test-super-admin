@@ -2,7 +2,7 @@
   <section class="space-y-4">
     <div class="lg:flex w-full gap-x-2">
       <div class="w-full lg:max-w-5xl lg:flex p-3 border border-gray-25 rounded-lg bg-white">
-        <div v-for="(item, idx) in firstSection" :key="idx" class="h-32 cursor-pointer space-y-4 w-full border-gray-100 lg:border-r last:border-r-0 p-4">
+        <div v-if="!loadingProperties" v-for="(item, idx) in firstSection" :key="idx" class="h-32 cursor-pointer space-y-4 w-full border-gray-100 lg:border-r last:border-r-0 p-4">
           <div class="flex justify-end items-end ">
             <img :src="dynamicIcons(item.icon)" :alt="item.label" class="h-10 w-10 bg-gray-100 p-2 rounded-md" />
           </div>
@@ -11,9 +11,12 @@
             <h6 class="text-[#667185] font-medium text-sm">{{item.label}}</h6>
           </div>
         </div>
+        <section v-if="loadingProperties">
+        <div class="animate-pulse h-32 w-full bg-red-700 rounded flex space-x-4"></div>
+      </section>
       </div>
       <div class="w-full lg:max-w-lg lg:flex p-3 border border-gray-25 rounded-lg bg-white">
-        <div v-for="(item, idx) in secondSection" :key="idx" class="h-32 space-y-4 w-full border-gray-100 lg:border-r last:border-r-0 p-4">
+        <div  v-if="!loadingProperties" v-for="(item, idx) in secondSection" :key="idx" class="h-32 space-y-4 w-full border-gray-100 lg:border-r last:border-r-0 p-4">
           <div class="flex justify-end items-end ">
             <img :src="dynamicIcons(item.icon)" :alt="item.label" class="h-10 w-10 bg-gray-100 p-2 rounded-md" />
           </div>
@@ -22,6 +25,9 @@
             <h6 class="text-[#667185] font-medium text-sm">{{item.label}}</h6>
           </div>
         </div>
+        <section v-if="loadingProperties">
+        <div class="animate-pulse h-32 w-full bg-red-700 rounded flex space-x-4"></div>
+      </section>
       </div>
     </div>
     <div class="lg:flex w-full gap-x-2">
@@ -36,7 +42,7 @@
           </div>
         </div>
       </div>
-      <div class="w-full lg:max-w-lg lg:flex p-3 border border-gray-25 rounded-lg bg-white">
+      <!-- <div class="w-full lg:max-w-lg lg:flex p-3 border border-gray-25 rounded-lg bg-white">
         <div v-for="(item, idx) in fourthSection" :key="idx" class="h-32 space-y-4 w-full border-gray-100 lg:border-r last:border-r-0 p-4">
           <div class="flex justify-end items-end ">
             <img :src="dynamicIcons(item.icon)" :alt="item.label" class="h-10 w-10 bg-gray-100 p-2 rounded-md" />
@@ -46,7 +52,26 @@
             <h6 class="text-[#667185] font-medium text-sm">{{item.label}}</h6>
           </div>
         </div>
-      </div>
+      </div> -->
+      <div class="w-full lg:max-w-lg lg:flex p-3 border border-gray-25 rounded-lg bg-white">
+  <div
+    v-if="!loadingMembers"
+    v-for="(item, idx) in fourthSection"
+    :key="idx"
+    class="h-32 space-y-4 w-full border-gray-100 lg:border-r last:border-r-0 p-4"
+  >
+    <div class="flex justify-end items-end">
+      <img :src="dynamicIcons(item.icon)" :alt="item.label" class="h-10 w-10 bg-gray-100 p-2 rounded-md" />
+    </div>
+    <div>
+      <p class="text-[#1D2739] font-semibold text-2xl">{{ item.value }}</p>
+      <h6 class="text-[#667185] font-medium text-sm">{{ item.label }}</h6>
+    </div>
+  </div>
+  <section v-if="loadingMembers">
+        <div class="animate-pulse h-32 w-full bg-red-700 rounded flex space-x-4"></div>
+      </section>
+</div>
     </div>
   </section>
   </template>
@@ -58,7 +83,7 @@
   import { dynamicIcons } from '@/utils/assets'; // assuming you have a dynamicIcons function in utils
   const { loadingProperties, propertiesList, metadata } = useGetProperties()
   const { metadata: tenantMetadata, tenantsList } = useGetTenants()
-  const { membersList, metadata: memberMetadata } = useGetMembers()
+  const { membersList, metadata: memberMetadata, serviceProviders, agents, loadingMembers } = useGetMembers()
   const router = useRouter()
   const firstSection = ref([
   { icon: 'total-properties', value: '0', label: 'Total Properties', path: '/dashboard/property' },
@@ -121,9 +146,24 @@ watch(
                            memberMetadata?.value?.invitations?.total;
       membersItem.value = totalMembers.toString();
     }
+
+    const agentsItem = fourthSection.value.find(item => item.label === 'Agents');
+    if (agentsItem) {
+      const totalAgents = agents.value?.length|| 0; // Fallback to 0 if undefined
+      agentsItem.value = totalAgents.toString();
+    }
+
+    const serviceProvidersItem = fourthSection.value.find(item => item.label === 'Service providers');
+    if (serviceProvidersItem) {
+      const totalServiceProviders = serviceProviders.value?.length || 0; // Fallback to 0 if undefined
+      serviceProvidersItem.value = totalServiceProviders.toString();
+    }
   },
   { immediate: true }
 );
+
+
+
   </script>
   
   <style scoped>

@@ -4,7 +4,7 @@ export const maintenance_api = {
         let url = `/maintenance-requests/${reqId}/service-providers/${spid}/assign`
         return GATEWAY_ENDPOINT.patch(url);
       },
-      $_fetch_maitenence_request: (page = 1, perPage = 20, status = 'pending', tenantId = '', houseId = '') => {
+      $_fetch_maitenence_request: (page = 1, perPage = 100000, status = 'pending', tenantId = '', houseId = '') => {
         let url = `/maintenance-requests?page=${page}&perPage=${perPage}&status=${status}`
         
     
@@ -20,5 +20,5 @@ export const maintenance_api = {
     
       
         return GATEWAY_ENDPOINT.get(url)
-      },
+      }
 }

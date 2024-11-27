@@ -8,11 +8,11 @@
                 <path d="M12.5 5C12.5 5 7.50001 8.68242 7.5 10C7.49999 11.3177 12.5 15 12.5 15" stroke="#292929" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               Back</button>
-          <p>{{memberObj?.firstName ?? 'Nil'}} {{memberObj?.lastName ?? 'Nil'}}</p>
+          <p v-if="!loading && Object.keys(memberObj).length">{{memberObj?.firstName ?? 'Nil'}} {{memberObj?.lastName ?? 'Nil'}}</p>
           </div>
-          <div class="flex items-center gap-x-4 lg:gap-x-6">
-           <button @click="deleteModal = true" class="bg-[#F9FAFB] text-[#292929] px-6 py-3.5 rounded-lg">Remove User</button>
-           <button @click="deactivateModal = true" class="bg-[#292929] text-white px-6 py-3.5 rounded-lg">Deactivate User</button>
+          <div v-if="!loading && Object.keys(memberObj).length" class="flex items-center gap-x-4 lg:gap-x-6">
+           <button @click="deleteModal = true" class="bg-[#F9FAFB] text-[#292929] text-sm px-6 py-2.5 rounded-lg">Remove User</button>
+           <button @click="deactivateModal = true" class="bg-[#292929] text-white text-sm px-6 py-2.5 rounded-lg">Deactivate User</button>
           </div>
         </div>
       </template>
@@ -150,19 +150,8 @@
     </div>
 
     <section v-else>
-      <div class="rounded-md p-4 w-full mx-auto mt-10">
-        <div class="animate-pulse flex space-x-4">
-          <!-- <div class="rounded-md bg-slate-200 h-44 w-44"></div> -->
-          <div class="flex-1 space-y-6 py-1">
-            <div class="h-32 bg-slate-200 rounded"></div>
-            <div class="space-y-3">
-              <div class="grid grid-cols-3 gap-4">
-                <div class="h-32 w-full bg-slate-200 rounded col-span-2"></div>
-                <div class="h-32 w-full bg-slate-200 rounded col-span-1"></div>
-              </div>
-              <div class="h-32 w-full bg-slate-200 rounded"></div>
-            </div>
-          </div>
+      <div class="rounded-md p-4 w-full mx-auto">
+        <div class="animate-pulse flex space-x-4 h-44 w-full bg-slate-200 rounded">
         </div>
       </div>
      </section>

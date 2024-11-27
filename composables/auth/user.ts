@@ -63,7 +63,7 @@ export const useUser = () => {
   const logOut = () => {
     localStorage.clear();
     runtimeData.user.value = null;
-    // location.href = '/login'
+    window.location.href = '/login'
   };
 
   const setToken = (token: string) => {

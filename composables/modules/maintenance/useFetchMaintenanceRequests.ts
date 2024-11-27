@@ -9,7 +9,7 @@ export const useFetchMaintenanceRequests = () => {
     tenantId: '',
     houseId : '',
     page: 1,
-    perPage: 20,
+    perPage: 1000000,
     status: 'pending'
   })
 

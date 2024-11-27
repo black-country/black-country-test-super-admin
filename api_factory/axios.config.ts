@@ -73,6 +73,7 @@ instanceArray.forEach((instance) => {
       return response;
     },
     (err: any) => {
+      console.log(err, 'error here')
       if (typeof err.response === "undefined") {
         showToast({
           title: "Error",

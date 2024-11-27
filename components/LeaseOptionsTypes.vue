@@ -41,7 +41,8 @@ const { payload } = useCreateLeaseTemplate();
     console.log(option, 'option')
     selectedOption.value = option; // Update selected option when user selects a card
     if(option === 'upload'){
-      showUploadModal.value = true
+      router.push('/dashboard/property/lease-documents/upload')
+      // showUploadModal.value = true
     }
 
     if(option === 'create'){

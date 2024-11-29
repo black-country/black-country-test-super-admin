@@ -21,8 +21,8 @@
           <p class="flex justify-between"><span class="text-[#667185]">Date of Birth:</span> {{tenantObj?.dateOfBirth ?? '----'}}</p>
           <p class="flex justify-between"><span class="text-[#667185]">Gender:</span> {{tenantObj?.gender ?? '----'}}</p>
           <p class="flex justify-between"><span class="text-[#667185]">Marital status:</span>{{tenantObj?.maritalStatus ?? '----'}}</p>
-          <p class="flex justify-between"><span class="text-[#667185]">State of Origin:</span>{{tenantObj?.city?.lga?.name ?? '----'}}</p>
-          <p class="flex justify-between"><span class="text-[#667185]">LGA:</span>{{tenantObj?.city?.lga?.stateName ?? '----'}}</p>
+          <p class="flex justify-between"><span class="text-[#667185]">State of Origin:</span>{{tenantObj?.city?.name ?? '----'}}</p>
+          <p class="flex justify-between"><span class="text-[#667185]">LGA:</span>{{tenantObj?.city?.stateName ?? '----'}}</p>
         </div>
       </div>
     </div>

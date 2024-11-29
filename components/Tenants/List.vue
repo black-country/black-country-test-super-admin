@@ -434,11 +434,11 @@ const showModal = ref(false);
 // Columns data
 const columns = ref([
   { label: "Tenant Name", key: "firstName", visible: true },
-  { label: "Current Home", key: "house.name", visible: true },
-  { label: "Room Number", key: "house.room.id", visible: true },
-  { label: "Frequency", key: "house.frequency", visible: true },
+  { label: "Current Home", key: "rentalApplication.house.name", visible: true },
+  { label: "Room Number", key: "rentalApplication.room.name", visible: true },
+  { label: "Frequency", key: "rentalApplication.room.rentFrequency", visible: true },
   { label: "Payment Count", key: "house.paymentCount", visible: false },
-  { label: "Current Rental Status", key: "house.rentalApplication.status", visible: true }
+  { label: "Current Rental Status", key: "status", visible: true }
 ]);
 
 // Computed property to get only visible columns

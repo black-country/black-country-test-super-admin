@@ -1,6 +1,37 @@
 <template>
   <div class="space-y-6">
       <!-- Current Residence -->
+      <div class="max-w-2xl mx-auto">
+    <!-- Property Information -->
+    <div class="mb-8">
+      <h1 class="text-sm font-medium mb-6 bg-white py-3 rounded-lg px-5">Property Information</h1>
+      
+      <div class="space-y-6 bg-white rounded-lg p-5">
+        <div>
+          <p class="text-sm mb-2">Property name</p>
+          <div class="bg-gray-50 p-4 rounded text-sm">{{tenantObj?.home?.house?.name ?? 'Nil'}}</div>
+        </div>
+
+        <div>
+          <p class="text-sm mb-2">Room number</p>
+          <div class="bg-gray-50 p-4 rounded text-sm">{{tenantObj?.home?.room?.name ?? 'Nil'}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pre-screening Section -->
+    <div>
+      <h2 class="text-sm font-medium mb-6 bg-white py-3 rounded-lg px-5">Pre-screening questions</h2>
+      
+      <div class="space-y-6 bg-white rounded-lg p-5">
+        <div v-for="(item, idx) in tenantObj?.home?.questionAnswers" :key="idx">
+          <p class="text-sm mb-2 text-sm">{{ item?.question?.question ?? 'Nil' }}</p>
+          <div class="bg-gray-50 p-4 text-sm rounded">{{ item?.answer ?? 'Nil' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <section>
     <div class="mb-6">
         <h3 class="text-base font-medium text-[#1D2739] mb-4 border-[0.5px] py-3 px-3 rounded-lg bg-white">Rental History</h3>
@@ -53,14 +84,14 @@
 
       <!-- ID Card -->
     <section>
-      <h3 class="font-medium text-[#1D2739] text-sm mb-4 border-[0.5px] py-3 px-3 rounded-lg bg-white">ID Card</h3>
+      <h3 class="font-medium text-[#1D2739] text-sm mb-4 border-[0.5px] py-3 px-3 rounded-lg bg-white">Identity document</h3>
       <div class="border-[0.5px] py-3 px-3 rounded-lg bg-white text-sm">
         <div class="mb-4 space-y-3">
           <p>ID Type:</p>
-          <h3 class="ttext-sm font-medium text-[#1D2739] mb-4 border-[0.5px] py-3 px-3 rounded-lg bg-[#E4E7EC]">ID Card</h3>
+          <h3 class="ttext-sm font-medium text-[#1D2739] mb-4 border-[0.5px] py-3 px-3 rounded-lg bg-[#E4E7EC]">{{ tenantObj?.home?.idDocs?.type ?? 'Nil' }}</h3>
         </div>
-      <div v-if="tenantObj?.idDocs?.fileUrls" class="grid grid-cols-2 gap-6">
-        <img class="w-96 h- rounded-lg border border-gray-300" v-for="itm in tenantObj?.idDocs?.fileUrls" :key="itm" :src="itm" />
+      <div v-if="tenantObj?.home?.idDocs?.fileUrls" class="grid grid-cols-2 gap-6">
+        <img class="w-96 h- rounded-lg border border-gray-300" v-for="itm in tenantObj?.home?.idDocs?.fileUrls" :key="itm" :src="itm" />
       </div>
         <img
            v-else

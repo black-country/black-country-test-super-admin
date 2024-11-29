@@ -7,7 +7,7 @@ export const useGetTenentDetails = () => {
     const { $_tenent_details } = tenant_api
     const getTenantDetails = async () => {
         loading.value = true;
-        const id = route.params.id
+        const id = route.params.id || route?.query?.userId
         try {
             const res = await $_tenent_details(id) as any;
             console.log(res, 'tenent detrals')

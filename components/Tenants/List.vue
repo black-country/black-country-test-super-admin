@@ -400,7 +400,8 @@ const handleDropdownClick = (action: any, item: any) => {
   }
 
   if (action === "send-message") {
-    return router.push(`/dashboard/messages?userId${item.id}`);
+    // return router.push(`/dashboard/messages?userId=${item.id}`);
+    router.push({ path: '/dashboard/messages', query: { userId: item.id }})
   }
   closeDropdown();
   emit(action, item);

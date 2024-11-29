@@ -8,5 +8,9 @@ export const tenant_api = {
           url += `&search=${encodeURIComponent(filters.searchQuery.trim())}`;
         }      
         return GATEWAY_ENDPOINT.get(url);
+      },
+      $_tenent_details: (id: string) => {
+        let url = `/tenants/${id}/details`;
+        return GATEWAY_ENDPOINT.get(url);
       }
 }

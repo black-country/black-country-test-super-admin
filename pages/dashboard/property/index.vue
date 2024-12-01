@@ -1,5 +1,5 @@
 <template>
-  <Layout class="bg-red-500">
+  <Layout class="">
     <template #header-content>
       <div class="flex z-10 flex-1 gap-x-4 self-stretch lg:gap-x-6 justify-between">
         <!-- Header left side -->

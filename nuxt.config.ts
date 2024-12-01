@@ -39,7 +39,18 @@ export default {
   vite: {
     optimizeDeps: {
       include: ['fast-deep-equal'],
-    }
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes("pdfjs-dist")) {
+              return "pdfjs";
+            }
+          },
+        },
+      },
+    },
   },
   resolve: {
     alias: {

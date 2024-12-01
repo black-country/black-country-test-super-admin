@@ -1,362 +1,377 @@
 <template>
-      <div class="">
-        <!-- Filter Row -->
-        <div class="flex items-center space-x-4 mb-6">
-          <!-- Dropdown Filter -->
-          <div>
-            <select
-              class="px-4 py-3 bg-[#F9FAFB] border-[0.5px] text-sm border-gray-300 rounded-lg"
-            >
-              <option>All Tenants</option>
-              <option>Tenant 1</option>
-              <option>Tenant 2</option>
-              <!-- Add more options as needed -->
-            </select>
-          </div>
-
-          <!-- Search Input -->
-          <div class="relative flex-1">
-            <input
-              type="text"
-              placeholder="Search"
-              class="w-full px-4 py-3 text-sm bg-[#F9FAFB] border-[0.5px] rounded-lg pl-10 text-gray-700 placeholder-gray-500"
-            />
+  <main class="">
+    <div class="flex flex-wrap gap-3  justify-between items-center mb-4">
+      <!-- Left: Filter and Search -->
+      <div class="flex space-x-2">
+        <!-- Filter Button -->
+        <button @click="tenantFilterModal = true" class="flex items-center text-sm space-x-1 bg-[#F0F2F5] border-[#F0F2F5] border-2 text-gray-700 px-6 py-2 rounded transition-all">
+          <img :src="dynamicIcons('gray-filter')" />
+          <span>Filter</span>
+        </button>
+  
+        <!-- Search Bar -->
+        <div class="relative">
+          <input  v-model="filters.searchQuery" type="text" placeholder="Search properties by name..." class="bg-[#F0F2F5] pl-10 border-[#F0F2F5] border text-sm text-gray-700 px-4 py-3 rounded w-full sm:w-[500px] focus:outline-none focus:bg-white transition-all"/>
+          <span class="absolute inset-y-0 left-3 flex items-center pr-2">
             <img
-              class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500"
-              :src="dynamicIcons('gray-search')"
-            />
-          </div>
-
-          <!-- Date Pickers -->
-          <div class="flex space-x-4">
-            <input
-              type="date"
-              class="px-4 py-3 bg-[#F9FAFB] border-[0.5px] text-sm rounded-lg"
-            />
-            <input
-              type="date"
-              class="px-4 py-3 bg-[#F9FAFB] border-[0.5px] text-sm rounded-lg"
-            />
-          </div>
-
-          <!-- Configure Table Button -->
-          <button
-            class="flex items-center px-4 text-sm py-3 border-[0.5px] gap-x-2 bg-[#F9FAFB] rounded-lg text-gray-700"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M17.7633 5.95083L17.3519 5.237C17.0409 4.69714 16.8854 4.42722 16.6207 4.31958C16.356 4.21194 16.0567 4.29688 15.4581 4.46674L14.4413 4.75316C14.0591 4.84129 13.6581 4.79129 13.3092 4.612L13.0284 4.45003C12.7292 4.25837 12.499 3.97578 12.3716 3.64363L12.0934 2.81248C11.9104 2.26246 11.8189 1.98745 11.601 1.83015C11.3833 1.67285 11.0939 1.67285 10.5153 1.67285H9.58628C9.0077 1.67285 8.71836 1.67285 8.50053 1.83015C8.28274 1.98745 8.19125 2.26246 8.00827 2.81248L7.72997 3.64363C7.60257 3.97578 7.37241 4.25837 7.07317 4.45003L6.79244 4.612C6.44348 4.79129 6.04252 4.84129 5.66035 4.75316L4.64349 4.46674C4.04487 4.29688 3.74557 4.21194 3.48092 4.31958C3.21627 4.42722 3.06074 4.69714 2.74966 5.237L2.33834 5.95083C2.04675 6.45688 1.90095 6.7099 1.92925 6.97925C1.95754 7.2486 2.15272 7.46566 2.54308 7.89978L3.40228 8.86034C3.61228 9.12618 3.76137 9.58951 3.76137 10.0061C3.76137 10.4228 3.61233 10.886 3.40231 11.1519L2.54308 12.1125C2.15272 12.5467 1.95755 12.7637 1.92925 13.0331C1.90095 13.3024 2.04675 13.5554 2.33834 14.0614L2.74965 14.7753C3.06072 15.3151 3.21627 15.5851 3.48092 15.6927C3.74557 15.8003 4.04488 15.7154 4.64351 15.5455L5.66031 15.2591C6.04256 15.1709 6.44359 15.221 6.79259 15.4003L7.07328 15.5623C7.37245 15.754 7.60256 16.0365 7.72995 16.3687L8.00827 17.1999C8.19125 17.7499 8.28274 18.0249 8.50053 18.1823C8.71836 18.3395 9.0077 18.3395 9.58628 18.3395H10.5153C11.0939 18.3395 11.3833 18.3395 11.601 18.1823C11.8189 18.0249 11.9104 17.7499 12.0934 17.1999L12.3717 16.3687C12.499 16.0365 12.7291 15.754 13.0284 15.5623L13.309 15.4003C13.658 15.221 14.059 15.1709 14.4413 15.2591L15.4581 15.5455C16.0567 15.7154 16.356 15.8003 16.6207 15.6927C16.8854 15.5851 17.0409 15.3151 17.3519 14.7753L17.7633 14.0614C18.0549 13.5554 18.2006 13.3024 18.1724 13.0331C18.144 12.7637 17.9489 12.5467 17.5585 12.1125L16.6993 11.1519C16.4893 10.886 16.3402 10.4228 16.3402 10.0061C16.3402 9.58951 16.4894 9.12618 16.6993 8.86034L17.5585 7.89978C17.9489 7.46566 18.144 7.2486 18.1724 6.97925C18.2006 6.7099 18.0549 6.45688 17.7633 5.95083Z"
-                stroke="#292929"
-                stroke-width="1.5"
-                stroke-linecap="round"
-              />
-              <path
-                d="M12.931 9.99967C12.931 11.6105 11.6251 12.9163 10.0143 12.9163C8.40346 12.9163 7.09766 11.6105 7.09766 9.99967C7.09766 8.38884 8.40346 7.08301 10.0143 7.08301C11.6251 7.08301 12.931 8.38884 12.931 9.99967Z"
-                stroke="#292929"
-                stroke-width="1.5"
-              />
-            </svg>
-
-            Configure table
-          </button>
-
-          <!-- Export Button -->
-          <button
-            class="flex items-center px-4 text-sm py-3 border-[0.5px] gap-x-2 bg-[#F9FAFB] rounded-lg text-gray-700"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M10.0013 12.0833V3.75M10.0013 12.0833C9.4178 12.0833 8.32758 10.4214 7.91797 10M10.0013 12.0833C10.5848 12.0833 11.6751 10.4214 12.0846 10"
-                stroke="#292929"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M16.6654 13.75C16.6654 15.8183 16.2337 16.25 14.1654 16.25H5.83203C3.7637 16.25 3.33203 15.8183 3.33203 13.75"
-                stroke="#292929"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-
-            Export
-          </button>
+            class=""
+            :src="dynamicIcons('gray-search')"
+          />
+          </span>
         </div>
-
-        <div class="bg-white rounded-lg">
-          <!-- Table -->
-          <div class="overflow-x-auto">
-            <table class="min-w-full bg-white">
-              <thead class="border-b border-gray-50">
-                <tr>
-                  <th
-                    class="py-4 px-5 text-left text-sm font-medium text-[#1D2739] tracking-wider"
-                  >
-                    Tenant name
-                  </th>
-                  <th
-                    class="py-4 px-5 text-left text-sm font-medium text-[#1D2739] tracking-wider"
-                  >
-                    Current home
-                  </th>
-                  <th
-                    class="py-4 px-5 text-left text-sm font-medium text-[#1D2739] tracking-wider"
-                  >
-                    Room number
-                  </th>
-                  <th
-                    class="py-4 px-5 text-left text-sm font-medium text-[#1D2739] tracking-wider"
-                  >
-                    Frequency
-                  </th>
-                  <th
-                    class="py-4 px-5 text-left text-sm font-medium text-[#1D2739] tracking-wider"
-                  >
-                    Payment count
-                  </th>
-                  <th
-                    class="py-4 px-5 text-left text-sm font-medium text-[#1D2739] tracking-wider"
-                  >
-                    Current rent status
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-50">
-                <tr
-                  class="cursor-pointer"
-                  v-for="(tenant, index) in tenants"
-                  :key="index"
+      </div>
+  
+      <!-- Right: Configure Table, Export, and New Property -->
+      <div class="flex space-x-2">
+        <!-- Configure Table Button -->
+        <button @click="showModal = true" class="flex items-center space-x-1 text-sm px-2  bg-[#F0F2F5] border-[#F0F2F5] border text-gray-700 py-2 rounded hover:bg-gray-200 transition-all">
+          <img :src="dynamicIcons('gray-settings')" />
+          <span>Configure table</span>
+        </button>
+  
+        <!-- Export Button -->
+        <button  @click="toggleDownloadDropdown" class="flex items-center space-x-1 text-sm px-2 bg-[#F0F2F5] border-[#F0F2F5] border text-gray-700 py-2 rounded hover:bg-gray-200 transition-all">
+          <img :src="dynamicIcons('gray-download')" />
+          <span>Export</span>
+        </button>
+        <div
+        v-if="downloadDropdown"
+        class="absolute right-0 sm:right-4 z-50 mt-2 bg-white border border-gray-200 w-44 rounded-lg shadow-lg"
+      >
+        <ul class="py-1 text-sm text-gray-700 divide-gray-100 divide-y-[0.5px]">
+          <li>
+            <a
+              @click="downloadData('pdf')"
+              href="#"
+              class="block flex items-center gap-x-2 px-4 py-3 hover:bg-gray-100 text-start"
+            >
+              <img :src="dynamicIcons('gray-pdf')" />
+              PDF
+            </a>
+          </li>
+          <li>
+            <a
+              @click="downloadData('excel')"
+              href="#"
+              class="block flex items-center gap-x-2 px-4 py-3 hover:bg-gray-100 text-start"
+            >
+              <img :src="dynamicIcons('gray-excel')" />
+              Excel/Spreadsheet
+            </a>
+          </li>
+          <li>
+            <a
+              @click="downloadData('csv')"
+              href="#"
+              class="block flex items-center gap-x-2 px-4 py-3 hover:bg-gray-100 text-start"
+            >
+              <img :src="dynamicIcons('gray-csv')" />
+              CSV
+            </a>
+          </li>
+        </ul>
+      </div>
+      </div>
+    </div>
+    <!-- v-if="tenantsList && !loadingTenants" -->
+    <div>
+      <div
+        class="bg-white rounded-lg overflow-hidden"
+      >
+        <div class="custom-scrollbar-container w-full">
+          <table class="min-w-full bg-white w-full">
+            <thead class="border-b-[0.5px] border-gray-50 z-30 bg-gray-25 sticky top-0">
+              <tr>
+                <th
+                  v-for="column in visibleColumns"
+                  :key="column.key"
+                  class="py-5 px-5 text-left text-sm font-medium text-gray-500 tracking-wider"
                 >
-                  <td
-                                      @click="router.push(`/dashboard/tenant-mgt/${index}`)"
-                    class="py-6 px-5 whitespace-nowrap text-sm text-[#667185] cursor-pointer"
-                  >
-                    {{ tenant.name }}
-                  </td>
-                  <td
-                                      @click="router.push(`/dashboard/tenant-mgt/${index}`)"
-                    class="py-6 px-5 whitespace-nowrap text-sm text-[#667185] cursor-pointer"
-                  >
-                    {{ tenant.currentHome }}
-                  </td>
-                  <td
-                                      @click="router.push(`/dashboard/tenant-mgt/${index}`)"
-                    class="py-6 px-5 whitespace-nowrap text-sm text-[#667185] cursor-pointer"
-                  >
-                    {{ tenant.roomNumber }}
-                  </td>
-                  <td
-                                      @click="router.push(`/dashboard/tenant-mgt/${index}`)"
-                    class="py-6 px-5 whitespace-nowrap text-sm text-[#667185] cursor-pointer"
-                  >
-                    {{ tenant.frequency }}
-                  </td>
-                  <td
-                                      @click="router.push(`/dashboard/tenant-mgt/${index}`)"
-                    class="py-6 px-5 whitespace-nowrap text-sm text-[#667185] cursor-pointer"
-                  >
-                    {{ tenant.paymentCount }}
-                  </td>
-                  <td class="py-6 px-5 whitespace-nowrap text-sm">
-                    <span
-                      :class="{
-                        'bg-green-100 text-green-800':
-                          tenant.rentStatus === 'Paid',
-                        'bg-red-100 text-red-800':
-                          tenant.rentStatus === 'Not Paid',
-                      }"
-                      class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
-                    >
-                      {{ tenant.rentStatus }}
+                  {{ column.label }}
+                </th>
+                <th class="py-5 px-5 text-right text-sm font-medium text-gray-500 tracking-wider">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody  v-if="!loadingTenants" class="divide-y divide-gray-50 z-10">
+              <tr
+                class="cursor-pointer"
+                v-for="(tenant, index) in tenantsList"
+                :key="tenant.id"
+              >
+                <!-- <td
+                  @click.prevent="handleDropdownClick('view', property)"
+                  v-for="column in visibleColumns"
+                  :key="column.key"
+                  class="py-5 px-5 whitespace-nowrap text-sm text-[#667185] font-semibold relative"
+                >
+                <p v-if="column.key === 'address'">{{property.address.slice(0, 10)}}</p>
+                  <p v-if="column.key !== 'isPublished'">{{ getTenantValue(property, column.key) }}</p>
+                  <p class="absolute left-0 top-0" v-if="column.key === 'name'">
+                    <span class="bg-[#F7D394] text-[#1D2739] text-sm px-2 py-1" v-if="!property.isPublished">
+                      Draft
                     </span>
-                  </td>
-                  <td
-                    class="py-4 px-5 relative whitespace-nowrap text-sm text-[#667185]"
+                  </p>
+                  <p v-if="column.key === 'isPublished'">{{ property.isPublished ? 'Published' : 'Draft' }}</p>
+                </td> -->
+                <td
+  @click.prevent="handleDropdownClick('view', tenant)"
+  v-for="column in visibleColumns"
+  :key="column.key"
+  class="py-5 px-5 whitespace-nowrap text-sm text-[#667185] font-semibold relative"
+>
+  <p v-if="column.key === 'address'">
+    <span v-if="tenant">{{ `${tenant?.address?.slice(0, 30)}...` }}</span>
+  </p>
+  <p v-else-if="column.key === 'firstName'">
+    {{ tenant.firstName }} {{ tenant.lastName }}
+  </p>
+  <p class="inline px-3 py-2 rounded-full text-sm" :class="[tenant.status === 'not paid' ? 'text-[#BA110B] bg-[#FBEAE9]' : 'bg-[#E7F6EC] text-[#099137]']" v-else-if="column.key === 'status'">{{ tenant.status === 'not paid' ? 'Not Paid' : 'Paid' }}</p>
+  <p v-else>{{ getTenantValue(tenant, column.key) }}</p>
+</td>
+                <td class="py-5 px-5 relative whitespace-nowrap text-sm text-right">
+                  <button
+                    @click="toggleDropdown(index)"
+                    class="inline-flex items-center text-sm font-medium text-[#667185] hover:text-black"
                   >
-                    <button
-                      @click="toggleDropdown(index)"
-                      class="inline-flex items-center text-sm font-medium text-[#667185] hover:text-black"
+                    <svg
+                      width="48"
+                      height="44"
+                      viewBox="0 0 48 44"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M9.99609 10H10.0036"
-                          stroke="#292929"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M15 10H15.0075"
-                          stroke="#1D2739"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M5 10H5.00748"
-                          stroke="#1D2739"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </button>
-                    <div
-                      v-if="activeDropdown === index"
-                      class="absolute -top-2 right-10 z-50 mt-2 w-60 bg-white border border-gray-200 rounded-md shadow-lg"
-                    >
-                      <ul
-                        class="py-1 text-sm text-gray-700 divide divide-y-[0.5px]"
-                      >
-                        <li>
-                          <a
-                            @click.prevent="
-                              handleDropdownClick('view', tenant)
-                            "
-                            href="#"
-                            class="block flex items-center gap-x-2 px-4 py-3 hover:bg-gray-100 text-start"
-                          >
-                            <img :src="dynamicIcons('view-property')" />
-                            View Tenant
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            @click.prevent="
-                              handleDropdownClick('message', tenant)
-                            "
-                            href="#"
-                            class="block flex items-center gap-x-2 px-4 py-3 text-sm hover:bg-gray-100 text-start"
-                          >
-                            <img :src="dynamicIcons('edit-property')" />
-                            Message Tenant
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div
+                      <path
+                        d="M21.9966 22H22.0041"
+                        stroke="#292929"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M27 22H27.0075"
+                        stroke="#1D2739"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M17 22H17.0075"
+                        stroke="#1D2739"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </button>
+                   <div
+                    v-if="activeDropdown === index"
+                    class="absolute -top-2 right-10 z-50 mt-2 w-60 bg-white border border-gray-200 rounded-md shadow-lg"
+                  >
+                    <ul class="py-1 text-sm text-gray-700 divide divide-y-[0.5px]">
+                      <li>
+                        <a
+                          @click.prevent="handleDropdownClick('view', tenant)"
+                          href="#"
+                          class="block flex items-center gap-x-2 px-4 py-3 hover:bg-gray-100 text-start"
+                        >
+                          <img :src="dynamicIcons('view-property')" />
+                          View Tenant
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          @click.prevent="handleDropdownClick('send-message', tenant)"
+                          href="#"
+                          class="block flex items-center gap-x-2 px-4 py-3 text-sm hover:bg-gray-100 text-start"
+                        >
+                          <img :src="dynamicIcons('send-message')" />
+                          Send Message
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <section id="loader" class="w-full" v-if="loadingTenants">
+            <div class="rounded-md p-4 w-full">
+              <div class="animate-pulse flex space-x-4 w-full">
+                <div class="h-44 w-full bg-slate-200 rounded"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div
           v-if="activeDropdown !== null"
           @click="closeDropdown"
           class="fixed inset-0 z-40 bg-black opacity-25"
         ></div>
-
-          <!-- Pagination Controls -->
-          <section class="border-t border-gray-50">
-            <nav class="flex justify-between items-center mt- px-4 py-6">
-              <div class="-mt-px flex w-0 flex-1">
-                <button
-                  class="px-6 text-sm py-2 bg-[#F9FAFB] text-[#545454] border-[0.5px] rounded-md"
-                  disabled
-                >
-                  Previous
-                </button>
-              </div>
-              <div class="hidden md:-mt-px md:flex">
-                <a
-                  href="#"
-                  class="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                  >1</a
-                >
-                <a
-                  href="#"
-                  class="inline-flex items-center px-4 pt-4 text-sm font-medium text-[#1D2739]"
-                  aria-current="page"
-                  >2</a
-                >
-                <a
-                  href="#"
-                  class="inline-flex items-center border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                  >3</a
-                >
-                <span
-                  class="inline-flex items-center border-transparent px-4 pt-4 text-sm font-medium text-gray-500"
-                  >...</span
-                >
-                <a
-                  href="#"
-                  class="inline-flex items-center border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                  >8</a
-                >
-                <a
-                  href="#"
-                  class="inline-flex items-center border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                  >9</a
-                >
-                <a
-                  href="#"
-                  class="inline-flex items-center border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                  >10</a
-                >
-              </div>
-              <div class="-mt-px flex w-0 flex-1 justify-end">
-                <button
-                  class="px-6 text-sm py-2 bg-[#292929] text-white rounded-md"
-                >
-                  Next
-                </button>
-              </div>
-            </nav>
-          </section>
+        <CorePagination
+          v-if="!loadingTenants && tenantsList.length > 0"
+          :total="metadata.total"
+          :page="metadata.page"
+          :perPage="metadata.perPage"
+          :pages="metadata.pages"
+          @page-changed="handlePageChange"
+        />
+      </div>
+      <!-- <div
+        v-if="loadingTenants && tenantsList.length === 0"
+        class="h-32 bg-slate-200 rounded animate-pulse w-full m-3"
+      ></div> -->
+      <div
+        v-if="!loadingTenants && tenantsList.length === 0"
+        class="flex justify-center items-center flex-col my-20"
+      >
+        <div class="flex justify-center flex-col items-center gap-y-4 items-center">
+          <img src="@/assets/icons/activities-empty-state.svg" />
+          <p class="font-medium text-gray-400">No tenant found for search key <span class="text-gray-800">"{{filters.searchQuery}}"</span></p>
         </div>
       </div>
+    </div>
+
+    <!-- <section v-if="loadingTenants">
+      <div class="rounded-md p-4 w-full mx-auto mt-10">
+        <div class="animate-pulse flex space-x-4">
+          <div class="h-44 w-full bg-slate-200 rounded"></div>
+        </div>
+      </div>
+     </section> -->
+    
+
+    <TenantConfigTableModal
+      v-if="tenantConfigModal"
+      @close="tenantConfigModal = false"
+    />
+    <TenantFilterModal
+      v-if="tenantFilterModal"
+      @close="tenantFilterModal = false"
+      @applyFilters="handleApplyFilters"
+    />
+
+    <CoreModal :showCloseBtn="true" title="Configure Table" :isOpen="showModal" @close="showModal = false">
+      <div>
+        <div
+          v-for="(column, index) in columns"
+          :key="index"
+          class="flex items-center mb-2"
+        >
+          <span class="flex-1 text-sm text-[#1D2739]">{{ column.label }}</span>
+          <!-- <label :for="column.label" class="inline-flex items-center space-x-4 cursor-pointer dark:text-gray-100">
+            <span class="relative">
+              <input :id="column.label" type="checkbox" v-model="column.visible" class="hidden peer toggle">
+              <div class="w-10 h-6 rounded-full shadow-inner dark:bg-[#F0F2F5] peer-checked:dark:bg-[#099137]"></div>
+              <div class="absolute inset-y-0 left-0 w-4 h-4 m-1 rounded-full shadow peer-checked:right-0 peer-checked:left-auto dark:bg-[#FFFFFF]"></div>
+            </span>
+          </label> -->
+          <label :for="column.label" class="inline-flex items-center space-x-4 cursor-pointer dark:text-gray-100">
+            <span class="relative">
+              <input :id="column.label" type="checkbox" v-model="column.visible" class="hidden peer toggle">
+              <div class="w-10 h-6 rounded-full shadow-inner bg-gray-300 dark:bg-[#F0F2F5] peer-checked:bg-green-500 peer-checked:dark:bg-[#099137]">
+              </div>
+              <div class="absolute inset-y-0 left-0 w-4 h-4 m-1 rounded-full shadow bg-white peer-checked:right-0 peer-checked:left-auto dark:bg-[#FFFFFF]"></div>
+            </span>
+          </label>
+        </div>
+        <div class="flex justify-between mt-10 gap-x-6">
+          <button
+            @click="resetColumns"
+            class="bg-[#EBE5E0] w-full font-medium text-[#292929] text-sm px-4 py-2.5 rounded-lg"
+          >
+            Reset
+          </button>
+          <button
+            @click="saveColumns"
+            class="bg-[#292929] text-sm font-medium w-full text-white px-4 py-2.5 rounded-lg"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </CoreModal>
+  </main>
 </template>
 
 <script lang="ts" setup>
-import { useUserInitials } from "@/composables/core/useUserInitials";
-import { useUser } from "@/composables/auth/user";
-import Layout from "@/layouts/dashboard.vue";
-const { user } = useUser();
-const router = useRouter();
-const route = useRoute();
+import { usePaginatedFetchAndDownload } from '@/composables/core/exportData';
+import { useGetTenants } from '@/composables/modules/tenants/fetch'
 import { dynamicIcons } from "@/utils/assets";
+import { exportData } from "@/composables/core/exportData";
+import {  downloadableColumns } from '@/composables/core/exportData'
+import { useRouter, useRoute } from "vue-router";
+const { exportPaginatedData, isDownloading }  = usePaginatedFetchAndDownload()
 
-const activeDropdown = ref<number | null>(null);
+import { useClearLocalStorage } from '@/composables/core/useClearLocalStorage';
+const { clearLocalStorage } = useClearLocalStorage();
+// Define the method to handle the download
+const downloadData = (exportType: any) => {
+  // Call the export function with the desired format (csv, pdf, or excel)
+  exportPaginatedData('/houses', exportType, 'house_data_export', ['firstName', 'rentalApplication.house.name', 'rentalApplication.room.name', 'rentalApplication.room.rentFrequency', 'house.paymentCount', 'status']);
+}
+const route = useRoute();
+const router = useRouter();
+const testConfigModal = ref(true);
 
-const closeDropdown = () => {
-  activeDropdown.value = null;
+const deleteModal = ref(false);
+const onCancel = () => {
+  deleteModal.value = false;
+};
+
+const onConfirm = () => {
+  deleteModal.value = false;
+};
+
+const {
+        getTenants,
+        loadingTenants,
+        tenantsList,
+        searchQuery,
+        metadata,
+        filters,
+        setPaginationObj,
+        applyFilters, 
+} = useGetTenants();
+
+const handlePageChange = (val: any) => {
+  metadata.value.page = val || 1;
+  getTenants(); // Explicitly call the method to fetch new data
 };
 
 const downloadDropdown = ref(false);
 
-// Function to handle dropdown option click
-const handleDropdownClick = (action: any, item: any) => {
-  if (action === "view") {
-    return router.push(`/dashboard/tenant-mgt/${item.id}`);
-  }
-
-  if (action === "message") {
-    return router.push(`/dashboard/tenant-mgt/${item.id}`);
-  }
-  closeDropdown();
-  emit(action, item);
+const toggleDownloadDropdown = () => {
+  downloadDropdown.value = !downloadDropdown.value;
 };
 
+const activeTab = ref("property") as any; // Default to step 1
+
+// Set the active tab based on the query parameter
+onMounted(() => {
+  if (route.query.activeTab) {
+    activeTab.value = route.query.activeTab;
+  }
+});
+
+const tenantConfigModal = ref(false);
+const tenantFilterModal = ref(false);
+
+const isModalOpen = ref(false);
+
+const openModal = () => {
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
+
+// State to manage which dropdown is active
+const activeDropdown = ref<number | null>(null);
+
+// Function to toggle the dropdown visibility
 const toggleDropdown = (index: number) => {
   if (activeDropdown.value === index) {
     activeDropdown.value = null;
@@ -365,74 +380,147 @@ const toggleDropdown = (index: number) => {
   }
 };
 
+// Function to close the dropdown
+const closeDropdown = () => {
+  activeDropdown.value = null;
+};
 
+const emit = defineEmits(["delete", "deactivate", "duplicate"]);
 
-const tenants = ref([
-  {
-    name: "Jackie Goodwin",
-    currentHome: "Ortiz - Kunde",
-    roomNumber: 5,
-    frequency: "Yearly",
-    paymentCount: "1/2",
-    rentStatus: "Paid",
-  },
-  {
-    name: "Henry Veum",
-    currentHome: "Hodkiewicz - Cummings",
-    roomNumber: 5,
-    frequency: "Monthly",
-    paymentCount: "1/2",
-    rentStatus: "Not Paid",
-  },
-  {
-    name: "Shari Lang",
-    currentHome: "Gislason - Crona",
-    roomNumber: 5,
-    frequency: "Monthly",
-    paymentCount: "1/2",
-    rentStatus: "Paid",
-  },
-  {
-    name: "Kristina Schinner",
-    currentHome: "Cassin - Simonis",
-    roomNumber: 5,
-    frequency: "Yearly",
-    paymentCount: "1/2",
-    rentStatus: "Not Paid",
-  },
-  {
-    name: "Alex Brown",
-    currentHome: "Parisian - Haley",
-    roomNumber: 5,
-    frequency: "Monthly",
-    paymentCount: "1/2",
-    rentStatus: "Paid",
-  },
-  {
-    name: "Pat Haley",
-    currentHome: "Torp, O'Kon and Gislason",
-    roomNumber: 5,
-    frequency: "Yearly",
-    paymentCount: "1/2",
-    rentStatus: "Not Paid",
-  },
-  {
-    name: "Kristopher Beatty",
-    currentHome: "Lubowitz, Berge and Cartwright",
-    roomNumber: 5,
-    frequency: "Yearly",
-    paymentCount: "1/2",
-    rentStatus: "Paid",
-  },
-  {
-    name: "Franklin Jakubowski",
-    currentHome: "Fritsch LLC",
-    roomNumber: 5,
-    frequency: "Monthly",
-    paymentCount: "1/2",
-    rentStatus: "Paid",
-  },
+// Function to handle dropdown option click
+const handleDropdownClick = (action: any, item: any) => {
+  if (action === "view") {
+    return router.push(`/dashboard/tenant-mgt/${item.id}`);
+  }
+
+  if (action === "send-message") {
+    // return router.push(`/dashboard/messages?userId=${item.id}`);
+    router.push({ path: '/dashboard/messages', query: { userId: item.id }})
+  }
+  closeDropdown();
+  emit(action, item);
+};
+
+const handleExport = (type: string) => {
+  if (type === "csv") {
+    exportData(tenantsList.value, "csv", "tenant-listings");
+  }
+
+  if (type === "pdf") {
+    exportData(tenantsList.value, "pdf", "tenant-listings");
+  }
+
+  if (type === "excel") {
+    exportData(tenantsList.value, "excel", "tenant-listings");
+  }
+  downloadDropdown.value = false;
+};
+
+const openFilterModal = () => {
+  tenantFilterModal.value = true;
+};
+
+const handleApplyFilters = (filters: any) => {
+  applyFilters(filters);
+};
+
+const showModal = ref(false);
+
+// Columns data
+const columns = ref([
+  { label: "Tenant Name", key: "firstName", visible: true },
+  { label: "Current Home", key: "rentalApplication.house.name", visible: true },
+  { label: "Room Number", key: "rentalApplication.room.name", visible: true },
+  { label: "Frequency", key: "rentalApplication.room.rentFrequency", visible: true },
+  { label: "Payment Count", key: "house.paymentCount", visible: false },
+  { label: "Current Rental Status", key: "status", visible: true }
 ]);
 
-const currentPage = 1;
+// Computed property to get only visible columns
+const visibleColumns = computed(() => {
+  return columns.value.filter((column) => column.visible);
+});
+
+downloadableColumns.value = columns.value
+
+// Function to extract nested properties
+const getTenantValue = (tenant: any, key: string) => {
+  return key.split(".").reduce((obj, k) => obj && obj[k], tenant) || "N/A";
+};
+
+// Function to reset columns visibility
+const resetColumns = () => {
+  columns.value.forEach((column) => {
+    column.visible = true; // Reset all to visible
+  });
+  showModal.value = false;
+};
+
+// Function to save the changes and close modal
+const saveColumns = () => {
+  showModal.value = false;
+};
 </script>
+
+<style scoped>
+/* Custom styles */
+.toggle {
+  --tw-translate-x: -100%;
+  appearance: none;
+  background-color: #ccc;
+  width: 3rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.toggle::before {
+  content: '';
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: white;
+  border-radius: 9999px;
+  transition: transform 0.3s ease;
+}
+
+.toggle:checked {
+  background-color: #48bb78;
+}
+
+.toggle:checked::before {
+  transform: translateX(1.5rem);
+}
+
+.custom-scrollbar-container {
+  max-height: 700px;
+  overflow-y: auto;
+  overflow-x: auto;
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #5B8469 #F1F1F1; /* For Firefox */
+}
+
+.custom-scrollbar-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar-container::-webkit-scrollbar-thumb {
+  background-color: #5B8469;
+  border-radius: 10px;
+}
+
+.custom-scrollbar-container::-webkit-scrollbar-track {
+  background-color: #F1F1F1;
+}
+
+.custom-scrollbar-container:hover::-webkit-scrollbar-thumb {
+  background-color: #5B8469; /* Change on hover for better visibility */
+}
+
+</style>

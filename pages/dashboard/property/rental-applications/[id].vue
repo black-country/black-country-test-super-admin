@@ -166,4 +166,4 @@ definePageMeta({
 
 <style scoped>
 /* Additional custom styles if needed */
-</style>~/composables/modules/rentals/updateRentalStatus
+</style>

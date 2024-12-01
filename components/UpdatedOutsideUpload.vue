@@ -76,9 +76,11 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { useBatchUploadFile } from '@/composables/core/batchUpload'; // batch upload composable
+import { useCustomToast } from '@/composables/core/useCustomToast'
+const { showToast } = useCustomToast();
 import { debounce } from 'lodash-es'; // Use lodash debounce for optimization
 
 // Using batchUpload composable
@@ -154,7 +156,12 @@ const handleFileUpload = async (event: Event) => {
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     if (file.size > MAX_FILE_SIZE) {
-      alert(`File ${file.name} exceeds 2MB limit. Please choose a smaller file.`);
+      showToast({
+            title: "Error",
+            message: `File ${file.name} exceeds 2MB limit. Please choose a smaller file.`,
+            toastType: "error",
+            duration: 3000
+          });
       continue; // Skip files that exceed the size limit
     }
     formData.append('images', file); // Add each image to FormData
@@ -193,7 +200,12 @@ const handleDrop = async (event: DragEvent) => {
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     if (file.size > MAX_FILE_SIZE) {
-      alert(`File ${file.name} exceeds 2MB limit. Please choose a smaller file.`);
+      showToast({
+            title: "Error",
+            message: `File ${file.name} exceeds 2MB limit. Please choose a smaller file.`,
+            toastType: "error",
+            duration: 3000
+          });
       continue; // Skip files that exceed the size limit
     }
     formData.append('images', file);
@@ -240,144 +252,225 @@ const prevImage = () => {
 onMounted(() => {
   loadFromLocalStorage();
 });
-</script>  
-  
-  <!-- <script setup lang="ts">
-  import { ref, onMounted, watch } from 'vue';
-  import { useBatchUploadFile } from '@/composables/core/batchUpload'; // batch upload composable
-  import { debounce } from 'lodash-es'; // Use lodash debounce for optimization
-  
-  const { uploadFiles, uploadResponse, loading } = useBatchUploadFile(); // Using batchUpload composable
-  
-  // State variables
-  const images = ref<string[]>([]);
-  const currentImage = ref(0);
-  const isLoading = ref(false);
+</script>   -->
+   
+<script setup lang="ts">
+import { ref, onMounted, watch } from 'vue';
+import { useBatchUploadFile } from '@/composables/core/batchUpload'; // batch upload composable
+import { useCustomToast } from '@/composables/core/useCustomToast'
+const { showToast } = useCustomToast();
+import { debounce } from 'lodash-es'; // Use lodash debounce for optimization
 
-  const props = defineProps({
-    payload: {
-      type: Object
-    }
-  });
-  
-  // File size limit (2MB)
-  const MAX_FILE_SIZE = 2 * 1024 * 1024;
-  
-  // Load images from localStorage when the component is mounted
-  const loadFromLocalStorage = () => {
-    const storedImages = localStorage.getItem('property_images');
-    if (storedImages) {
+// Using batchUpload composable
+const { uploadFiles, uploadResponse, loading } = useBatchUploadFile();
+
+// Props to receive payload from parent
+const props = defineProps({
+  payload: {
+    type: Object,
+    required: true
+  }
+});
+
+// State variables
+const images = ref<string[]>(props.payload.images.value ?? []); // Load initial images from payload
+const currentImage = ref(0);
+const isLoading = ref(false);
+
+// File size limit (2MB)
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
+
+// **Optimized LocalStorage Loading and Saving**
+// Load images from localStorage when the component is mounted
+const loadFromLocalStorage = () => {
+  const storedImages = localStorage.getItem('property_images');
+  if (storedImages) {
+    try {
       images.value = JSON.parse(storedImages);
+    } catch (error) {
+      console.warn('Failed to parse images from localStorage', error);
     }
-  };
-  
-  // Debounce localStorage writes to optimize performance
-  const persistToLocalStorage = debounce(() => {
-    // Use requestIdleCallback to avoid blocking main thread during interactions
+  }
+};
+
+// **Debounce localStorage writes** to avoid frequent writes
+const persistToLocalStorage = debounce(() => {
+  // Offload the work to the browser's idle time
+  if ('requestIdleCallback' in window) {
     window.requestIdleCallback(() => {
       localStorage.setItem('property_images', JSON.stringify(images.value));
     });
-  }, 500);
-  
-  // Watch for changes to images and persist them to localStorage
-  watch(images, persistToLocalStorage, { deep: true });
-  
-  // Handle file upload for multiple images asynchronously
-  const handleFileUpload = async (event: Event) => {
-    const files = (event.target as HTMLInputElement).files;
-    if (!files) return;
-  
-    const formData = new FormData();
-  
-    // Check each file size and append valid files to the FormData object
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (file.size > MAX_FILE_SIZE) {
-        alert(`File ${file.name} exceeds 2MB limit. Please choose a smaller file.`);
-        continue; // Skip files that exceed the size limit
-      }
-      formData.append('images', file); // Add each image to FormData
+  } else {
+    setTimeout(() => {                                 
+      localStorage.setItem('property_images', JSON.stringify(images.value));
+    }, 500);
+  }
+}, 500);
+
+// **Watchers**
+// Watch for changes to the images array and sync with localStorage
+watch(images, persistToLocalStorage, { deep: true });
+
+// Sync with parent payload
+watch(
+  () => props.payload.images.value,
+  (newVal) => {
+    if (newVal && newVal.length !== images.value.length) {
+      images.value = [...newVal]; // Sync payload changes to local images
     }
-  
-    // Only proceed if there are valid files
-    if (formData.has('images')) {
-      isLoading.value = true;
-      try {
-        // Use the batch upload composable to upload the files
-        await uploadFiles(formData);
-  
-        // Extract secure URLs from the response and add them to the images array
-        uploadResponse.value.forEach((response: { secure_url: string }) => {
-          images.value.push(response.secure_url);
-        });
-      } catch (error) {
-        console.error("Failed to upload images", error);
-      } finally {
-        isLoading.value = false;
-      }
+  },
+  { deep: true }
+);
+
+// **File Upload Handling**
+// Optimized file handling for multiple uploads
+const handleFileUpload = async (event: Event) => {
+  const files = (event.target as HTMLInputElement).files;
+  if (!files) return;
+
+  const formData = new FormData();
+
+  // Validate file size before appending
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    if (file.size > MAX_FILE_SIZE) {
+      showToast({
+            title: "Error",
+            message: `File ${file.name} exceeds 2MB limit. Please choose a smaller file.`,
+            toastType: "error",
+            duration: 3000
+          });
+      continue; // Skip files that exceed the size limit
     }
-  };
-  
-  // Handle drag and drop uploads asynchronously
-  const handleDrop = async (event: DragEvent) => {
-    const files = event.dataTransfer?.files;
-    if (!files) return;
-  
-    const formData = new FormData();
-  
-    // Check each file size and append valid files to the FormData object
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (file.size > MAX_FILE_SIZE) {
-        alert(`File ${file.name} exceeds 2MB limit. Please choose a smaller file.`);
-        continue; // Skip files that exceed the size limit
-      }
-      formData.append('images', file); // Add each image to FormData
+    formData.append('images', file); // Add each image to FormData
+  }
+
+  // Proceed only if there are valid files
+  if (formData.has('images')) {
+    isLoading.value = true;
+    try {
+      // Use batchUpload composable to upload files
+      await uploadFiles(formData);
+
+      // Add the uploaded images' secure URLs to the `images` array
+      uploadResponse.value.forEach((response: { secure_url: string }) => {
+        images.value.push(response.secure_url);
+        props.payload.images.value.push(response.secure_url)
+      });
+    } catch (error) {
+      console.error("Image upload failed", error);
+    } finally {
+      isLoading.value = false;
     }
-  
-    // Only proceed if there are valid files
-    if (formData.has('images')) {
-      isLoading.value = true;
-      try {
-        // Use the batch upload composable to upload the files
-        await uploadFiles(formData);
-  
-        // Extract secure URLs from the response and add them to the images array
-        uploadResponse.value.forEach((response: { secure_url: string }) => {
-          images.value.push(response.secure_url);
-        });
-      } catch (error) {
-        console.error("Failed to upload images", error);
-      } finally {
-        isLoading.value = false;
-      }
+  }
+};
+
+// Handle drag-and-drop upload functionality
+const handleDrop = async (event: DragEvent) => {
+  event.preventDefault(); // Prevent default browser handling
+
+  const files = event.dataTransfer?.files;
+  if (!files) return;
+
+  const formData = new FormData();
+
+  // Validate file size before appending
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    if (file.size > MAX_FILE_SIZE) {
+      showToast({
+            title: "Error",
+            message: `File ${file.name} exceeds 2MB limit. Please choose a smaller file.`,
+            toastType: "error",
+            duration: 3000
+          });
+      continue; // Skip files that exceed the size limit
     }
-  };
-  
-  // Delete the current image
-  const deleteImage = (index: number) => {
-    images.value.splice(index, 1);
-    if (currentImage.value >= images.value.length) {
-      currentImage.value = images.value.length - 1;
+    formData.append('images', file);
+  }
+
+  // Proceed only if there are valid files
+  if (formData.has('images')) {
+    isLoading.value = true;
+    try {
+      await uploadFiles(formData);
+
+      // Add uploaded images to the local state
+      uploadResponse.value.forEach((response: { secure_url: string }) => {
+        images.value.push(response.secure_url);
+        props.payload.images.value.push(response.secure_url)
+      });
+    } catch (error) {
+      console.error("Drag-and-drop upload failed", error);
+    } finally {
+      isLoading.value = false;
     }
-  };
-  
-  // Navigate to the next image
-  const nextImage = () => {
-    currentImage.value = (currentImage.value + 1) % images.value.length;
-  };
-  
-  // Navigate to the previous image
-  const prevImage = () => {
-    currentImage.value = (currentImage.value - 1 + images.value.length) % images.value.length;
-  };
-  
-  // Load the images on component mount
-  onMounted(() => {
-    loadFromLocalStorage();
-  });
-  </script> -->
-  
+  }
+};
+
+// // Delete the current image from the array and localStorage
+// const deleteImage = (index: number) => {
+//   images.value.splice(index, 1); // Remove image from array
+//   if (currentImage.value >= images.value.length) {
+//     currentImage.value = images.value.length - 1; // Adjust current index
+//   }
+
+//   // If all images are deleted, clear localStorage as well
+//   if (images.value.length === 0) {
+//     localStorage.removeItem('property_images'); // Clear localStorage if no images left
+//   } else {
+//     // Update localStorage after deleting an image
+//     localStorage.setItem('property_images', JSON.stringify(images.value)); // Sync with localStorage
+//   }
+// };
+
+// Helper function to update localStorage after images are modified
+const updateLocalStorage = () => {
+  // If there are no images left, remove the item from localStorage
+  if (images.value.length === 0) {
+    localStorage.removeItem('property_images');
+  } else {
+    // Otherwise, update localStorage with the current images array
+    localStorage.setItem('property_images', JSON.stringify(images.value));
+  }
+};
+
+
+// Delete the current image from the array and localStorage
+const deleteImage = (index: number) => {
+  // Remove image from the local images array
+  images.value.splice(index, 1);
+
+  // Also remove the image from the payload images array
+  props.payload.images.value.splice(index, 1);
+
+  // Adjust the current index if needed
+  if (currentImage.value >= images.value.length) {
+    currentImage.value = images.value.length - 1; // Adjust current index if it goes out of bounds
+  }
+
+  // Sync with localStorage
+  updateLocalStorage();
+};
+
+
+
+// Navigate to the next image
+const nextImage = () => {
+  currentImage.value = (currentImage.value + 1) % images.value.length;
+};
+
+// Navigate to the previous image
+const prevImage = () => {
+  currentImage.value = (currentImage.value - 1 + images.value.length) % images.value.length;
+};
+
+// On component mount, load images from localStorage
+onMounted(() => {
+  loadFromLocalStorage();
+});
+</script>  
+
 
   <style scoped>
   .loader {

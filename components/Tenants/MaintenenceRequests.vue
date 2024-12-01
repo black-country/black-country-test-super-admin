@@ -1,7 +1,7 @@
 <template>
     <div class="max-w-4xl mx-auto p-4">
       <!-- Tabs Navigation -->
-      <div class="flex overflow-x-auto space-x-4 mb-4">
+      <div v-if="showTabs" class="flex overflow-x-auto space-x-4 mb-4">
         <button
           v-for="tab in tabs"
           :key="tab"
@@ -73,13 +73,14 @@
       </section>
   
       <section v-else-if="loading && !maintenanceRequests?.length">
-        <div class="rounded-md p-4 w-full mx-auto">
+        <div class="h-44 bg-slate-200 rounded animate-pulse"></div>
+        <!-- <div class="rounded-md p-4 w-full mx-auto">
           <div class="animate-pulse flex space-x-4">
             <div class="flex-1 space-y-6 py-1">
               <div class="h-44 bg-slate-200 rounded"></div>
             </div>
           </div>
-        </div>
+        </div> -->
       </section>
   
       <section v-else class="flex flex-col justify-between items-center space-y-2 mt-10">
@@ -116,6 +117,13 @@
   
   const { maintenanceRequests, loading, queryObj } = useFetchMaintenanceRequests();
   const router = useRouter();
+
+  const props = defineProps({
+    showTabs: {
+      type: Boolean,
+      default: false
+    }
+  })
   
   const activeTab = ref<string>('All');
   const tabs = ['All', 'Pending', 'Assigned', 'In Progress', 'Completed', 'Cancelled', 'Declined', 'Payment & Invoice'];

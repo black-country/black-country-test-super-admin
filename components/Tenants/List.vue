@@ -124,16 +124,10 @@
   <p v-if="column.key === 'address'">
     <span v-if="tenant">{{ `${tenant?.address?.slice(0, 30)}...` }}</span>
   </p>
-  <p v-else-if="column.key === 'name'">
-    {{ tenant.name }}
-    <span 
-      class="bg-[#F7D394] text-[#1D2739] text-sm px-2 py-1 absolute left-0 top-0"
-      v-if="tenant.status === 'draft'"
-    >
-      Draft
-    </span>
+  <p v-else-if="column.key === 'firstName'">
+    {{ tenant.firstName }} {{ tenant.lastName }}
   </p>
-  <p v-else-if="column.key === 'status'">{{ tenant.status === 'hidden' ? 'Deactivated' : tenant.status }}</p>
+  <p class="inline px-3 py-2 rounded-full text-sm" :class="[tenant.status === 'not paid' ? 'text-[#BA110B] bg-[#FBEAE9]' : 'bg-[#E7F6EC] text-[#099137]']" v-else-if="column.key === 'status'">{{ tenant.status === 'not paid' ? 'Not Paid' : 'Paid' }}</p>
   <p v-else>{{ getTenantValue(tenant, column.key) }}</p>
 </td>
                 <td class="py-5 px-5 relative whitespace-nowrap text-sm text-right">
@@ -315,7 +309,7 @@ const { clearLocalStorage } = useClearLocalStorage();
 // Define the method to handle the download
 const downloadData = (exportType: any) => {
   // Call the export function with the desired format (csv, pdf, or excel)
-  exportPaginatedData('/houses', exportType, 'house_data_export', ['name', 'houseType.name', 'bedroomCount', 'address']);
+  exportPaginatedData('/houses', exportType, 'house_data_export', ['firstName', 'rentalApplication.house.name', 'rentalApplication.room.name', 'rentalApplication.room.rentFrequency', 'house.paymentCount', 'status']);
 }
 const route = useRoute();
 const router = useRouter();

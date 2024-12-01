@@ -68,7 +68,7 @@
       </section>
     </template>
     <main v-if="!loading" class="lg:flex max-w-6xl mx-auto space-y-6 lg:space-y-0">
-      <div class="lg:mr-6 lg:max-w-5xl lg:w-96">
+      <div class="lg:max-w-6xl lg:w-96">
         <TenantProfile :tenantObj="tenantDetails" />
       </div>
       <div class="flex-1 lg:px-6 lg:max-w-6xl">

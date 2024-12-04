@@ -1,6 +1,15 @@
 <template>
-    <div class="space-y-2">
-      <div v-for="(payment, index) in payments" :key="index" class="flex items-center justify-between p-4 bg-white rounded-lg">
+<main>
+  <div v-if="!transactionHistory?.length && !loading" class="text-center text-gray-500 py-12">
+              <img src="@/assets/icons/transaction-illustration.svg" alt="No transactions"
+                class="h-12 w-12 mx-auto mb-2" />
+              <p>No recent transactions made</p>
+            </div>
+            <section class="my-6" v-if="!transactionHistory?.length && loading">
+            <div class="animate-pulse flex space-x-4 h-44 bg-slate-200 rounded"></div>
+            </section>
+    <div  v-else class="space-y-2 mt-6">
+      <div v-for="(transaction, index) in transactionHistory" :key="index" class="flex items-center justify-between p-4 bg-white rounded-lg">
         <div class="flex items-center space-x-4">
           <div class="rounded-full">
             <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -13,21 +22,24 @@
                 </svg>                
           </div>
           <div>
-            <h3 class="text-base font-medium text-[#1D2739]">{{ payment.description }}</h3>
-            <p class="text-sm text-[#667185] font-light">{{ payment.date }},{{ payment.time }}</p>
+            <h3 class="text-base font-medium text-[#1D2739]">{{ transaction?.narration ?? 'Nil' }}</h3>
+            <p class="text-sm text-[#667185] font-light">
+              {{  moment(transaction?.transactionDate).format("MMMM Do YYYY, HH:MM A") ?? 'Nil' }}
+            </p>
           </div>
         </div>
-        <p class="text-base font-medium text-[#292929]">{{ payment.amount }}</p>
+        <p class="text-base font-medium text-[#292929]">{{ formatCurrency(transaction?.amountSubunit) ?? '0.00' }}</p>
       </div>
     </div>
+</main>
   </template>
   
   <script lang="ts" setup>
-  const payments = [
-    { description: 'Maintenance payment', date: '03/04/2024', time: '16:00 pm', amount: '₦50,000.00' },
-    { description: 'Rent payment', date: '03/04/2024', time: '16:00 pm', amount: '₦50,000.00' },
-    { description: 'Maintenance payment', date: '03/04/2024', time: '16:00 pm', amount: '₦50,000.00' },
-  ];
+  import moment from "moment";
+  import { useCurrencyFormatter } from '@/composables/core/useCurrencyFormatter';
+const { formatCurrency } = useCurrencyFormatter()
+  import { useGetTransactionHistory } from '@/composables/modules/tenants/useFetchTransactionHistory'
+  const { transactionHistory, loading} = useGetTransactionHistory()
   </script>
   
   <style scoped>

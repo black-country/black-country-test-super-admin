@@ -63,6 +63,7 @@
     <TenantPaymentList v-if="activeTab === 'paymentHistory'" />
     <TenantLeaseDocument v-if="activeTab === 'leaseDocument'" />
     <TenantsMaintenenceRequests :showTabs="false"  v-if="activeTab === 'maintenanceRequest'"  />
+    <TenantChecklist v-if="activeTab === 'checklist'" />
     <!-- <TenantMaintanceInfo v-if="activeTab === 'maintenanceRequest'" /> -->
       <!-- Current Residence -->
        <section class="space-y-6" v-if="activeTab === 'tenantDetails'">

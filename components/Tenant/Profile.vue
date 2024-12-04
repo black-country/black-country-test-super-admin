@@ -14,11 +14,11 @@
         alt="Profile Picture"
         class="w-32 h-32 rounded-full mb-4"
       />
-        <h2 class="text-xl font-medium text-gray-800">{{tenantObj?.firstName}} {{tenantObj?.lastName}}</h2>
+        <h2 class="text-lg font-medium text-gray-800">{{tenantObj?.firstName}} {{tenantObj?.lastName}}</h2>
         <p class="text-gray-600 mb-4 text-sm">{{tenantObj?.email ?? '----'}}</p>
         <div class="text-sm text-gray-600 space-y-4 w-full">
           <p class="flex justify-between"><span class="text-[#667185]">Phone number:</span> {{tenantObj?.phoneNumber ?? '-----'}} </p>
-          <p class="flex justify-between"><span class="text-[#667185]">Date of Birth:</span> {{tenantObj?.dateOfBirth ?? '----'}}</p>
+          <p class="flex justify-between"><span class="text-[#667185]">Date of Birth:</span> {{ moment(tenantObj?.dateOfBirth).format('DD MMMM YYYY') ?? '----'}}</p>
           <p class="flex justify-between"><span class="text-[#667185]">Gender:</span> {{tenantObj?.gender ?? '----'}}</p>
           <p class="flex justify-between"><span class="text-[#667185]">Marital status:</span>{{tenantObj?.maritalStatus ?? '----'}}</p>
           <p class="flex justify-between"><span class="text-[#667185]">State of Origin:</span>{{tenantObj?.city?.name ?? '----'}}</p>
@@ -29,6 +29,7 @@
   </template>
   
   <script lang="ts" setup>
+  import moment from "moment";
         import { dynamicImage } from '@/utils/assets';
         const props = defineProps({
           tenantObj: {

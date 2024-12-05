@@ -1,6 +1,6 @@
 <template>
   <div v-if="!leaseDocumentsList?.length && !loading" class="text-center text-gray-500 py-12">
-    <img src="@/assets/icons/transaction-illustration.svg" alt="No transactions" class="h-12 w-12 mx-auto mb-2" />
+    <img src="@/assets/icons/config-illustration.svg" alt="No transactions" class="h-12 w-12 mx-auto mb-2" />
     <p>No Lease documents available</p>
   </div>
   <section class="my-6" v-if="!leaseDocumentsList?.length && loading">

@@ -111,7 +111,7 @@
   </template>
   
   <script lang="ts" setup>
-  import { useFetchMaintenanceRequests } from '@/composables/modules/maintenance/useFetchMaintenanceRequests';
+  import { useFetchMaintenanceRequests } from '@/composables/modules/tenants/useFetchMaintenenceRequests';
   import { ref, computed } from 'vue';
   import { useRouter } from 'vue-router';
   

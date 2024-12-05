@@ -1,7 +1,7 @@
 <template>
 <main>
   <div v-if="!transactionHistory?.length && !loading" class="text-center text-gray-500 py-12">
-              <img src="@/assets/icons/transaction-illustration.svg" alt="No transactions"
+              <img src="@/assets/icons/config-illustration.svg" alt="No transactions"
                 class="h-12 w-12 mx-auto mb-2" />
               <p>No recent transactions made</p>
             </div>

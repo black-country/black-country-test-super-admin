@@ -65,10 +65,10 @@ export const useFetchRoles = () => {
         fetchRoles()
     });
 
-    onBeforeUnmount(() => {
-        // Clear timeout to avoid memory leaks
-        debouncedGetProperties.cancel?.();
-    });
+    // onBeforeUnmount(() => {
+    //     // Clear timeout to avoid memory leaks
+    //     debouncedGetProperties.cancel?.();
+    // });
 
 
     return { fetchRoles, loading, roles, filters };

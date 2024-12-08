@@ -425,6 +425,22 @@ const setActiveRoom = (roomName: string) => {
   loadRoomData(roomName);
 };
 
+
+// Method to format the input value in real-time
+function onInput(event) {
+  rentAmount.value = unformatCurrency(event.target.value);
+  event.target.value = formatCurrency(rentAmount.value);
+}
+
+const formattedRentAmount = computed({
+  get() {
+    return rentAmount.value ? formatCurrency(rentAmount.value) : '';
+  },
+  set(value) {
+    rentAmount.value = unformatCurrency(value);
+  }
+}); 
+
 // Manually add an item to the room features list
 const addManualItem = () => {
   const trimmedInput = manualInput.value.trim();
@@ -522,14 +538,14 @@ const filteredRoomFeatures = computed(() => {
   return isRoomFurnished.value ? furnishedFeatures : unfurnishedFeatures;
 });
 
-const formattedRentAmount = computed({
-  get() {
-    return rentAmount.value ? formatCurrency(rentAmount.value) : '';
-  },
-  set(value) {
-    rentAmount.value = unformatCurrency(value);
-  }
-});
+// const formattedRentAmount = computed({
+//   get() {
+//     return rentAmount.value ? formatCurrency(rentAmount.value) : '';
+//   },
+//   set(value) {
+//     rentAmount.value = unformatCurrency(value);
+//   }
+// });
 
 // Helper function to format currency
 function formatCurrency(value: number | string): string {
@@ -542,12 +558,6 @@ function formatCurrency(value: number | string): string {
 // Helper function to remove formatting and get raw value
 function unformatCurrency(value: string): number {
   return parseInt(value.replace(/[^\d]/g, ''), 10) || 0;
-}
-
-// Method to format the input value in real-time
-function onInput(event) {
-  rentAmount.value = unformatCurrency(event.target.value);
-  event.target.value = formatCurrency(rentAmount.value);
 }
 
 onMounted(() => {

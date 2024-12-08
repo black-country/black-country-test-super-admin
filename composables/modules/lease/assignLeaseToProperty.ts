@@ -14,7 +14,7 @@ export const useAssignLeaseToProperty = () => {
 		const res = await  lease_api.$_assign_lease_to_property(tenantId, houseId, {
             leaseAgreement: `<html>${assignPayload.value.leaseAgreement}</html>`,
         }) as any
-
+         
         if (res.type !== 'ERROR') {
             showToast({
                 title: "Success",

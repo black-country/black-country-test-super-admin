@@ -1,61 +1,50 @@
 <template>
   <div>
     <div class="bg-gray-100">
-  <!-- Header with back button and template title -->
-  <div class="flex flex-wrap justify-between items-center bg-white border p-4 shadow px-3 lg:px-10">
-    <!-- Back button and title -->
-    <div class="flex items-center space-x-4">
-      <button
-        @click="router.back()"
-        class="flex items-center text-gray-600 bg-gray-100 text-sm py-2 px-4 rounded-md hover:bg-gray-200 hover:text-black"
-      >
-        <span>&larr;</span>
-        <span class="ml-2">Back</span>
-      </button>
-      <h1 class="text-lg font-semibold">{{ payload?.documentName }}</h1>
+      <div class="flex flex-wrap justify-between items-center bg-white border p-4 shadow px-3 lg:px-10">
+        <div class="flex items-center space-x-4">
+          <button @click="router.back()"
+            class="flex items-center text-gray-600 bg-gray-100 text-sm py-2 px-4 rounded-md hover:bg-gray-200 hover:text-black">
+            <span>&larr;</span>
+            <span class="ml-2">Back</span>
+          </button>
+          <h1 class="text-lg font-semibold">{{ payload?.documentName }}</h1>
+        </div>
+        <button
+          class="flex items-center px-4 text-sm py-2.5 text-sm bg-blue-500 text-white text-sm font-medium gap-x-3 rounded-md shadow-md cursor-pointer hover:bg-blue-600"
+          v-if="isDocumentEdited" @click="submitLeaseDocument">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 17l5-5-5-5" />
+            <path d="M13.8 12H3m9 10a10 10 0 1 0 0-20" />
+          </svg>
+           {{  uploading ? 'processing' : 'Submit Lease' }}
+        </button>
+        <label
+          class="flex items-center px-4 text-sm py-2.5 text-sm bg-blue-500 text-white text-sm font-medium gap-x-3 rounded-md shadow-md cursor-pointer hover:bg-blue-600">
+          <input type="file" class="hidden" @change="handleFileUpload" accept="application/pdf" />
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-2-2.4-3.5-4.4-3.5h-1.2c-.7-3-3.2-5.2-6.2-5.6-3-.3-5.9 1.3-7.3 4-1.2 2.5-1 6.5.5 8.8m8.7-1.6V21" />
+            <path d="M16 16l-4-4-4 4" />
+          </svg>
+          Upload Lease
+        </label>
+      </div>
     </div>
-    <!-- Styled file input -->
-    <button class="flex items-center px-4 text-sm py-2.5 text-sm bg-blue-500 text-white text-sm font-medium gap-x-3 rounded-md shadow-md cursor-pointer hover:bg-blue-600" v-if="isDocumentEdited" @click="submitLeaseDocument">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17l5-5-5-5"/><path d="M13.8 12H3m9 10a10 10 0 1 0 0-20"/></svg>
-      Submit Lease
-    </button>
-    <label class="flex items-center px-4 text-sm py-2.5 text-sm bg-blue-500 text-white text-sm font-medium gap-x-3 rounded-md shadow-md cursor-pointer hover:bg-blue-600">
-      <input
-        type="file"
-        class="hidden"
-        @change="handleFileUpload"
-        accept="application/pdf"
-      />
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-2-2.4-3.5-4.4-3.5h-1.2c-.7-3-3.2-5.2-6.2-5.6-3-.3-5.9 1.3-7.3 4-1.2 2.5-1 6.5.5 8.8m8.7-1.6V21"/><path d="M16 16l-4-4-4 4"/></svg>
-      Upload Lease
-    </label>
-  </div>
-</div>
-
-
-    <!-- PDF Viewer -->
     <div id="webViewer" ref="viewerDiv"></div>
-
-    <!-- Submit Button -->
-
-
-    <!-- Feedback -->
     <p v-if="submissionMessage">{{ submissionMessage }}</p>
+    <CoreFullScreenLoader :visible="uploading || assigning" text="Processing lease agreement" logo="/path-to-your-logo.png" />
   </div>
 </template>
 
 
 <script>
-import { useUploadFile } from '@/composables/core/upload'
+import { useUploadFile } from '@/composables/core/pdfUpload'
 import { ref, onMounted } from "vue";
 import WebViewer from "@pdftron/webviewer";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf"; // Use legacy build for better compatibility
-// import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.js";
-
-import { useFetch } from "#app";
-import { useCreateLeaseTemplate } from '@/composables/modules/lease/create'
-const {  createLeaseTemplate, loading, payload, setPayloadObj } = useCreateLeaseTemplate()
-const { uploadFile, uploadResponse } =  useUploadFile()
 
 export default {
   name: "LeaseDocument",
@@ -64,6 +53,7 @@ export default {
     const instance = ref(null);
     const isDocumentEdited = ref(false);
     const submissionMessage = ref("");
+    const { pdfUploadFile, uploadResponse, loading: uploading, processing: assigning } =  useUploadFile()
 
     const handleFileUpload = (event) => {
       const file = event.target.files[0];
@@ -81,41 +71,40 @@ export default {
 
 
 const submitLeaseDocument = async () => {
-  if (instance.value) {
-    try {
-      const docViewer = instance.value.getDocument();
-      const xfdfString = await instance.value.getAnnotationManager().exportAnnotations();
+  if (!instance.value) return
 
-      // Include annotations in the options
-      const options = {
-        xfdfString,
-      };
+  try {
+    const docViewer = instance.value.getDocument()
+    const annotManager = instance.value.getAnnotationManager()
+    const xfdfString = await annotManager.exportAnnotations()
 
-      // Get the edited PDF file as Uint8Array
-      const fileData = await docViewer.getFileData(options);
+    // Get the edited PDF file as Uint8Array with annotations
+    const fileData = await docViewer.getFileData({
+      xfdfString,
+      downloadType: 'pdf'
+    })
 
-      // Convert Uint8Array to a Blob
-      const blob = new Blob([fileData], { type: "application/pdf" });
+    // Convert Uint8Array to File object
+    const pdfBlob = new Blob([fileData], { type: 'application/pdf' })
+    const pdfFile = new File([pdfBlob], 'edited-lease.pdf', {
+      type: 'application/pdf',
+      lastModified: Date.now()
+    })
 
-      // Convert PDF to Image (first page as an example)
-      const imageFile = await convertPdfToImage(blob);
+    // Upload the file using our composable
+    const { url, error } = await pdfUploadFile(pdfFile)
 
-      // Use the uploadFile composable to upload the image file
-      const { success, error } = await uploadFile(imageFile);
-
-      if (success) {
-        submissionMessage.value = "Image uploaded successfully!";
-        console.log("Upload Response:", uploadResponse.value);
-      } else {
-        submissionMessage.value = "Error uploading image. Please try again.";
-        console.error("Upload Error:", error);
-      }
-    } catch (error) {
-      console.error("Error processing document:", error);
-      submissionMessage.value = "An unexpected error occurred.";
+    if (error) {
+      console.error('Upload failed:', error)
+    } else if (url) {
+      console.log('File uploaded successfully:', url)
     }
+  } catch (error) {
+    console.error('Error processing document:', error)
+    uploadError.value = error instanceof Error ? error.message : 'An unexpected error occurred'
   }
-};
+}
+
 
 /**
  * Converts a PDF file (Blob) into an image (first page).
@@ -147,8 +136,6 @@ const convertPdfToImage = async (pdfBlob) => {
   // Convert Blob to File
   return new File([imageBlob], "converted-image.png", { type: "image/png" });
 };
-
-
 
 
     onMounted(() => {

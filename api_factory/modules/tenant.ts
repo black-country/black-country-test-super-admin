@@ -12,5 +12,21 @@ export const tenant_api = {
       $_tenent_details: (id: string) => {
         let url = `/tenants/${id}/details`;
         return GATEWAY_ENDPOINT.get(url);
-      }
+      },
+      $_fetch_transaction_history: (tenentId: string | number, page = 1, perPage = 20) => {
+        let url = `/tenants/${tenentId}/payments?page=${page}&perPage=${perPage}&sort=transactionDate:desc`
+        return GATEWAY_ENDPOINT.get(url)
+      },
+      $_fetch_lease_documents: (tenentId: string | number) => {
+        let url = `/tenants/${tenentId}/lease-documents`
+        return GATEWAY_ENDPOINT.get(url)
+      },
+      $_fetch_rental_checklist: (tenentId: string | number) => {
+        let url = `/tenants/${tenentId}/rental-checklists`
+        return GATEWAY_ENDPOINT.get(url)
+      },
+      $_fetch_maintenance_request: (tenentId: string | number, page = 1, perPage = 100000000) => {
+        let url = `/maintenance-requests?page=${page}&perPage=${perPage}&tenantId=${tenentId}`
+        return GATEWAY_ENDPOINT.get(url)
+      },
 }

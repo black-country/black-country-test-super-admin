@@ -31,9 +31,8 @@
           </div>
           <div>
             <button
-              :disabled="loading || isSubmitDisabled"
               @click="submitForm"
-              class="bg-[#292929] disabled:cursor-not-allowed disabled:opacity-25 text-white px-4 py-3 rounded-lg"
+              class="bg-[#292929] text-white px-4 py-3 rounded-lg"
             >
               {{ creating ? "saving.." : "Create New Role" }}
             </button>

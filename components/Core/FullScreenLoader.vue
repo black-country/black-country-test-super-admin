@@ -31,7 +31,7 @@
   defineProps({
     visible: {
       type: Boolean,
-      default: true, // Controls whether the loader is visible
+      default: false, // Controls whether the loader is visible
     },
     text: {
       type: String,

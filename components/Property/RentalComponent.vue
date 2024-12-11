@@ -72,18 +72,7 @@
               class="bg-red-100 text-red-700 px-2.5 py-1.5 rounded-full text-xs font-semibold">
               Declined
             </div>
-            <!-- <div v-if="application.status === 'RENT_ACTIVE'"
-              class="bg-red-100 text-red-700 px-2.5 py-1.5 rounded-full text-xs font-semibold">
-              Acitve
-            </div> -->
-            <!-- <div v-if="application.status === 'RENT_INACTIVE'"
-              class="bg-yellow-100 text-yellow-700 px-2.5 py-1.5 rounded-full text-xs font-semibold">
-              In Active
-            </div>
-            <div v-if="application.status === 'CANCELLED'"
-              class="bg-black text-white px-2.5 py-1.5 rounded-full text-xs font-semibold">
-              Cancelled
-            </div> -->
+   
 
           </div>
           <div class="mt-4">

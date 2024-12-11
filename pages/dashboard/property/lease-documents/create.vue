@@ -4,7 +4,7 @@
       <!-- Header with back button and template title -->
       <div class="flex flex-wrap justify-between items-center bg-white p-4 shadow px-10">
         <div class="flex items-center space-x-2">
-          <button @click="router.back()" class="text-gray-600 bg-gray-100 text-sm py-3 px-4 rounded-md hover:text-black">
+          <button @click="router.back()" class="text-gray-600 bg-gray-100 text-xs py-2.5 px-4 rounded-md hover:text-black">
             <span>&larr;</span> Back
           </button>
           <h1 class="text-lg font-semibold">{{payload.documentName}}</h1>
@@ -15,10 +15,10 @@
             <button @click="previewDocument" class="bg-transparent text-green-600 hover:underline">
               Preview
             </button>
-            <button type="button" :disabled="processingSaveAndExit"  @click="proceedSaveAndExit" class="bg-gray-400  disabled:cursor-not-allowed disabled:opacity-25 text-sm text-white px-4 py-3 rounded-md">
+            <button type="button" :disabled="processingSaveAndExit"  @click="proceedSaveAndExit" class="bg-gray-400  disabled:cursor-not-allowed disabled:opacity-25 text-xs text-white px-4 py-2.5 rounded-md">
                {{ processingSaveAndExit ? 'processing...' : 'Save & Exit'}}
             </button>
-            <button type="button" :disabled="processingSaveAndSend" @click="proceedSaveAndSend" class="bg-black disabled:cursor-not-allowed disabled:opacity-25 text-sm text-white px-4 py-3 rounded-md">
+            <button type="button" :disabled="processingSaveAndSend" @click="proceedSaveAndSend" class="bg-black disabled:cursor-not-allowed disabled:opacity-25 text-xs text-white px-4 py-2.5 rounded-md">
                {{ processingSaveAndSend ? 'processing...' : 'Save & Send'}}
             </button>
           </div>
@@ -691,6 +691,16 @@ const updateLeaseInLocalStorage = () => {
 // Save and exit or send functionalities
 const proceedSaveAndExit = async () => {
   const signatureUrl = emittedAgreementData?.value?.signatureObj?.secure_url || leaseSignatureUrl.value;
+  if (!signatureUrl) {
+    showToast({
+      title: "Error",
+      message: 'You need to sign before you can send the lease agreement.',
+      toastType: "error",
+      duration: 3000,
+    });
+    return;
+  }
+
   const reqPayload = {
     leaseAgreement: `<html>${editor.value?.innerHTML}</html>` || `<html>${leaseAgreementContent}</html>`,
     isPublished: false,

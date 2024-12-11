@@ -104,6 +104,70 @@ export const useWebSocket = () => {
     });
   };
 
+  // const sendMessage = async (payload: {
+  //   recipientId: string;
+  //   recipientType: string;
+  //   content: string;
+  //   room?: string;
+  //   messageType: string;
+  // }) => {
+  //   if (!socket.value?.connected) {
+  //     console.error("Socket not connected");
+  //     return;
+  //   }
+
+  //   // Create temporary message
+  //   const tempId = `temp-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+  //   const tempMessage = {
+  //     id: tempId,
+  //     ...payload,
+  //     status: 'sending',
+  //     timestamp: new Date().toISOString(),
+  //   };
+
+  //   // Add to messages immediately
+  //   messages.value = [...messages.value, tempMessage];
+
+  //   // Send message
+  //   return new Promise((resolve, reject) => {
+  //     socket.value?.emit("message.new", payload, (response: any) => {
+  //       if (response.status === "success") {
+  //         // Update temp message with actual message data
+  //         messages.value = messages.value.map(msg => 
+  //           msg.id === tempId 
+  //             ? { ...response.data, status: 'sent' }
+  //             : msg
+  //         );
+
+  //         // Update room chats if needed
+  //         if (payload.room) {
+  //           getRoomChats(response?.data?.room?.id);
+  //         }
+
+  //         // Emit custom event if needed
+  //         const { $emitter } = useNuxtApp();
+  //         $emitter.emit('messageSent', {
+  //           roomId: response?.data?.room?.id,
+  //           message: response?.data
+  //         });
+
+  //         resolve(response.data);
+  //       } else {
+  //         // Update temp message to show error
+  //         messages.value = messages.value.map(msg => 
+  //           msg.id === tempId 
+  //             ? { ...msg, status: 'error' }
+  //             : msg
+  //         );
+
+  //         console.error("Failed to send message:", response);
+  //         reject(new Error(response.message || 'Failed to send message')); // Fixed the rejection issue
+  //       }
+  //     });
+  //   });
+  // };
+
+
   const sendMessage = async (payload: {
     recipientId: string;
     recipientType: string;

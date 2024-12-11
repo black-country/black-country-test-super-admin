@@ -32,7 +32,8 @@ export const useSaveAndExit = () => {
                 toastType: "success",
                 duration: 3000
               });
-              router.push('/dashboard/property/lease-documents/lease-document-success')
+              window.location.href = '/dashboard/property/lease-documents/lease-document-draft-success'
+            //   router.push('/dashboard/property/lease-documents/lease-document-success')
         } else {
             showToast({
                 title: "Error",

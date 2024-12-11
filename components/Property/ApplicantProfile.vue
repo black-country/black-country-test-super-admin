@@ -22,7 +22,7 @@
           <p class="flex justify-between"><span class="text-[#667185]">Gender:</span> {{rentalObj?.tenant?.gender ?? '----'}}</p>
           <p class="flex justify-between"><span class="text-[#667185]">Marital status:</span>{{rentalObj?.tenant?.maritalStatus ?? '----'}}</p>
           <p class="flex justify-between"><span class="text-[#667185]">State of Origin:</span>{{rentalObj?.tenant?.city?.stateName ?? '----'}}</p>
-          <p class="flex justify-between"><span class="text-[#667185]">LGA:</span> ---</p>
+          <p class="flex justify-between"><span class="text-[#667185]">LGA:</span>{{rentalObj?.tenant?.city?.name ?? '----'}}</p>
         </div>
       </div>
     </div>

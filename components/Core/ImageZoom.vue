@@ -1,13 +1,13 @@
 <template>
 <main>
-  <div>
-    <img
-      :src="src"
-      :class="computedClasses"
-      :style="style"
-      alt="Zoomed Image"
-    />
-  </div>
+  <div @click="toggleImage">
+      <img
+        :src="src"
+        :class="computedClasses"
+        :style="style"
+        alt="Zoomed Image"
+      />
+    </div>
   <transition
   name="fade-zoom"
   appear
@@ -44,11 +44,21 @@ const props = defineProps({
   }
 });
 
-// If you need to combine default and passed classes
+
+// Define the isFullScreen state
+const isFullScreen = ref(false);
+
+// Function to toggle full-screen mode
+const toggleImage = () => {
+  isFullScreen.value = !isFullScreen.value;
+};
+
+// Compute the classes for the image
 const computedClasses = computed(() => {
-  const defaultClasses = 'transition-transform duration-200 ease-in-out'; // You can add any default classes here
+  const defaultClasses = "transition-transform duration-200 ease-in-out";
   return `${defaultClasses} ${props.class}`;
 });
+
 </script>
 
 <style scoped>

@@ -75,31 +75,7 @@
               </div>
             </div>
 
-            <!-- Header -->
-            <!-- <div class="py-2 px-3 bg-grey-lighter flex flex-row justify-between items-center">
-                          <div>
-                              <img class="w-10 h-10 rounded-full" src="http://andressantibanez.com/res/avatar.png"/>
-                          </div>
-
-                          <div class="flex">
-                              <div>
-                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="#727A7E" d="M12 20.664a9.163 9.163 0 0 1-6.521-2.702.977.977 0 0 1 1.381-1.381 7.269 7.269 0 0 0 10.024.244.977.977 0 0 1 1.313 1.445A9.192 9.192 0 0 1 12 20.664zm7.965-6.112a.977.977 0 0 1-.944-1.229 7.26 7.26 0 0 0-4.8-8.804.977.977 0 0 1 .594-1.86 9.212 9.212 0 0 1 6.092 11.169.976.976 0 0 1-.942.724zm-16.025-.39a.977.977 0 0 1-.953-.769 9.21 9.21 0 0 1 6.626-10.86.975.975 0 1 1 .52 1.882l-.015.004a7.259 7.259 0 0 0-5.223 8.558.978.978 0 0 1-.955 1.185z"></path></svg>
-                              </div>
-                              <div class="ml-4">
-                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path opacity=".55" fill="#263238" d="M19.005 3.175H4.674C3.642 3.175 3 3.789 3 4.821V21.02l3.544-3.514h12.461c1.033 0 2.064-1.06 2.064-2.093V4.821c-.001-1.032-1.032-1.646-2.064-1.646zm-4.989 9.869H7.041V11.1h6.975v1.944zm3-4H7.041V7.1h9.975v1.944z"></path></svg>
-                              </div>
-                              <div class="ml-4">
-                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="#263238" fill-opacity=".6" d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"></path></svg>
-                              </div>
-                          </div>
-                      </div> -->
-
-            <!-- Search -->
-            <!-- <div class="py-2 px-2 bg-grey-lightest">
-                          <input type="text" class="w-full px-2 py-2 text-sm" placeholder="Search or start new chat"/>
-                      </div> -->
-
-            <!-- Contacts -->
+        
             <div v-if="!loadingActiveChats && activeChatsList.length" class="bg-grey-lighter flex-1 overflow-auto">
               <ChatUserList class="px-3 flex items-center bg-grey-light cursor-pointer" :loading="loadingActiveChats"
                 :users="activeChatsList" @selectUser="selectUser" />
@@ -169,111 +145,6 @@
                   </div>
                 </div>
 
-                <!-- <div class="flex mb-2">
-                                  <div class="rounded py-2 px-3" style="background-color: #F2F2F2">
-                                      <p class="text-sm text-teal">
-                                          Sylverter Stallone
-                                      </p>
-                                      <p class="text-sm mt-1">
-                                          Hi everyone! Glad you could join! I am making a new movie.
-                                      </p>
-                                      <p class="text-right text-xs text-grey-dark mt-1">
-                                          12:45 pm
-                                      </p>
-                                  </div>
-                              </div>
-
-                              <div class="flex mb-2">
-                                  <div class="rounded py-2 px-3" style="background-color: #F2F2F2">
-                                      <p class="text-sm text-purple">
-                                          Tom Cruise
-                                      </p>
-                                      <p class="text-sm mt-1">
-                                          Hi all! I have one question for the movie
-                                      </p>
-                                      <p class="text-right text-xs text-grey-dark mt-1">
-                                          12:45 pm
-                                      </p>
-                                  </div>
-                              </div>
-
-                              <div class="flex mb-2">
-                                  <div class="rounded py-2 px-3" style="background-color: #F2F2F2">
-                                      <p class="text-sm text-orange">
-                                          Harrison Ford
-                                      </p>
-                                      <p class="text-sm mt-1">
-                                          Again?
-                                      </p>
-                                      <p class="text-right text-xs text-grey-dark mt-1">
-                                          12:45 pm
-                                      </p>
-                                  </div>
-                              </div>
-
-                              <div class="flex mb-2">
-                                  <div class="rounded py-2 px-3" style="background-color: #F2F2F2">
-                                      <p class="text-sm text-orange">
-                                          Russell Crowe
-                                      </p>
-                                      <p class="text-sm mt-1">
-                                          Is Andrés coming for this one?
-                                      </p>
-                                      <p class="text-right text-xs text-grey-dark mt-1">
-                                          12:45 pm
-                                      </p>
-                                  </div>
-                              </div>
-
-                              <div class="flex mb-2">
-                                  <div class="rounded py-2 px-3" style="background-color: #F2F2F2">
-                                      <p class="text-sm text-teal">
-                                          Sylverter Stallone
-                                      </p>
-                                      <p class="text-sm mt-1">
-                                          He is. Just invited him to join.
-                                      </p>
-                                      <p class="text-right text-xs text-grey-dark mt-1">
-                                          12:45 pm
-                                      </p>
-                                  </div>
-                              </div>
-
-                              <div class="flex justify-end mb-2">
-                                  <div class="rounded py-2 px-3" style="background-color: #E2F7CB">
-                                      <p class="text-sm mt-1">
-                                          Hi guys.
-                                      </p>
-                                      <p class="text-right text-xs text-grey-dark mt-1">
-                                          12:45 pm
-                                      </p>
-                                  </div>
-                              </div>
-
-                              <div class="flex justify-end mb-2">
-                                  <div class="rounded py-2 px-3" style="background-color: #E2F7CB">
-                                      <p class="text-sm mt-1">
-                                          Count me in
-                                      </p>
-                                      <p class="text-right text-xs text-grey-dark mt-1">
-                                          12:45 pm
-                                      </p>
-                                  </div>
-                              </div>
-
-                              <div class="flex mb-2">
-                                  <div class="rounded py-2 px-3" style="background-color: #F2F2F2">
-                                      <p class="text-sm text-purple">
-                                          Tom Cruise
-                                      </p>
-                                      <p class="text-sm mt-1">
-                                          Get Andrés on this movie ASAP!
-                                      </p>
-                                      <p class="text-right text-xs text-grey-dark mt-1">
-                                          12:45 pm
-                                      </p>
-                                  </div>
-                              </div> -->
                 <ChatWindow class="z-10" :roomChats="roomChatsList" :messages="messages" :selectedUser="selectedUser" />
               </div>
             </div>
@@ -336,7 +207,7 @@
 </template>
 
 <script setup lang="ts">
-import { useGetTenentDetails } from '@/composables/modules/tenants/useFetchTenantDetails'
+// import { useGetTenentDetails } from '@/composables/modules/tenants/useFetchTenantDetails'
 import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 // import MessagingView from "@/layouts/messagingView.vue";
@@ -344,7 +215,7 @@ import MessagingView from '../../../layouts/MessagingView.vue';
 import { useGetActiveChats } from "@/composables/modules/messages/fetchActiveChats";
 import { useGetRoomChats } from "@/composables/modules/messages/fetchRoomMessages";
 import { useWebSocket } from "@/composables/modules/messages/sockets";
-const { tenantDetails, getTenantDetails, loading: fetchingTenantDetails } = useGetTenentDetails()
+// const { tenantDetails, getTenantDetails, loading: fetchingTenantDetails } = useGetTenentDetails()
 
 // Composables
 const { loadingActiveChats, activeChatsList } = useGetActiveChats();
@@ -365,6 +236,13 @@ const route = useRoute();
 const selectedUser = ref(null);
 const messageStatus = ref('idle');
 
+// User selection
+const selectUser = (user: any) => {
+  selectedUser.value = user;
+  // Optionally update URL
+  router.push({ query: { userId: user?.participant?.id } });
+};
+
 // Watch for selected user changes
 watch(selectedUser, async (newVal: any) => {
   if (newVal?.id) {
@@ -376,9 +254,6 @@ watch(selectedUser, async (newVal: any) => {
   }
 });
 
-// watch(route.query.id, () => {
-//   getTenantDetails()
-// })
 
 // Watch for new messages to scroll to bottom
 watch(messages, (newMessages) => {
@@ -387,17 +262,39 @@ watch(messages, (newMessages) => {
   }
 }, { deep: true });
 
+// Watch `activeChatsList` to handle delayed population
+watch(activeChatsList, (newVal) => {
+  console.log(newVal, 'active chats (watch)');
+  const userId = route.query.userId;
+  if (userId) {
+    const user = newVal.find(u => u?.participant?.id === userId);
+    if (user) {
+      selectUser(user);
+    } else {
+      if(newVal.length === 1){
+        selectUser(newVal[0]);
+      }
+    }
+  }
+
+  if(newVal.length === 1) {
+    selectUser(newVal[0])
+    console.log('only one item found')
+  }
+
+}, { immediate: true });
+
 // Message handling
 const sendMessageToUser = async (content: string) => {
   console.log(content, 'content here')
   console.log(selectedUser.value, 'selected user here here')
-  // if (!selectedUser.value?.participant?.id || !isConnected.value) {
-  //   console.error('Cannot send message: No recipient selected or not connected');
-  //   return;
-  // }
+  if (!selectedUser.value?.participant?.id || !isConnected.value) {
+    console.error('Cannot send message: No recipient selected or not connected');
+    return;
+  }
 
 
-  const userId = route?.query?.userId
+  const userId =  selectedUser?.value?.participant?.id || route?.query?.userId
 
   if (!userId || !isConnected.value) {
     console.error('Cannot send message: No recipient selected or not connected');
@@ -410,7 +307,7 @@ const sendMessageToUser = async (content: string) => {
     const socketPayload = {
       content,
       recipientId: userId,
-      recipientType: 'TENANT',
+      recipientType: selectedUser?.value?.participant?.role,
       messageType: 'private',
       room: userId // Include room ID if needed
     };
@@ -427,12 +324,6 @@ const sendMessageToUser = async (content: string) => {
   }
 };
 
-// User selection
-const selectUser = (user: any) => {
-  selectedUser.value = user;
-  // Optionally update URL
-  router.push({ query: { userId: user.id } });
-};
 
 // Scroll handling
 const scrollToBottom = () => {
@@ -445,17 +336,37 @@ const scrollToBottom = () => {
 // Event handling
 const { $emitter } = useNuxtApp();
 
+// onMounted(() => {
+//   console.log(activeChatsList.value[0], 'active chats')
+//   // Handle URL parameters
+//   const userId = route.query.userId;
+//   if (userId && activeChatsList.value) {
+//     const user = activeChatsList.value.find(u => u.id === userId);
+//     if (user) {
+//       selectUser(user);
+//     }
+//   }
+
+//   // Set up event listeners
+//   $emitter.on('customEvent', async (payload: any) => {
+//     if (payload.data) {
+//       await getRoomChats(payload.data);
+//       scrollToBottom();
+//     }
+//   });
+// });
+
 onMounted(() => {
-  // Handle URL parameters
+  console.log(activeChatsList.value, 'active chats (onMounted)');
   const userId = route.query.userId;
-  if (userId && activeChatsList.value) {
+
+  if (userId && activeChatsList.value?.length > 0) {
     const user = activeChatsList.value.find(u => u.id === userId);
     if (user) {
       selectUser(user);
     }
   }
 
-  // Set up event listeners
   $emitter.on('customEvent', async (payload: any) => {
     if (payload.data) {
       await getRoomChats(payload.data);

@@ -515,6 +515,15 @@ watch(fontColor, (newColor) => {
 const proceedSaveAndExit = async () => {
   // const signatureUrl = emittedAgreementData?.value?.signatureObj?.secure_url || leaseSignatureUrl.value;
   const leaseSignature = localStorage.getItem('lease-signature-url')
+  if (!leaseSignature) {
+    showToast({
+      title: "Error",
+      message: 'You need to sign before you can send the lease agreement.',
+      toastType: "error",
+      duration: 3000,
+    });
+    return;
+  }
   const reqPayload = {
     leaseAgreement: editor.value?.innerHTML,
     isPublished: false,

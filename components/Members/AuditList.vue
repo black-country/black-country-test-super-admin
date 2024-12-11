@@ -2,12 +2,12 @@
     <main>
       <div class="flex flex-wrap gap-5 justify-between items-center mb-4">
         <div class="flex space-x-2">
-          <button @click="propertyFilterModal = true" class="flex items-center text-sm space-x-1 bg-[#F0F2F5] border-[#F0F2F5] border text-gray-700 px-2 py-2 rounded transition-all">
+          <button @click="propertyFilterModal = true" class="flex items-center text-sm space-x-1 bg-[#F0F2F5] border-[#F0F2F5] border text-gray-700 px-10 py-2 rounded transition-all">
             <img :src="dynamicIcons('gray-filter')" />
             <span>Filter</span>
           </button>
           <div class="relative w-full">
-            <input  v-model="filters.searchQuery" type="text" placeholder="Search members by name..." class="bg-[#F0F2F5] pl-10 border-[#F0F2F5] border text-sm text-gray-700 px-4 py-3 rounded w-full sm:w-64 focus:outline-none focus:bg-white transition-all"/>
+            <input  v-model="filters.searchQuery" type="text" placeholder="Search" class="bg-[#F0F2F5] pl-10 border-[#F0F2F5] border text-sm text-gray-700 px-4 py-3 rounded w-full sm:w-64 focus:outline-none focus:bg-white transition-all"/>
             <span class="absolute inset-y-0 left-3 flex items-center pr-2">
               <img
               class=""
@@ -19,11 +19,6 @@
     
         <!-- Right: Configure Table, Export, and New Property -->
         <div class="flex space-x-2">
-                  <!-- Configure Table Button -->
-          <button @click="showModal = true" class="flex items-center space-x-1 text-sm px-2  bg-[#F0F2F5] border-[#F0F2F5] border text-gray-700 py-2 rounded hover:bg-gray-200 transition-all">
-            <img :src="dynamicIcons('gray-settings')" />
-            <span>Configure table</span>
-          </button>
           <!-- Export Button -->
           <button  @click="toggleDownloadDropdown" class="flex items-center space-x-1 text-sm px-2 bg-[#F0F2F5] border-[#F0F2F5] border text-gray-700 py-2 rounded hover:bg-gray-200 transition-all">
             <img :src="dynamicIcons('gray-download')" />
@@ -66,16 +61,13 @@
             </li>
           </ul>
         </div>
-                          <!-- New Property Button -->
-                          <button @click="isInviteModalOpen =  true" class="bg-[#292929] px-2 flex items-center text-sm text-white py-2 rounded hover:bg-gray-800 transition-all">
-                            <img :src="dynamicIcons('white-add')" /> New Member
-                          </button>
+            
         </div>
       </div>
   
       <div>
         <div
-          v-if="membersList && !loadingMembers"
+          v-if="auditList && !loading"
           class="bg-white rounded-lg overflow-hidden"
         >
           <div class="custom-scrollbar-container">
@@ -83,130 +75,86 @@
               <thead class="border-b-[0.5px] border-gray-50 z-30 bg-gray-25 sticky top-0">
                 <tr>
                   <th
-                    v-for="column in visibleColumns"
-                    :key="column.key"
                     class="py-5 px-5 text-left text-sm font-medium text-gray-500 tracking-wider"
                   >
-                    {{ column.label }}
+                  Members
                   </th>
-                  <th class="py-5 px-5 text-right text-sm font-medium text-gray-500 tracking-wider">
-                    Action
+                  <th
+                    class="py-5 px-5 text-left text-sm font-medium text-gray-500 tracking-wider"
+                  >
+                  Timestamp
+                  </th>
+                  <th
+                    class="py-5 px-5 text-left text-sm font-medium text-gray-500 tracking-wider"
+                  >
+                  Action type
+                  </th>
+                  <th
+                    class="py-5 px-5 text-left text-sm font-medium text-gray-500 tracking-wider"
+                  >
+                  Description
+                  </th>
+                  <th
+                    class="py-5 px-5 text-left text-sm font-medium text-gray-500 tracking-wider"
+                  >
+                  Entity type
+                  </th>
+                  <th
+                    class="py-5 px-5 text-left text-sm font-medium text-gray-500 tracking-wider"
+                  >
+                  IP address
+                  </th>
+                  <th
+                    class="py-5 px-5 text-left text-sm font-medium text-gray-500 tracking-wider"
+                  >
+                  Status
                   </th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-50 z-10">
                 <tr
                   class="cursor-pointer"
-                  v-for="(member, index) in processedData"
-                  :key="member.id"
+                  v-for="(audit, index) in auditList"
+                  :key="audit.id"
                 >
                   <td
-                    @click.prevent="handleDropdownClick('view', member)"
-                    v-for="column in visibleColumns"
-                    :key="column.key"
                     class="py-5 px-5 whitespace-nowrap text-sm text-[#667185] font-semibold relative"
                   >
-                    <p v-if="column.label !== 'Status'">{{ getPropertyValue(member, column.key) }}</p>
-                    <!-- {{column}} -->
-                    <p class="absolute left-0 top-10" v-if="column.label === 'Status'">
-                      <span :class="[ member.isActive ? 'bg-green-500' : 'bg-red-500']" class="rounded-full  px-3 py-2 text-white text-sm">
-                       {{ member.isActive ? 'active' : 'In Active'}}
-                      </span>
-                    </p>
-                    <!-- <p v-if="column.key === 'isPublished'">{{ property.isPublished ? 'Published' : 'Draft' }}</p> -->
+                    <p>{{ `${audit?.metadata?.authUser?.firstName} ${audit?.metadata?.authUser?.lastName}` ?? 'Nil' }}</p>
+                    <p>{{ audit?.metadata?.authUser?.role ?? 'Nil' }}</p>
                   </td>
-                  <td class="py-5 px-5 whitespace-nowrap text-sm text-right">
-                    <button
-                      @click="toggleDropdown(index)"
-                      class="inline-flex items-center text-sm font-medium text-[#667185] hover:text-black"
-                    >
-                      <svg
-                        width="48"
-                        height="44"
-                        viewBox="0 0 48 44"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M21.9966 22H22.0041"
-                          stroke="#292929"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M27 22H27.0075"
-                          stroke="#1D2739"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M17 22H17.0075"
-                          stroke="#1D2739"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </button>
-                    <div
-                      v-if="activeDropdown === index"
-                      class="absolute right-16 z-50 mt-2 w- bg-white border border-gray-200 rounded-md shadow-lg"
-                    >
-                      <ul class="py-1 text-sm text-gray-700 divide divide-y-[0.5px]">
-                        <li>
-                          <a
-                            @click.prevent="handleDropdownClick('view', member)"
-                            href="#"
-                            class="block flex items-center gap-x-2 px-4 py-3 hover:bg-gray-100 text-start"
-                          >
-                            <img :src="dynamicIcons('view-property')" />
-                            View Member
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            @click.prevent="handleDropdownClick('edit', member)"
-                            href="#"
-                            class="block flex items-center gap-x-2 px-4 py-3 hover:bg-gray-100 text-start"
-                          >
-                            <img :src="dynamicIcons('edit-property')" />
-                            Deactivate User
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            @click.prevent="handleDropdownClick('duplicate', member)"
-                            href="#"
-                            class="block flex items-center gap-x-2 px-4 py-3 hover:bg-gray-100 text-start"
-                          >
-                            <img :src="dynamicIcons('duplicate-property')" />
-                            Remove User
-                          </a>
-                        </li>
-                        <!-- <li>
-                          <a
-                            @click.prevent="handleDropdownClick('deactivate', property)"
-                            href="#"
-                            class="block flex items-center gap-x-2 px-4 py-3 hover:bg-gray-100 text-start"
-                          >
-                            <img :src="dynamicIcons('deactivate-property')" />
-                            {{property.isPublished ? 'Deactivate property' : 'Activate property'}}
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            @click.prevent="handleDropdownClick('delete', property)"
-                            href="#"
-                            class="block flex items-center gap-x-2 px-4 py-3 hover:bg-gray-100 text-start"
-                          >
-                            <img :src="dynamicIcons('delete-property')" />
-                            Delete property
-                          </a>
-                        </li> -->
-                      </ul>
-                    </div>
+                  <td
+                    class="py-5 px-5 whitespace-normal break-words text-sm text-[#667185] font-semibold relative"
+                  >
+                    <p> {{ moment(audit?.createdAt).format('DD MMMM YYYY, HH:mm:ss A') ?? 'Nil' }}</p>
+                  </td>
+                  <td
+                    class="py-5 px-5 whitespace-nowrap text-sm text-[#667185] font-semibold relative"
+                  >
+                  {{ audit?.eventType ?? 'Nil' }}
+                  </td>
+                  <td
+                    class="py-5 px-5 whitespace-normal break-words text-sm text-[#667185] font-semibold relative"
+                  >
+                    <p class=""> {{ audit?.actionDescription?.summary ?? 'Nil' }}</p>
+                  </td>
+
+                  <td
+                    class="py-5 px-5 whitespace-nowrap text-sm text-[#667185] font-semibold relative"
+                  >
+                  {{ audit?.entityType ?? 'Nil' }}
+                  </td>
+
+                  <td
+                    class="py-5 px-5 whitespace-nowrap text-sm text-[#667185] font-semibold relative"
+                  >
+                  {{ audit?.metadata?.ipAddress ?? 'Nil' }}
+                  </td>
+
+                  <td
+                    class="py-5 px-5 whitespace-nowrap text-sm text-[#667185] font-semibold relative"
+                  >
+                  {{ audit?.status ?? 'Nil' }}
                   </td>
                 </tr>
               </tbody>
@@ -218,7 +166,7 @@
             class="fixed inset-0 z-40 bg-black opacity-25"
           ></div>
           <CorePagination
-            v-if="!loadingMembers && membersList.length > 0"
+            v-if="!loading && auditList.length > 0"
             :total="metadata.total"
             :page="metadata.page"
             :perPage="metadata.perPage"
@@ -227,11 +175,11 @@
           />
         </div>
         <div
-          v-if="loadingMembers && membersList.length === 0"
+          v-if="loading && auditList.length === 0"
           class="h-32 bg-slate-200 rounded animate-pulse w-full m-3"
         ></div>
         <div
-          v-if="!loadingMembers && membersList.length === 0"
+          v-if="!loading && auditList.length === 0"
           class="flex justify-center items-center flex-col my-20"
         >
           <div class="flex justify-center items-center">
@@ -241,64 +189,18 @@
       </div>
       
   
-      <PropertyConfigTableModal
-        v-if="propertyConfigModal"
-        @close="propertyConfigModal = false"
-      />
       <PropertyFilterModal
         v-if="propertyFilterModal"
         @close="propertyFilterModal = false"
         @applyFilters="handleApplyFilters"
       />
-  
-      <CoreModal :showCloseBtn="false" title="Configure Table" :isOpen="showModal" @close="showModal = false">
-        <div>
-          <div
-            v-for="(column, index) in columns"
-            :key="index"
-            class="flex items-center mb-2"
-          >
-            <span class="flex-1 text-sm text-[#1D2739]">{{ column.label }}</span>
-            <!-- <label :for="column.label" class="inline-flex items-center space-x-4 cursor-pointer dark:text-gray-100">
-              <span class="relative">
-                <input :id="column.label" type="checkbox" v-model="column.visible" class="hidden peer toggle">
-                <div class="w-10 h-6 rounded-full shadow-inner dark:bg-[#F0F2F5] peer-checked:dark:bg-[#099137]"></div>
-                <div class="absolute inset-y-0 left-0 w-4 h-4 m-1 rounded-full shadow peer-checked:right-0 peer-checked:left-auto dark:bg-[#FFFFFF]"></div>
-              </span>
-            </label> -->
-            <label :for="column.label" class="inline-flex items-center space-x-4 cursor-pointer dark:text-gray-100">
-              <span class="relative">
-                <input :id="column.label" type="checkbox" v-model="column.visible" class="hidden peer toggle">
-                <div class="w-10 h-6 rounded-full shadow-inner bg-gray-300 dark:bg-[#F0F2F5] peer-checked:bg-green-500 peer-checked:dark:bg-[#099137]">
-                </div>
-                <div class="absolute inset-y-0 left-0 w-4 h-4 m-1 rounded-full shadow bg-white peer-checked:right-0 peer-checked:left-auto dark:bg-[#FFFFFF]"></div>
-              </span>
-            </label>
-          </div>
-          <div class="flex justify-between mt-10 gap-x-6">
-            <button
-              @click="resetColumns"
-              class="bg-[#EBE5E0] w-full font-medium text-[#292929] text-sm px-4 py-2.5 rounded-lg"
-            >
-              Reset
-            </button>
-            <button
-              @click="saveColumns"
-              class="bg-[#292929] text-sm font-medium w-full text-white px-4 py-2.5 rounded-lg"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </CoreModal>
-
-      <MembersInviteMemberModal class="" :isOpen="isInviteModalOpen" @close="closeInviteModal" />
     </main>
   </template>
   
   <script lang="ts" setup>
+    import moment from "moment";
   import { usePaginatedFetchAndDownload } from '@/composables/core/exportData';
-  import { useGetMembers } from "@/composables/modules/member/fetch";
+  import { useGetAudits } from "@/composables/modules/audits/useFetchAudits";
   import { dynamicIcons } from "@/utils/assets";
   import { exportData } from "@/composables/core/exportData";
   import {  downloadableColumns } from '@/composables/core/exportData'
@@ -306,7 +208,7 @@
   const { exportPaginatedData, isDownloading }  = usePaginatedFetchAndDownload()
 
   const downloadData = (exportType: any) => {
-    exportPaginatedData('/members', exportType, 'members_data_export', ['firstName', 'lastName', 'email', 'status', 'role' ]);
+    exportPaginatedData('/audits', exportType, 'audits_data_export', ['metadata.authUser.firstName', 'createdAt', 'eventType', 'actionDescription.summary', 'entityType', 'metadata.ipAddress', 'status' ]);
   }
   const route = useRoute();
   const router = useRouter();
@@ -322,18 +224,17 @@
   };
   
   const {
-    loadingMembers,
-    membersList,
-    searchQuery,
-    filters,
+    loading,
+    auditList,
     metadata,
-    getMembers,
-    applyFilters,
-  } = useGetMembers();
+    fetchAudits,
+    setPaginationObj,
+    filters
+  } = useGetAudits();
   
   const handlePageChange = (val: any) => {
     metadata.value.page = val || 1;
-    getMembers(); // Explicitly call the method to fetch new data
+    fetchAudits(); // Explicitly call the method to fetch new data
   };
   
   const downloadDropdown = ref(false);
@@ -399,15 +300,15 @@
   
   const handleExport = (type: string) => {
     if (type === "csv") {
-      exportData(membersList.value, "csv", "property-listings");
+      exportData(auditList.value, "csv", "audit-listings");
     }
   
     if (type === "pdf") {
-      exportData(membersList.value, "pdf", "property-listings");
+      exportData(auditList.value, "pdf", "audit-listings");
     }
   
     if (type === "excel") {
-      exportData(membersList.value, "excel", "property-listings");
+      exportData(auditList.value, "excel", "audit-listings");
     }
     downloadDropdown.value = false;
   };
@@ -420,63 +321,6 @@
     applyFilters(filters);
   };
   
-  const showModal = ref(false);
-  
-  // Columns data
-  const columns = ref([
-    { label: "Full Name", key: "fullName", visible: true },
-    { label: "Email", key: "email", visible: true },
-    { label: "Role", key: "group", visible: true },
-    { label: "Status", key: "isActive", visible: true },
-    { label: "Last Active", key: "lastActive", visible: false },
-    { label: "Group", key: "group", visible: false },
-    { label: "Date Added", key: "createdAt", visible: false },
-  ]);
-
-
-  // Concatenate firstName and lastName into fullName
-const processedData = computed(() => {
-  return membersList.value.map((item: any) => ({
-    ...item,
-    fullName: `${item.firstName} ${item.lastName}`
-  }));
-});
-  
-  // Computed property to get only visible columns
-  const visibleColumns = computed(() => {
-    return columns.value.filter((column) => column.visible);
-  });
-  
-  downloadableColumns.value = columns.value
-  
-  // Function to extract nested properties
-  const getPropertyValue = (property: any, key: string) => {
-    return key.split(".").reduce((obj, k) => obj && obj[k], property) || "N/A";
-  };
-  
-  // Function to reset columns visibility
-  const resetColumns = () => {
-    columns.value.forEach((column) => {
-      column.visible = true; // Reset all to visible
-    });
-    showModal.value = false;
-  };
-  
-  // Function to save the changes and close modal
-  const saveColumns = () => {
-    showModal.value = false;
-  };
-
-
-  const isInviteModalOpen = ref(false);
-
-const openInviteModal = () => {
-  isInviteModalOpen.value = true;
-};
-
-const closeInviteModal = () => {
-    isInviteModalOpen.value = false;
-};
   </script>
   
   <style scoped>

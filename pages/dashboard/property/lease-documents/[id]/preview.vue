@@ -1,13 +1,13 @@
 <template>
     <DashboardWithHeaderOnly>
         <template #left-content>
-            <h2 class="text-lg font-semibold">{{leaseDocsObj?.rentalApplication?.house?.name ?? 'Nil'}} Lease agreement</h2>
+            <h2 class="text-sm font-semibold">{{leaseDocsObj?.rentalApplication?.house?.name ?? 'Nil'}} Lease agreement</h2>
           </template>
           <template #right-content>
             <div class="flex items-center gap-x-4">
          <button
                 :class="[
-                  'relative rounded-full font-semibold text-sm px-6 py-3',
+                  'relative rounded-full font-semibold text-sm px-6 py-2',
                   `text-[${handleColor(leaseDocsObj.status).textColor}]`,
                   `bg-[${handleColor(leaseDocsObj.status).bgColor}]`
                 ]"
@@ -15,7 +15,7 @@
                 {{ handleColor(leaseDocsObj.status).text }}
               </button>
               
-              <button :disabled="isDownloading"  v-if="leaseDocsObj.status === 'SIGNED'" @click="downloadAgreement" class="bg-[#292929] disabled:cursor-not-allowed disabled:opacity-25 text-white px-6 py-3 rounded-lg flex items-center gap-x-2">
+              <button :disabled="isDownloading"  v-if="leaseDocsObj.status === 'SIGNED'" @click="downloadAgreement" class="bg-[#292929] disabled:cursor-not-allowed disabled:opacity-25 text-white px-6 py-2 text-sm rounded-lg flex items-center gap-x-2">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9.99935 12.0833V3.75M9.99935 12.0833C9.41585 12.0833 8.32562 10.4214 7.91602 10M9.99935 12.0833C10.5828 12.0833 11.6731 10.4214 12.0827 10" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M16.6673 13.75C16.6673 15.8183 16.2357 16.25 14.1673 16.25H5.83398C3.76565 16.25 3.33398 15.8183 3.33398 13.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -30,50 +30,54 @@
                    Edit</button>
             </div>
           </template>
-    <main>
-            <div  ref="leaseAgreementContent" class="bg-white p-6 rounded-lg max-w-5xl mx-auto w-full border-[0.5px] shadow-sm border-gray-100 my-10">
-              <div v-html="leaseDocsObj?.leaseAgreementContent" class="p-4 rounded-lg shadow-sm"></div>
-              <div class="mt-6">
-                <h2 class="text- font-medium mb-2">Signature</h2>
-                <p class="text-gray-500 mb-6">
-                  The parties hereto have executed this Lease Agreement as of the
-                  date first above written.
-                </p>
-    
-                <div class="mb-4">
-                  <h3 class="text-sm font-medium mb-2">
-                    Landlord/Property Manager:
-                  </h3>
-                  <label class="block text-sm text-gray-500 mb-1">Signature</label>
-                  <img :src="leaseDocsObj?.houseOwnerSignatureUrl" alt="Signature"
-                  class="w-full border-b-2 border-dotted py-2 mb-4  bg-transparent outline-none placeholder-gray-400" />
-                  <label class="block text-sm text-gray-500 mb-1">Full Name</label>
-                  <div class="border-b-2 border-dotted text-gray-800 py-2 mb-4">
-                    {{ leaseDocsObj?.houseOwnerSigneeName }}
-                  </div>
-                  <label class="block text-sm text-gray-500 mb-1">Date</label>
-                  <div class="border-b-2 border-dotted text-gray-800 py-2 mb-8">
-                    {{ moment(leaseDocsObj?.signedAt).format('DD MMMM YYYY, HH:mm:ss') }}
-                  </div>
-                </div>
-    
-                <div class="mb-4">
-                  <h3 class="text-base font-medium mb-2">Tenant:</h3>
-                  <label class="block text-sm text-gray-500 mb-1">Full Name</label>
-                    <div class="border-b-2 border-dotted text-gray-800 py-2 mb-4">
-                        {{ leaseDocsObj?.signeeName }}
+            <main class="">
+                    <div  ref="leaseAgreementContent" class="bg-white p-6 rounded-lg max-w-3xl mx-auto w-full border-[0.5px] shadow-sm border-gray-100 my-10">
+                      <div v-html="leaseDocsObj?.leaseAgreementContent" class="p-4 rounded-lg shadow-sm"></div>
+                      <div class="mt-6">
+                        <h2 class="text- font-medium mb-2">Signature</h2>
+                        <p class="text-gray-500 mb-6">
+                          The parties hereto have executed this Lease Agreement as of the
+                          date first above written.
+                        </p>
+            
+                        <div class="mb-4">
+                          <h3 class="text-sm font-medium mb-2">
+                            Landlord/Property Manager:
+                          </h3>
+                          <label class="block text-sm text-gray-500 mb-1">Signature</label>
+                          <div class="border-b-2 border-dotted py-2 mb-4">
+                            <img :src="leaseDocsObj?.houseOwnerSignatureUrl" alt="Signature"
+                            class="bg-transparent outline-none placeholder-gray-400" />
+                          </div>
+                          <label class="block text-sm text-gray-500 mb-1">Full Name</label>
+                          <div class="border-b-2 border-dotted text-gray-800 py-2 mb-4">
+                            {{ leaseDocsObj?.houseOwnerSigneeName }}
+                          </div>
+                          <label class="block text-sm text-gray-500 mb-1">Date</label>
+                          <div class="border-b-2 border-dotted text-gray-800 py-2 mb-8">
+                            {{ moment(leaseDocsObj?.signedAt).format('DD MMMM YYYY, HH:mm:ss') }}
+                          </div>
+                        </div>
+            
+                        <div class="mb-4">
+                          <h3 class="text-base font-medium mb-2">Tenant:</h3>
+                          <label class="block text-sm text-gray-500 mb-1">Full Name</label>
+                            <div class="border-b-2 border-dotted text-gray-800 py-2 mb-4">
+                                {{ leaseDocsObj?.signeeName }}
+                              </div>
+                          <label class="block text-sm text-gray-500 mb-1">Signature</label>
+                         <div class="border-b-2 border-dotted py-2 mb-4">
+                          <img :src="leaseDocsObj?.signatureUrl" alt="Signature"
+                          class="h-32 bg-transparent outline-none placeholder-gray-400" />
+                         </div>
+                          <label class="block text-sm text-gray-500 mb-1">Date</label>
+                          <div class="border-b-2 border-dotted text-gray-800 py-2 mb-8">
+                            {{ moment(leaseDocsObj?.createdAt).format('DD MMMM YYYY, HH:mm:ss') }}
+                          </div>
+                        </div>
                       </div>
-                  <label class="block text-sm text-gray-500 mb-1">Signature</label>
-                  <img :src="leaseDocsObj?.signatureUrl" alt="Signature"
-                    class="w-full border-b-2 border-dotted py-2 mb-4 bg-transparent outline-none placeholder-gray-400" />
-                  <label class="block text-sm text-gray-500 mb-1">Date</label>
-                  <div class="border-b-2 border-dotted text-gray-800 py-2 mb-8">
-                    {{ moment(leaseDocsObj?.createdAt).format('DD MMMM YYYY, HH:mm:ss') }}
-                  </div>
-                </div>
-              </div>
-            </div>
-    </main>
+                    </div>
+            </main>
 </DashboardWithHeaderOnly>
 </template>
 

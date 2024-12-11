@@ -2,7 +2,7 @@ import { GATEWAY_ENDPOINT } from "../axios.config";
 
 export const settings_api = {
       $_create_notification_preferences: (payload: any) => {
-        const url = '/preferences/users';
+        const url = '/preferences/admins';
         return GATEWAY_ENDPOINT.post(url, payload);
       },
       $_fetch_notification_preferences: () => {

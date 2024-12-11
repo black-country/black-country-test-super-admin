@@ -38,6 +38,7 @@ export const useGetRentals = () => {
         searchQuery: null,
         fromDate: null,
         toDate: null,
+        status: ''
     });
 
     const { $_fetch_rentals } = rental_api;
@@ -71,6 +72,7 @@ export const useGetRentals = () => {
         loadingRentals.value = true;
         getRentals()
     }, { deep: true });
+
 
     watch( [metadata.value.page, metadata.value.perPage], // Watch only page and perPage
         () => {

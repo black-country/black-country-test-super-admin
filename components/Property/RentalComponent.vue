@@ -23,6 +23,21 @@
               Declined
             </a>
           </li>
+          <li>
+            <a class="pb-3" href="#" @click="setActiveTab('RENT_ACTIVE')" :class="activeTab === 'RENT_ACTIVE' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
+              Active
+            </a>
+          </li>
+          <!-- <li>
+            <a class="pb-3" href="#" @click="setActiveTab('RENT_INACTIVE')" :class="activeTab === 'RENT_INACTIVE' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
+              In-Active
+            </a>
+          </li> -->
+          <!-- <li>
+            <a class="pb-3" href="#" @click="setActiveTab('CANCELLED')" :class="activeTab === 'CANCELLED' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
+              Cancelled
+            </a>
+          </li> -->
         </ul>
       </nav>
 
@@ -57,6 +72,19 @@
               class="bg-red-100 text-red-700 px-2.5 py-1.5 rounded-full text-xs font-semibold">
               Declined
             </div>
+            <!-- <div v-if="application.status === 'RENT_ACTIVE'"
+              class="bg-red-100 text-red-700 px-2.5 py-1.5 rounded-full text-xs font-semibold">
+              Acitve
+            </div> -->
+            <!-- <div v-if="application.status === 'RENT_INACTIVE'"
+              class="bg-yellow-100 text-yellow-700 px-2.5 py-1.5 rounded-full text-xs font-semibold">
+              In Active
+            </div>
+            <div v-if="application.status === 'CANCELLED'"
+              class="bg-black text-white px-2.5 py-1.5 rounded-full text-xs font-semibold">
+              Cancelled
+            </div> -->
+
           </div>
           <div class="mt-4">
             <p class="text-[#1D2739]">{{ application?.house?.name }}</p>
@@ -103,6 +131,10 @@
      @page-changed="handlePageChange"
    />
     </div>
+    <div class="border-[0.5px] border-gray-100 flex justify-center items-center flex-col space-y-3 py-10 rounded-lg" v-else-if="!loadingRentals && !rentalsList.length">
+      <img src="@/assets/icons/users-illustration.svg" />
+       NO DATA AVAILABLE
+    </div>
     <section v-else>
       <div class="rounded-md p-4 w-full mx-auto ">
         <div class="animate-pulse flex space-x-4">
@@ -124,13 +156,14 @@
 
 <script setup lang="ts">
 import { useGetRentals } from '@/composables/modules/rentals/fetchAllRentals';
-const { loadingRentals, rentalsList, metadata, getRentals } = useGetRentals();
+const { loadingRentals, rentalsList, metadata, getRentals, filters } = useGetRentals();
 const router = useRouter();
 
 const activeTab = ref('ALL');
 
 // Function to change active tab
 const setActiveTab = (tab: string) => {
+  filters.value.status = tab
   activeTab.value = tab;
 };
 

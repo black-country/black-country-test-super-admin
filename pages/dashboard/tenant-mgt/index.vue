@@ -108,7 +108,7 @@
     </template>
     
     <TenantsList v-if="activeTab === 'tenants'" />
-    <TenantsMaintenenceRequests :showTabs="true"  v-if="activeTab === 'maintenance-request'" />
+    <TenantsAllMaintenenceRequests :showTabs="true"  v-if="activeTab === 'maintenance-request'" />
   </Layout>
 </template>
 

@@ -7,7 +7,9 @@
             
             <table class="w-full">
               <tbody>
+
                 <tr v-for="item in items" :key="item.id" class="border-t border-gray-100 first:border-t-0">
+                  <!-- {{ item.createdAt }} -->
                   <td class="py-4 text-sm w-1/3">{{ item.itemName }}</td>
                   <td class="py-4 text-sm w-1/3">
                     <div class="flex items-center gap-2">
@@ -44,7 +46,7 @@
           <div class="flex items-center justify-between mt-12 mb-4">
             <div>
               <h2 class="text-sm font-medium">Move in checklist</h2>
-              <p class="text-gray-600 text-sm">Date: {{ formatDate }}</p>
+              <p class="text-gray-600 text-sm">Date: {{ moment(selectedItem?.createdAt).format('DD MMMM YYYY') ?? 'Nil' }}</p>
             </div>
             <button @click="downloadChecklist" class="text-gray-600 hover:text-gray-800">
               <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -56,6 +58,7 @@
       </template>
       
       <script setup lang="ts">
+          import moment from "moment";
       import { useCustomToast } from '@/composables/core/useCustomToast'
       const { showToast } = useCustomToast();
       import { computed } from 'vue'
@@ -80,14 +83,53 @@
         }
       })
       
-      const formatDate = computed(() => {
-        return new Date().toLocaleDateString('en-GB', {
+      // const formatDate = computed(() => {
+      //   return new Date().toLocaleDateString('en-GB', {
+      //     day: 'numeric',
+      //     month: 'long',
+      //     year: 'numeric'
+      //   })
+      // })
+
+      // Reactive reference to the selected item
+const selectedItem = ref<InspectionItem | null>(null);
+
+// Automatically set the selected item on mount
+onMounted(() => {
+  // Loop through the rentalChecklist groups to find the first item
+  for (const group in props.rentalChecklist) {
+    if (props.rentalChecklist[group]?.length > 0) {
+      selectedItem.value = props.rentalChecklist[group][0]; // Assign the first item
+      console.log('Selected item on mount:', selectedItem.value); // Debug or process further
+      break;
+    }
+  }
+});
+      
+      // Compute the date for the checklist
+const formatDate = computed(() => {
+  // Extract the first available date from the checklist items
+  for (const group in props.rentalChecklist) {
+    if (props.rentalChecklist.hasOwnProperty(group)) {
+      const items = props.rentalChecklist[group];
+      if (items && items.length > 0) {
+        return new Date(items[0].createdAt).toLocaleDateString('en-GB', {
           day: 'numeric',
           month: 'long',
-          year: 'numeric'
-        })
-      })
-      
+          year: 'numeric',
+        });
+      }
+    }
+  }
+  // Fallback if no date is found
+  return new Date().toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+});
+
+
       // Function to download checklist as PDF
       const downloadChecklist = () => {
         const doc = new jsPDF();

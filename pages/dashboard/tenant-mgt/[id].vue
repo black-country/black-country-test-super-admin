@@ -76,7 +76,7 @@
       </div>
     </main>
   </Layout>
-  <CoreFullScreenLoader :visible="loading" text="Authenticating..." logo="/path-to-your-logo.png" />
+  <CoreFullScreenLoader :visible="loading" text="Fetching tenent details..." logo="/path-to-your-logo.png" />
 </template>
 
 <script setup lang="ts">

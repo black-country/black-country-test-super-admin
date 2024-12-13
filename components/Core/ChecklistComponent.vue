@@ -1,7 +1,7 @@
 
 
       <template>
-        <div class="max-w-4xl mx-auto p-4 border-[0.5px] rounded-lg">        
+        <div class="max-w-sm h-96 overflow-y-auto p-4 border-[0.5px] rounded-lg">        
           <div v-for="(items, group) in rentalChecklist" :key="group" class="mb-8">
             <h2 class="text-base font-semibold mb-4">{{ group }}</h2>
             

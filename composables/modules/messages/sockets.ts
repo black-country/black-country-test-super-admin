@@ -28,34 +28,34 @@ export const useWebSocket = () => {
     // Connection events
     socket.value.on("connect", () => {
       // console.log("Connected to WebSocket server");
-      showToast({
-        title: "Success",
-        message: "Connection was successful",
-        toastType: "success",
-        duration: 3000
-      });
+      // showToast({
+      //   title: "Success",
+      //   message: "Connection was successful",
+      //   toastType: "success",
+      //   duration: 3000
+      // });
       isConnected.value = true;
       fetchInitialMessages();
     });
 
     socket.value.on("disconnect", () => {
       console.log("Disconnected from server");
-      showToast({
-        title: "Error",
-        message: "Disconnected from websocket.",
-        toastType: "error",
-        duration: 3000
-      });
+      // showToast({
+      //   title: "Error",
+      //   message: "Disconnected from websocket.",
+      //   toastType: "error",
+      //   duration: 3000
+      // });
       isConnected.value = false;
     });
 
     socket.value.on("error", (error) => {
-      showToast({
-        title: "Error",
-        message: "Connection error:",
-        toastType: "error",
-        duration: 3000
-      });
+      // showToast({
+      //   title: "Error",
+      //   message: "Connection error:",
+      //   toastType: "error",
+      //   duration: 3000
+      // });
       isConnected.value = false;
     });
 

@@ -305,11 +305,11 @@ const accountSettings = ref([
     icon: "gray-profile",
     path: "/dashboard/profile/personal-information",
   },
-  {
-    label: "Payment Information",
-    icon: "payment",
-    path: "/dashboard/profile/payment-information",
-  },
+  // {
+  //   label: "Payment Information",
+  //   icon: "payment",
+  //   path: "/dashboard/profile/payment-information",
+  // },
   {
     label: "Notification Preference",
     icon: "gray-notification",

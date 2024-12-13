@@ -69,7 +69,7 @@
 
 
    <template>
-    <div class="flex-1 z-10 overflow-y-auto p-4 space-y-3 bg-white">
+    <div  ref="scrollContainer" class="flex-1 scroll-container z-10 overflow-y-auto p-4 space-y-3 bg-white">
       <div v-for="(msg, index) in sortedMessagesWithHeaders" :key="msg.id || msg.dateHeader">
         <!-- Display date headers -->
         <div v-if="msg.isHeader" class="text-center my-3 text-sm text-gray-400">
@@ -96,7 +96,8 @@
   const { user } = useUser();
   const props = defineProps({
     messages: Array,
-    roomChats: Array
+    roomChats: Array,
+    selectedUser: Object
   });
   
   // Merge messages and roomChats, then sort and add date headers
@@ -134,5 +135,32 @@
       return messageDate.format('MMMM D, YYYY');
     }
   };
+
+  // Reference to the scrollable container
+const scrollContainer = ref<HTMLDivElement | null>(null);
+
+  // Scroll-to-bottom function
+const scrollToBottomPage = () => {
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
+  }
+};
+
+  watch(
+      () => props.selectedUser, // Watched property
+      (newValue, oldValue) => {
+        console.log(newValue, 'new selected user');
+        console.log(oldValue, 'previous selected user');
+        scrollToBottomPage();
+      }
+    );
+
   </script>
+  
+  <style>
+.scroll-container {
+  height: 650px; /* Adjust based on your needs */
+  overflow-y: auto;
+}
+</style>
   

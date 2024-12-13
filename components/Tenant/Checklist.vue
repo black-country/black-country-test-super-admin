@@ -1,31 +1,3 @@
-<!-- <template>
-  <div v-if="!(rentalChecklist?.moveInChecklist?.length || rentalChecklist?.moveOutChecklist?.length) && !loading"
-    class="text-center text-gray-500 py-12">
-    <img src="@/assets/icons/transaction-illustration.svg" alt="No transactions" class="h-12 w-12 mx-auto mb-2" />
-    <p>No Rental Checklist Available</p>
-  </div>
-  <section class="my-6" v-else-if="!(rentalChecklist?.moveInChecklist?.length || rentalChecklist?.moveOutChecklist?.length) && loading">
-    <div class="animate-pulse flex space-x-4 h-44 bg-slate-200 rounded"></div>
-  </section>
-
-  <div v-else>
-    <CoreChecklistComponent :rentalChecklist="rentalChecklist?.moveInChecklist" checklistType="in" />
-
-    <CoreChecklistComponent :rentalChecklist="rentalChecklist?.moveOutChecklist" checklistType="out" />
-  </div>
-
-</template>
-
-<script lang="ts" setup>
-import moment from "moment";
-import { useFetchRentalChecklist } from '@/composables/modules/tenants/useFetchRentalChecklist'
-const { rentalChecklist, loading } = useFetchRentalChecklist()
-</script>
-
-<style scoped>
-/* Additional custom styles if needed */
-</style> -->
-
 <template>
   <!-- No Move In Checklist Available -->
   <div v-if="rentalChecklist?.moveInChecklist === null && !loading" class="text-center text-gray-500 py-12">
@@ -46,7 +18,8 @@ const { rentalChecklist, loading } = useFetchRentalChecklist()
 
   <!-- Show checklist components when available -->
   <!-- <div v-else> -->
-    <CoreChecklistComponent 
+<section>
+  <CoreChecklistComponent 
       v-if="rentalChecklist?.moveInChecklist !== null && !loading"
       :rentalChecklist="rentalChecklist?.moveInChecklist" 
       checklistType="in" 
@@ -56,6 +29,7 @@ const { rentalChecklist, loading } = useFetchRentalChecklist()
       :rentalChecklist="rentalChecklist?.moveOutChecklist" 
       checklistType="out" 
     />
+</section>
   <!-- </div> -->
 </template>
 

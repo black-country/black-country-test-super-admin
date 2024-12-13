@@ -72,7 +72,7 @@
         </div>
       </section>
   
-      <section v-else-if="loading && !maintenanceRequests?.length">
+      <section v-else-if="loading && !maintenanceRequestsList?.length">
         <div class="h-44 bg-slate-200 rounded animate-pulse"></div>
       </section>
   
@@ -104,13 +104,13 @@
   </template>
   
   <script lang="ts" setup>
-  import { useFetchMaintenanceRequests } from '@/composables/modules/tenants/useFetchMaintenenceRequests';
-  // import { useFetchAdminMaintenanceRequests } from '@/composables/modules/maintenance/useFetchAllMaintenenceRequests'
-// const { maintenanceRequests, fetching, queryObj } = useFetchAdminMaintenanceRequests()
+//   import { useFetchMaintenanceRequests } from '@/composables/modules/tenants/useFetchMaintenenceRequests';
+  import { useFetchAdminMaintenanceRequests } from '@/composables/modules/maintenance/useFetchAllMaintenenceRequests'
+const { maintenanceRequestsList, fetching, queryObj } = useFetchAdminMaintenanceRequests()
   import { ref, computed } from 'vue';
   import { useRouter } from 'vue-router';
   
-  const { maintenanceRequests, loading } = useFetchMaintenanceRequests();
+//   const { maintenanceRequestsList, loading } = useFetchMaintenanceRequests();
   const router = useRouter();
 
   const props = defineProps({
@@ -122,7 +122,7 @@
     //   type: Object,
     //   default: () => {}
     // },
-    // maintenanceRequests: {
+    // maintenanceRequestsList: {
     //   type: Array,
     //   default: () => []
     // },
@@ -209,7 +209,7 @@
   };
   
   // const filteredRequests = computed(() => {
-  //   const groupedRequests: { [date: string]: any[] } = maintenanceRequests.value.reduce(
+  //   const groupedRequests: { [date: string]: any[] } = maintenanceRequestsList.value.reduce(
   //     (acc: { [key: string]: any[] }, request: any) => {
   //       const date = new Date(request.createdAt).toDateString();
   //       if (!acc[date]) acc[date] = [];
@@ -227,9 +227,9 @@
   // });
 
   const requests = computed(() => {
-  return maintenanceRequests.value && maintenanceRequests.value.length > 0
-    ? maintenanceRequests.value
-    : maintenanceRequests.value;
+  return maintenanceRequestsList.value && maintenanceRequestsList.value.length > 0
+    ? maintenanceRequestsList.value
+    : maintenanceRequestsList.value;
 });
 
 const filteredRequests = computed(() => {

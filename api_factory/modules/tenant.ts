@@ -25,8 +25,12 @@ export const tenant_api = {
         let url = `/tenants/${tenentId}/rental-checklists`
         return GATEWAY_ENDPOINT.get(url)
       },
-      $_fetch_maintenance_request: (tenentId: string | number, page = 1, perPage = 100000000) => {
-        let url = `/maintenance-requests?page=${page}&perPage=${perPage}&tenantId=${tenentId}`
+      $_fetch_maintenance_request: (tenantId?: string | number, page = 1, perPage = 100000000) => {
+        let url = `/maintenance-requests?page=${page}&perPage=${perPage}`
+
+        if (tenantId) {
+          url += `&tenantId=${tenantId}`;
+        }
         return GATEWAY_ENDPOINT.get(url)
       },
 }

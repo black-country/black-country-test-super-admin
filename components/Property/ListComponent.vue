@@ -73,7 +73,7 @@
       </div>
   
         <!-- New Property Button -->
-        <button @click="handleNewProperty" class="bg-[#292929] px-2 flex items-center text-sm text-white py-2 rounded hover:bg-gray-800 transition-all">
+        <button @click="handleNewProperty" type="button" class="bg-[#292929] px-2 flex items-center text-sm text-white py-2 rounded hover:bg-gray-800 transition-all">
           <img :src="dynamicIcons('white-add')" /> New Property
         </button>
       </div>
@@ -504,7 +504,7 @@ const saveColumns = () => {
 };
 
 const handleNewProperty = () => {
-  clearLocalStorage()
+  // clearLocalStorage()
   router.push('/dashboard/property/create-steps')
   // 
 }

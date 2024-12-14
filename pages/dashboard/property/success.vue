@@ -12,7 +12,7 @@
         </div>
         <h2 class="text-lg text-[#1D2739] font-medium mb-2">Property published successfully</h2>
         <p class="text-gray-500 mb-6 text-sm">You've successfully published this property for potential tenants to view.</p>
-        <button @click="router.push('/dashboard/property/')"
+        <button type="button" @click="handleRouting"
           class="bg-[#292929] w-full text-white py-3.5 text-sm px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
         >
           Got it
@@ -23,12 +23,20 @@
   </template>
   
   <script setup lang="ts">
+
+import { useClearLocalStorage } from '@/composables/core/useClearLocalStorage';
+const { clearLocalStorage } = useClearLocalStorage();
   import AuthLayout from '@/layouts/auth.vue'
   const router = useRouter()
 //   definePageMeta({
 //      middleware: 'auth'
 // })
   // No additional setup is needed for this component
+
+  const handleRouting = () => {
+    router.push('/dashboard/property/')
+    clearLocalStorage();
+  }
   </script>
   
   <style scoped>

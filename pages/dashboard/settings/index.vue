@@ -129,6 +129,8 @@
       /> -->
     </div>
     <SettingsNotificationsTableList @create="showModal = true" v-if="activeTab === 'notifications-reminders'" />
+    <SettingsPolicyManagement v-if="activeTab === 'policy-management'" />
+    <!-- <SettingsFaq v-if="activeTab === 'faqs'" /> -->
     </Layout>
   </template>
   

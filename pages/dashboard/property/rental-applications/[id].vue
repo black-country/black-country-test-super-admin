@@ -19,7 +19,7 @@
         </div>
 
         <p
-          :class="`${computedColorMap(rentalObj.status)} text-sm px-3 py-2 rounded-lg border-[0.5px]`"
+          :class="`${computedColorMap(rentalObj.status)} text-xs px-3 py-2 rounded-lg border-[0.5px]`"
         >
           {{ rentalObj.status }}
         </p>
@@ -34,10 +34,10 @@
           </button>
         </div> -->
         <div v-if="rentalObj.status === 'PENDING'" class="flex space-x-4">
-          <button @click="declineModal = true" class="bg-[#EBE5E0] text-sm text-[#292929] px-6 py-2.5 rounded-md">
+          <button @click="declineModal = true" class="bg-[#EBE5E0] text-sm text-[#292929] text-xs px-6 py-2 rounded-md">
             Decline
           </button>
-          <button @click="approveModal = true" class="bg-[#292929] text-white px-6 py-2.5 text-sm rounded-md">
+          <button @click="approveModal = true" class="bg-[#292929] text-white px-6 text-xs py-2 text-sm rounded-md">
             Approve
           </button>
         </div>

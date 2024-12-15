@@ -11,18 +11,25 @@ const assignPayload = ref({
     isPublished: false,
     houseOwnerSigneeName: "",
     houseOwnerSignatureUrl: "",
+    startDate: "",
+    endDate: "",
+    agreementName: ""
 })
 const router = useRouter()
 
 export const useSaveAndExit = () => {
 	const handleSaveAndExit = async (tenantId: string | number, houseId: string | number) => {
         const localUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const payloadObj = JSON.parse(localStorage.getItem('lease-template-payload') || '{}')
 		processingSaveAndExit.value = true
 		const res = await  lease_api.$_assign_lease_to_property(tenantId, houseId, {
             leaseAgreement: assignPayload.value.leaseAgreement,
             isPublished: false,
             houseOwnerSigneeName: `${localUser.firstName || ''} ${localUser.lastName || ''}`.trim() || assignPayload.value.houseOwnerSigneeName,
-            houseOwnerSignatureUrl: leaseSignatureUrl || assignPayload.value.houseOwnerSignatureUrl
+            houseOwnerSignatureUrl: leaseSignatureUrl || assignPayload.value.houseOwnerSignatureUrl,
+            startDate: payloadObj?.startDate || assignPayload.value.startDate,
+            endDate: payloadObj?.endDate || assignPayload.value?.endDate,
+            agreementName: payloadObj?.documentName || assignPayload?.value?.agreementName,
         }) as any
 
         if (res.type !== 'ERROR') {
@@ -49,6 +56,9 @@ export const useSaveAndExit = () => {
         assignPayload.value.leaseAgreement = data.leaseAgreement || '';
         assignPayload.value.houseOwnerSigneeName = data.houseOwnerSigneeName || '';
         assignPayload.value.houseOwnerSignatureUrl = data.houseOwnerSignatureUrl || leaseSignatureUrl;
+        assignPayload.value.startDate = data.startDate || '';
+        assignPayload.value.endDate = data.endDate || '';
+        assignPayload.value.agreementName = data.agreementName || '';
 	}
 
 	return { handleSaveAndExit, processingSaveAndExit, assignPayload, setSaveAndExitPayloadObj }

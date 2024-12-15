@@ -37,7 +37,11 @@
                 </div>
         
                 <!-- Co-living with -->
-                  <h2 class="text-sm font-medium text-[#667185] mt-6 border-[0.5px] py-3 px-3 rounded-lg border-gray-50 text-sm text-[#1D2739] font-medium bg-white border-[0.5px] px-3 py-3 rounded-sm border-gray-100">Co-living with <span class="text-[#1D2739]">{{occupiedRoomsCount ?? 'Nil'}} Person {{occupiedRoomsCount > 1 ? 's' : ''}}</span></h2>
+                  <h2 class="text-sm font-medium text-[#667185] mt-6 border-[0.5px] py-3 px-3 rounded-lg border-gray-50 text-sm text-[#1D2739] font-medium bg-white border-[0.5px] px-3 py-3 rounded-sm border-gray-100">Co-living with 
+                    
+                    <!-- <span class="text-[#1D2739]">{{occupiedRoomsCount ?? 'Nil'}} Person {{occupiedRoomsCount > 1 ? 's' : ''}}</span> -->
+                    <span class="text-[#1D2739]">{{property?.bedroomCount - 1}} Persons</span>
+                  </h2>
 
                 <div>
                   <table class="w-full mt-2 table-fixed text-sm">

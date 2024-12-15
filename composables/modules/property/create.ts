@@ -130,7 +130,7 @@ export const use_create_property = () => {
           toastType: "success",
           duration: 3000
         });
-        clearLocalStorage()
+        // clearLocalStorage()
         Router.push("/dashboard/property/success");
       } else {
         showToast({
@@ -215,7 +215,7 @@ export const use_create_property = () => {
           toastType: "success",
           duration: 3000
         });
-        clearLocalStorage();
+        // clearLocalStorage();
         // Router.push("/dashboard/property/draft-success");
       } else {
         showToast({

@@ -221,6 +221,7 @@
         <label class="block text-sm font-medium">Enter availability date</label>
         <input
           v-model="availabilityDate"
+          :min="minDate"
           type="date"
           class="mt-1 block w-full bg-[#E4E7EC] text-sm px-3 py-3.5 border-[0.5px] outline-none border-gray-50 rounded-md"
         />
@@ -327,6 +328,13 @@ const unfurnishedFeatures = [
   'Wardrobes/Closet',
   'Air conditioning space'
 ];
+
+// Computed property to dynamically set the min date
+const minDate = computed(() => {
+  const today = new Date();
+  // Format the date as YYYY-MM-DD
+  return today.toISOString().split('T')[0];
+});
 
 // Reactive state
 const activeRoom = ref('Room 1');

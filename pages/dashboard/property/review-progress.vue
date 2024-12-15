@@ -153,7 +153,10 @@
                 </div>
         
                 <!-- Co-living with -->
-                <h2 class="text-sm font-medium text-[#667185] mt-6 border-[0.5px] py-3 px-3 rounded-lg border-gray-50">Co-living with <span class="text-[#1D2739]">{{occupiedRoomsCount ?? 'Nil'}} Person {{occupiedRoomsCount > 1 ? 's' : ''}}</span></h2>
+                <h2 class="text-sm font-medium text-[#667185] mt-6 border-[0.5px] py-3 px-3 rounded-lg border-gray-50">Co-living with 
+                  <span class="text-[#1D2739]">{{property?.bedroomCount - 1}} Persons</span>
+                  <!-- <span class="text-[#1D2739]">{{occupiedRoomsCount ?? 'Nil'}} Person {{occupiedRoomsCount > 1 ? 's' : ''}}</span> -->
+                </h2>
                 <table class="w-full mt-2 table-fixed text-sm">
                   <thead>
                     <tr class="bg-[#F9FAFB] rounded-lg">

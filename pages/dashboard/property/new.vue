@@ -705,7 +705,8 @@
     </div>
     
       <!-- Custom Modal -->
-      <CoreRefreshModal 
+      <CoreRefreshModal
+       v-if="!route.query.preview"
       :isVisible="showModal"
       @confirm="proceedWithNavigation"
       @cancel="cancelNavigation"
@@ -742,12 +743,6 @@
     { id: 3, title: "Add Visuals", completed: false },
     { id: 4, title: "Finalize listing and publish", completed: false },
   ]);
-
-  // const localStoragePropertyImages = JSON.parse(localStorage.getItem("property_images")) || [];
-  // const localStorageCommonAreas = JSON.parse(localStorage.getItem("property_commonAreas")) || [];
-  // const localStorageRooms = JSON.parse(localStorage.getItem("property_rooms")) || [];
-  // const localQuestions = JSON.parse(localStorage.getItem("property_questions")) || [];
-  // const localRules = JSON.parse(localStorage.getItem("property_rules")) || [];
 
   // Retrieve data from localStorage only once
 const storedPropertyImages = JSON.parse(localStorage.getItem("property_images")) || [];
@@ -1091,7 +1086,7 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
   const openCancelModal = ref(false)
   
   const handleConfirm = () => {
-    clearLocalStorage();
+    // clearLocalStorage();
     openCancelModal.value = false
   
   }

@@ -75,7 +75,7 @@
                     </td>
                     <td class="py-5 px-5 whitespace-nowrap text-sm">
                       <p v-for="(item, idx) in schedule?.recipients" :key="idx">
-                        {{ item ?? 'Nil' }}
+                        {{ `${item?.firstName} ${item?.lastName}` ?? 'Nil' }}
                       </p>
                     </td>
                     <td class="py-5 px-5  text-sm max-w-xs text-right">

@@ -41,7 +41,7 @@
         v-for="(item, idx) in displayedRecipients"
         :key="idx"
       >
-        {{ item }}
+        {{ `${item?.firstName} ${item?.lastName}` ?? 'Nil' }}
       </span>
       <button
       v-if="scheduleInfoObj?.recipients?.length > 2"

@@ -67,6 +67,7 @@
         </div>
       </div>
     </template>
+    <!-- {{dashboardStats}} -->
     <main v-if="activeTabHeader === 'overview'" class="space-y-6">
       <DashboardStats />
       <section class="lg:flex gap-x-6">

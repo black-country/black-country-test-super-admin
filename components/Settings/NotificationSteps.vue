@@ -1,116 +1,313 @@
 <template>
-    <div class="max-w-5xl mx-auto p-6">
-      <!-- <div class="flex items-center justify-between mb-8">
-        <div class="flex items-center space-x-2">
-          <button @click="$emit('back')" class="text-gray-600 hover:text-gray-800">
-            <span class="sr-only">Back</span>
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-          </button>
-          <h1 class="text-xl font-semibold">New notification</h1>
-        </div>
-        <div class="flex items-center space-x-4">
-          <button @click="$emit('cancel')" class="text-gray-600 hover:text-gray-800">
-            Cancel
-          </button>
-          <button @click="$emit('save')" class="text-gray-600 hover:text-gray-800">
-            Save & exit
-          </button>
-        </div>
-      </div> -->
-  
-      <div class="flex gap-x-6">
-        <div class="w-3/12">
-          <div class="flex flex-col space-y-4">
-            <div v-for="(step, index) in steps" :key="step.title" class="flex items-center">
-              <div
-                class="flex items-center justify-center w-8 h-8 rounded-full mr-4"
+  <div class="max-w-5xl mx-auto p-6">
+    <div class="lg:flex gap-x-6">
+      <div class="lg:w-3/12">
+        <div class="flex flex-col space-y-4">
+          <div
+            :class="[
+              currentStep === index + 1 ? 'bg-[#5B8469] text-white' : '',
+            ]"
+            v-for="(step, index) in steps"
+            :key="step.title"
+            class="flex rounded-lg py-1 items-center pl-3"
+          >
+            <div
+              class="flex relative items-center justify-center w-8 h-8 rounded-full mr-4"
+              :class="[
+                currentStep === index + 1
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-200 text-gray-600',
+              ]"
+            >
+              <p
                 :class="[
-                  currentStep === index + 1
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-200 text-gray-600'
+                  currentStep !== index ? 'text-[#292929]' : 'text-white',
                 ]"
+                class="absolute top-2 font-bold"
               >
                 {{ index + 1 }}
-              </div>
-              <p
-                class="text-sm font-medium"
-                :class="[
-                  currentStep === index + 1 ? 'text-gray-900' : 'text-gray-500'
-                ]"
-              >
-                {{ step.title }}
               </p>
+              <svg
+                v-if="currentStep === index"
+                width="40"
+                height="40"
+                viewBox="0 0 30 30"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g opacity="0.8">
+                  <g clip-path="url(#clip0_5289_73233)">
+                    <rect width="30" height="30" rx="15" fill="#292929" />
+                    <path
+                      d="M0.288893 22.1673C0.288893 21.2744 2.18618 20.8582 3.46852 20.8582C3.83222 20.8582 4.44286 20.9314 4.44286 21.4207C4.44286 22.378 2.46915 22.9004 1.45511 22.9004C0.917007 22.9004 0.288893 22.7083 0.288893 22.1673ZM5.08715 21.4207C5.08715 20.8373 4.66193 20.2139 3.46852 20.2139C2.14582 20.2139 -0.355615 20.6223 -0.355615 22.1673C-0.355615 22.9912 0.372212 23.5447 1.45511 23.5447C2.72148 23.5447 5.08715 22.9217 5.08715 21.4207ZM-3.83203 27.9421C-2.18319 28.5337 0.317385 29.1474 3.59738 29.1474C8.76429 29.1474 15.6336 28.5398 15.6336 23.2865C15.6336 21.2778 14.3731 20.3901 13.3601 19.6767C12.4693 19.0492 11.9204 18.6216 11.8641 17.7704C11.8269 17.2092 12.0911 16.7002 12.3974 16.1111C12.7408 15.4504 13.13 14.7017 13.13 13.7548C13.13 12.4696 12.1768 11.0863 10.0842 11.0863C8.42154 11.0863 6.88774 11.7364 5.26415 12.4249C3.17606 13.3103 0.808875 14.314 -2.53609 14.314C-2.99821 14.314 -3.42883 14.2825 -3.83203 14.2264V10.6863C-3.066 10.7815 -2.29483 10.8293 -1.52291 10.8294C2.47908 10.8294 5.28465 9.47993 7.75997 8.28933C9.86835 7.27507 11.8597 6.31736 14.2938 6.31736C17.6584 6.31736 19.4187 8.22349 19.4187 10.1063C19.4187 11.3712 18.7625 12.1415 18.0679 12.9568C17.3522 13.7968 16.612 14.6656 16.612 16.0747C16.612 17.4269 17.1432 18.1537 17.6569 18.8565C18.2565 19.6767 18.8767 20.5252 18.8767 22.5403C18.8767 26.3858 15.2362 28.7662 11.6886 30.1729H-3.83203V27.9421ZM-3.83203 24.7752C-2.24314 25.3475 -0.567193 25.6406 1.12163 25.6414C4.04462 25.6414 8.9482 24.9964 8.9482 20.6776C8.9482 19.4071 7.9279 17.6175 5.65936 17.6175C4.13225 17.6175 2.92891 18.019 1.76528 18.4073C0.581585 18.8021 -0.536279 19.1751 -2.00252 19.1751C-2.64293 19.1751 -3.25659 19.0648 -3.83203 18.8893V15.6561C-3.4019 15.7066 -2.96917 15.7318 -2.53609 15.7315C1.09725 15.7315 3.71437 14.6218 5.81736 13.7302C7.36929 13.072 8.70948 12.5037 10.0842 12.5037C11.2845 12.5037 11.7123 13.15 11.7123 13.7548C11.7123 14.3552 11.4341 14.8905 11.1395 15.4576C10.7863 16.137 10.3862 16.9072 10.4494 17.8642C10.5537 19.4339 11.6109 20.1785 12.5435 20.8356C13.4779 21.4937 14.2159 22.0132 14.2159 23.2865C14.2159 25.1939 13.1151 27.7297 3.59738 27.7297C0.174495 27.7297 -2.3468 27.0077 -3.83203 26.4199V24.7752ZM-3.83203 19.5662C-3.25292 19.725 -2.64078 19.8196 -2.00252 19.8196C-0.431594 19.8196 0.789015 19.4123 1.96926 19.0186C3.13547 18.6294 4.23672 18.262 5.65936 18.262C7.65745 18.262 8.30391 19.8895 8.30391 20.6776C8.30391 23.5034 5.82038 24.9971 1.12163 24.9971C-0.891562 24.9971 -2.59761 24.5486 -3.83203 24.08V19.5662ZM-3.83203 7.2578C-3.25102 7.387 -2.65773 7.453 -2.06253 7.45465C1.70247 7.45465 4.59675 5.87768 7.6609 4.20833C10.7509 2.52473 13.9463 0.783936 18.1603 0.783936C20.1113 0.783936 21.7738 1.34815 22.9674 2.41573C24.1265 3.45222 24.7393 4.86471 24.7393 6.50039C24.7393 8.21658 23.6855 9.76096 22.57 11.3958C21.3578 13.1728 20.104 15.0101 20.104 17.2392C20.104 21.9614 23.9307 24.7251 30.629 24.8753V26.573C30.6003 26.5753 30.5719 26.5816 30.5449 26.5918C25.6866 28.4668 22.5467 25.1208 22.406 24.9641C22.3756 24.9217 22.3355 24.8873 22.2889 24.8639C22.2424 24.8405 22.1909 24.8287 22.1388 24.8295C22.0867 24.8304 22.0355 24.8438 21.9898 24.8688C21.944 24.8937 21.905 24.9294 21.8761 24.9727C21.8391 25.0291 21.8212 25.0958 21.8249 25.1631H21.8225C21.8225 25.1719 21.799 26.0862 20.9976 27.4336C20.5588 28.1715 19.8197 29.1374 18.5911 30.1729H13.3385C14.0817 29.8215 14.8786 29.3902 15.6396 28.8713C18.2151 27.1147 19.521 24.9848 19.521 22.5403C19.521 20.3147 18.807 19.338 18.1771 18.4762C17.683 17.8004 17.2563 17.2165 17.2563 16.0747C17.2563 14.9028 17.8888 14.1605 18.5583 13.3747C19.298 12.5065 20.063 11.6086 20.063 10.1063C20.063 7.90318 18.0813 5.67284 14.2938 5.67284C11.7128 5.67284 9.65704 6.66163 7.48067 7.70848C4.94944 8.92607 2.33209 10.1849 -1.52291 10.1849C-2.39752 10.1849 -3.18385 10.1191 -3.83203 10.0349V7.2578ZM-3.83203 1.24239C-3.09168 1.75114 -1.9941 2.18477 -0.397707 2.18477C3.19397 2.18477 5.87672 0.581903 8.71704 -1.11529C11.6035 -2.8399 14.5882 -4.62322 18.6755 -4.62322C22.3753 -4.62322 25.5729 -3.32059 28.179 -0.75181C29.4033 0.454983 30.2015 1.673 30.629 2.41918V6.28843C30.6218 6.31119 30.6159 6.33432 30.6111 6.35772C30.459 7.09678 29.2861 8.05125 28.0443 9.06162C25.6819 10.9839 22.7416 13.3762 22.7552 17.1109C22.7608 18.6819 23.4254 20.0998 24.5785 21.0011C25.654 21.8416 26.9806 22.1229 28.2739 22.1229C29.0972 22.1227 29.9062 22.0083 30.629 21.8524V24.2313C24.3402 24.0854 20.7485 21.5556 20.7485 17.2392C20.7485 15.2091 21.9451 13.4552 23.1023 11.759C24.2238 10.1152 25.3836 8.41538 25.3836 6.50039C25.3836 2.75525 22.4131 0.139418 18.1603 0.139418C13.7821 0.139418 10.5137 1.92015 7.35266 3.6426C4.36255 5.27159 1.53821 6.81013 -2.06253 6.81013C-2.69086 6.81013 -3.28551 6.72595 -3.83203 6.59601V1.24239ZM30.629 11.3217C30.2133 11.6647 29.8131 11.9742 29.4261 12.2734C27.7527 13.5663 26.4311 14.5877 26.4311 16.4846C26.4311 17.3559 26.7635 18.0307 27.3918 18.4356C27.8973 18.7613 28.5356 18.8835 29.1805 18.8835C29.6791 18.8835 30.181 18.8101 30.629 18.7015V20.3983C28.3704 20.9433 26.5802 20.7665 25.4516 19.8841C24.643 19.2521 24.1768 18.2394 24.1729 17.1058C24.1617 14.0483 26.6996 11.9831 28.939 10.1611C29.5567 9.65843 30.1384 9.184 30.629 8.71389V11.3217ZM30.629 18.0352C29.6975 18.2845 28.4756 18.367 27.7408 17.894C27.2932 17.6054 27.0756 17.1444 27.0756 16.4846C27.0756 14.9041 28.2267 14.0144 29.8201 12.7832C30.0914 12.5745 30.361 12.3636 30.629 12.1506V18.0352ZM30.629 30.1729H19.571C21.5216 28.3559 22.1593 26.709 22.3656 25.813C22.7876 26.1784 23.491 26.7003 24.4554 27.1236C25.8174 27.7213 27.9852 28.2192 30.629 27.2477V30.1729Z"
+                      fill="white"
+                      fill-opacity="0.3"
+                    />
+                  </g>
+                </g>
+                <defs>
+                  <clipPath id="clip0_5289_73233">
+                    <rect width="30" height="30" rx="15" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+
+              <svg
+                v-if="currentStep !== index"
+                width="40"
+                height="40"
+                viewBox="0 0 30 30"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g opacity="0.8">
+                  <g clip-path="url(#clip0_5289_73226)">
+                    <rect width="30" height="30" rx="15" fill="#BDBDBD" />
+                    <path
+                      d="M0.288893 22.1673C0.288893 21.2744 2.18618 20.8582 3.46852 20.8582C3.83222 20.8582 4.44286 20.9314 4.44286 21.4207C4.44286 22.378 2.46915 22.9004 1.45511 22.9004C0.917007 22.9004 0.288893 22.7083 0.288893 22.1673ZM5.08715 21.4207C5.08715 20.8373 4.66193 20.2139 3.46852 20.2139C2.14582 20.2139 -0.355615 20.6223 -0.355615 22.1673C-0.355615 22.9912 0.372212 23.5447 1.45511 23.5447C2.72148 23.5447 5.08715 22.9217 5.08715 21.4207ZM-3.83203 27.9421C-2.18319 28.5337 0.317385 29.1474 3.59738 29.1474C8.76429 29.1474 15.6336 28.5398 15.6336 23.2865C15.6336 21.2778 14.3731 20.3901 13.3601 19.6767C12.4693 19.0492 11.9204 18.6216 11.8641 17.7704C11.8269 17.2092 12.0911 16.7002 12.3974 16.1111C12.7408 15.4504 13.13 14.7017 13.13 13.7548C13.13 12.4696 12.1768 11.0863 10.0842 11.0863C8.42154 11.0863 6.88774 11.7364 5.26415 12.4249C3.17606 13.3103 0.808875 14.314 -2.53609 14.314C-2.99821 14.314 -3.42883 14.2825 -3.83203 14.2264V10.6863C-3.066 10.7815 -2.29483 10.8293 -1.52291 10.8294C2.47908 10.8294 5.28465 9.47993 7.75997 8.28933C9.86835 7.27507 11.8597 6.31736 14.2938 6.31736C17.6584 6.31736 19.4187 8.2235 19.4187 10.1063C19.4187 11.3712 18.7625 12.1415 18.0679 12.9568C17.3522 13.7969 16.612 14.6656 16.612 16.0747C16.612 17.4269 17.1432 18.1537 17.6569 18.8565C18.2565 19.6767 18.8767 20.5252 18.8767 22.5403C18.8767 26.3858 15.2362 28.7662 11.6886 30.1729H-3.83203V27.9421ZM-3.83203 24.7752C-2.24314 25.3475 -0.567193 25.6406 1.12163 25.6414C4.04462 25.6414 8.9482 24.9964 8.9482 20.6776C8.9482 19.4071 7.9279 17.6175 5.65936 17.6175C4.13225 17.6175 2.92891 18.019 1.76528 18.4073C0.581585 18.8021 -0.536279 19.1751 -2.00252 19.1751C-2.64293 19.1751 -3.25659 19.0648 -3.83203 18.8893V15.6561C-3.4019 15.7066 -2.96917 15.7318 -2.53609 15.7315C1.09725 15.7315 3.71437 14.6218 5.81736 13.7302C7.36929 13.072 8.70948 12.5037 10.0842 12.5037C11.2845 12.5037 11.7123 13.15 11.7123 13.7548C11.7123 14.3552 11.4341 14.8905 11.1395 15.4576C10.7863 16.137 10.3862 16.9072 10.4494 17.8642C10.5537 19.4339 11.6109 20.1785 12.5435 20.8356C13.4779 21.4937 14.2159 22.0132 14.2159 23.2865C14.2159 25.1939 13.1151 27.7297 3.59738 27.7297C0.174495 27.7297 -2.3468 27.0077 -3.83203 26.4199V24.7752ZM-3.83203 19.5662C-3.25292 19.725 -2.64078 19.8196 -2.00252 19.8196C-0.431594 19.8196 0.789015 19.4123 1.96926 19.0186C3.13547 18.6294 4.23672 18.262 5.65936 18.262C7.65745 18.262 8.30391 19.8895 8.30391 20.6776C8.30391 23.5034 5.82038 24.9971 1.12163 24.9971C-0.891562 24.9971 -2.59761 24.5486 -3.83203 24.08V19.5662ZM-3.83203 7.2578C-3.25102 7.387 -2.65773 7.453 -2.06253 7.45465C1.70247 7.45465 4.59675 5.87768 7.6609 4.20833C10.7509 2.52473 13.9463 0.783939 18.1603 0.783939C20.1113 0.783939 21.7738 1.34816 22.9674 2.41573C24.1265 3.45222 24.7393 4.86472 24.7393 6.5004C24.7393 8.21659 23.6855 9.76097 22.57 11.3958C21.3578 13.1728 20.104 15.0101 20.104 17.2392C20.104 21.9614 23.9307 24.7251 30.629 24.8753V26.573C30.6003 26.5753 30.5719 26.5817 30.5449 26.5918C25.6866 28.4668 22.5467 25.1208 22.406 24.9641C22.3756 24.9217 22.3355 24.8873 22.2889 24.8639C22.2424 24.8405 22.1909 24.8287 22.1388 24.8295C22.0867 24.8304 22.0355 24.8439 21.9898 24.8688C21.944 24.8937 21.905 24.9294 21.8761 24.9727C21.8391 25.0291 21.8212 25.0958 21.8249 25.1631H21.8225C21.8225 25.1719 21.799 26.0862 20.9976 27.4336C20.5588 28.1715 19.8197 29.1374 18.5911 30.1729H13.3385C14.0817 29.8215 14.8786 29.3902 15.6396 28.8713C18.2151 27.1147 19.521 24.9848 19.521 22.5403C19.521 20.3147 18.807 19.338 18.1771 18.4762C17.683 17.8004 17.2563 17.2165 17.2563 16.0747C17.2563 14.9028 17.8888 14.1605 18.5583 13.3747C19.298 12.5065 20.063 11.6086 20.063 10.1063C20.063 7.90318 18.0813 5.67284 14.2938 5.67284C11.7128 5.67284 9.65704 6.66163 7.48067 7.70849C4.94944 8.92607 2.33209 10.1849 -1.52291 10.1849C-2.39752 10.1849 -3.18385 10.1191 -3.83203 10.0349V7.2578ZM-3.83203 1.24239C-3.09168 1.75114 -1.9941 2.18478 -0.397707 2.18478C3.19397 2.18478 5.87672 0.581907 8.71704 -1.11529C11.6035 -2.83989 14.5882 -4.62321 18.6755 -4.62321C22.3753 -4.62321 25.5729 -3.32059 28.179 -0.751806C29.4033 0.454988 30.2015 1.67301 30.629 2.41919V6.28843C30.6218 6.31119 30.6159 6.33432 30.6111 6.35772C30.459 7.09678 29.2861 8.05125 28.0443 9.06162C25.6819 10.9839 22.7416 13.3762 22.7552 17.1109C22.7608 18.6819 23.4254 20.0998 24.5785 21.0011C25.654 21.8416 26.9806 22.1229 28.2739 22.1229C29.0972 22.1227 29.9062 22.0083 30.629 21.8524V24.2313C24.3402 24.0854 20.7485 21.5556 20.7485 17.2392C20.7485 15.2091 21.9451 13.4552 23.1023 11.759C24.2238 10.1152 25.3836 8.41538 25.3836 6.5004C25.3836 2.75526 22.4131 0.139423 18.1603 0.139423C13.7821 0.139423 10.5137 1.92015 7.35266 3.6426C4.36255 5.27159 1.53821 6.81014 -2.06253 6.81014C-2.69086 6.81014 -3.28551 6.72596 -3.83203 6.59602V1.24239ZM30.629 11.3217C30.2133 11.6647 29.8131 11.9742 29.4261 12.2734C27.7527 13.5663 26.4311 14.5877 26.4311 16.4846C26.4311 17.3559 26.7635 18.0307 27.3918 18.4356C27.8973 18.7613 28.5356 18.8835 29.1805 18.8835C29.6791 18.8835 30.181 18.8101 30.629 18.7015V20.3983C28.3704 20.9433 26.5802 20.7665 25.4516 19.8841C24.643 19.2521 24.1768 18.2394 24.1729 17.1058C24.1617 14.0483 26.6996 11.9831 28.939 10.1611C29.5567 9.65844 30.1384 9.18401 30.629 8.71389V11.3217ZM30.629 18.0352C29.6975 18.2845 28.4756 18.367 27.7408 17.894C27.2932 17.6054 27.0756 17.1444 27.0756 16.4846C27.0756 14.9041 28.2267 14.0144 29.8201 12.7832C30.0914 12.5745 30.361 12.3636 30.629 12.1506V18.0352ZM30.629 30.1729H19.571C21.5216 28.3559 22.1593 26.709 22.3656 25.813C22.7876 26.1784 23.491 26.7003 24.4554 27.1236C25.8174 27.7213 27.9852 28.2192 30.629 27.2477V30.1729Z"
+                      fill="white"
+                    />
+                  </g>
+                </g>
+                <defs>
+                  <clipPath id="clip0_5289_73226">
+                    <rect width="30" height="30" rx="15" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
             </div>
+            <p
+              class="text-sm font-medium py-3"
+              :class="[
+                currentStep === index + 1 ? 'text-white' : 'text-gray-500',
+              ]"
+            >
+              {{ step.title }}
+            </p>
           </div>
         </div>
-  
-        <div class="flex-1 bg-white rounded-lg p-6 shadow-sm">
+      </div>
+
+      <div class="flex-1 bg-white rounded-lg lg:pl-6">
+        <keep-alive>
           <component
             :is="currentComponent"
             @next="nextStep"
             @prev="prevStep"
+            :isLastStep="isLastStep"
+            @update="updatePayload"
+            :payload="payload[currentStep - 1]"
           />
-        </div>
+        </keep-alive>
       </div>
     </div>
-  </template>
-  
-  <script setup lang="ts">
-  import AudienceStep from '@/components/Settings/AudienceStep.vue'
-  import ComposeStep from '@/components/Settings/ComposeStep.vue'
-  import ReminderStep from '@/components/Settings/ReminderStep.vue'
-  interface Step {
-    title: string;
-    component: string;
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useCreateSchedule } from "@/composables/modules/settings/useCreateSchedule";
+import AudienceStep from "@/components/Settings/AudienceStep.vue";
+import ComposeStep from "@/components/Settings/ComposeStep.vue";
+import ReminderStep from "@/components/Settings/ReminderStep.vue";
+const { createSchedule, setPayload, loading, savingAsDraft, saveAndExitSchedule } = useCreateSchedule();
+interface Step {
+  title: string;
+  component: string;
+}
+
+const props = defineProps<{
+  type: "scheduled" | "reminder" | "immediate";
+  saveAndExit: Function, // Accept saveAndExit function as a prop
+}>();
+
+const currentStep = ref(1);
+
+// Payload state: Stores data for all steps
+const payload = ref<Array<any>>([]);
+
+const steps = computed<Step[]>(() => {
+  if (props.type === "scheduled") {
+    return [
+      { title: "Define your audience", component: AudienceStep },
+      { title: "Compose message", component: ComposeStep },
+      { title: "Schedule Notification", component: ReminderStep },
+    ];
   }
-  
-  const props = defineProps<{
-    type: 'scheduled' | 'reminder' | 'immediate'
-  }>();
-  
-  const currentStep = ref(1);
-  
-  const steps = computed<Step[]>(() => {
-    if (props.type === 'scheduled') {
-      return [
-        { title: 'Define your audience', component: AudienceStep },
-        { title: 'Compose message', component: ComposeStep },
-        { title: 'Schedule Notification', component: 'ScheduleStep' }
-      ];
-    }
 
-    if (props.type === 'reminder') {
-      return [
-        { title: 'Define your audience', component: AudienceStep },
-        { title: 'Compose message', component: ComposeStep },
-        { title: 'Set Reminder', component: ReminderStep }
-      ];
-    }
+  if (props.type === "reminder") {
+    return [
+      { title: "Define your audience", component: AudienceStep },
+      { title: "Compose message", component: ComposeStep },
+      { title: "Set Reminder", component: ReminderStep },
+    ];
+  }
 
-    if (props.type === 'immediate') {
-      return [
-        { title: 'Define your audience', component: AudienceStep },
-        { title: 'Compose message', component: ComposeStep },
-      ];
-    }
-  });
-  
-  const currentComponent = computed(() => {
-    return steps.value[currentStep.value - 1].component;
-  });
-  
-  const nextStep = () => {
-    if (currentStep.value < steps.value.length) {
-      currentStep.value++;
-    }
+  if (props.type === "immediate") {
+    return [
+      { title: "Define your audience", component: AudienceStep },
+      { title: "Compose message", component: ComposeStep },
+    ];
+  }
+
+  return [];
+});
+
+const notificationPayload = ref<Record<string, any>>({});
+
+const currentComponent = computed(() => {
+  return steps.value[currentStep.value - 1].component;
+});
+
+const route = useRoute();
+
+const saveScheduleAsDraft = () => {
+
+  const reciepientsArray = notificationPayload?.value?.selectedRecipients?.map(
+    (item: any) => item.id
+  );
+  const filesArray = notificationPayload?.value?.files?.map((itm: any) => ({
+    fileUrl: itm?.url,
+    fileName: itm?.name,
+  }));
+
+  const payloadObj = {
+    subject: notificationPayload.value.subject,
+    notificationType: route?.query?.notification,
+    scheduleStartDate: notificationPayload?.value?.startDate,
+    recipientType: notificationPayload?.value?.recipientType?.toUpperCase(),
+    recipients: reciepientsArray ?? [],
+    metadata: {
+      houseId: notificationPayload?.value?.property,
+    },
+    message: {
+      coverImageUrl: notificationPayload?.value?.coverImage,
+      subject: notificationPayload?.value?.subject,
+      htmlContent: notificationPayload?.value?.content,
+      attachments: filesArray ?? [],
+    },
+    status: "draft",
   };
-  
-  const prevStep = () => {
-    if (currentStep.value > 1) {
-      currentStep.value--;
-    }
+
+  setPayload(payloadObj);
+  saveAndExitSchedule();
+}
+
+const nextStep = (data: any) => {
+  // Merge new data with existing notificationPayload
+  notificationPayload.value = { ...notificationPayload.value, ...data };
+
+  console.log(notificationPayload.value, "Updated notification payload");
+
+  const reciepientsArray = notificationPayload?.value?.selectedRecipients?.map(
+    (item: any) => item.id
+  );
+  const filesArray = notificationPayload?.value?.files?.map((itm: any) => ({
+    fileUrl: itm?.url,
+    fileName: itm?.name,
+  }));
+
+  const payloadObj = {
+    subject: notificationPayload.value.subject,
+    notificationType: route?.query?.notification,
+    scheduleStartDate: notificationPayload?.value?.startDate,
+    recipientType: notificationPayload?.value?.recipientType.toUpperCase(),
+    recipients: reciepientsArray,
+    metadata: {
+      houseId: notificationPayload?.value?.property,
+    },
+    message: {
+      coverImageUrl: notificationPayload?.value?.coverImage,
+      subject: notificationPayload?.value?.subject,
+      htmlContent: notificationPayload?.value?.content,
+      attachments: filesArray,
+    },
+    status: "sent",
   };
-  </script>
-  
+
+  setPayload(payloadObj);
+
+  // Check if user is on the last step
+  if (currentStep.value === steps.value.length) {
+    createSchedule(); // Call only on the last step
+  } else if (currentStep.value < steps.value.length) {
+    // Move to the next step if not the last step
+    currentStep.value++;
+  }
+};
+
+const isLastStep = computed(() => {
+  return currentStep?.value === steps?.value?.length;
+});
+
+
+// const nextStep = (data: any) => {
+//   // Merge new data with existing notificationPayload
+//   notificationPayload.value = { ...notificationPayload.value, ...data };
+
+//   console.log(notificationPayload.value, "Updated notification payload");
+
+//   const reciepientsArray = notificationPayload?.value?.selectedRecipients?.map(
+//     (item: any) => item.id
+//   );
+//   const filesArray = notificationPayload?.value?.files?.map((itm: any) => ({
+//     fileUrl: itm?.url,
+//     fileName: itm?.name,
+//   }));
+
+//   const payloadObj = {
+//     subject: notificationPayload.value.subject,
+//     notificationType: route?.query?.notification,
+//     scheduleStartDate: "",
+//     recipientType: notificationPayload?.value?.recipientType.toUpperCase(),
+//     recipients: reciepientsArray,
+//     metadata: {
+//       houseId: notificationPayload?.value?.property,
+//     },
+//     message: {
+//       coverImageUrl: notificationPayload?.value?.coverImage,
+//       subject: notificationPayload?.value?.subject,
+//       htmlContent: notificationPayload?.value?.content,
+//       attachments: filesArray,
+//     },
+//     status: "sent",
+//   };
+
+//   setPayload(payloadObj);
+//   createSchedule();
+
+//   // Move to the next step if not the last step
+//   if (currentStep.value < steps.value.length) {
+//     currentStep.value++;
+//   }
+// };
+
+// Initialize payload structure
+watch(
+  steps,
+  (newSteps) => {
+    payload.value = newSteps.map(() => ({})); // Create an empty object for each step
+  },
+  { immediate: true }
+);
+
+// Update payload when a component emits an update event
+const updatePayload = (data: any) => {
+  payload.value[currentStep.value - 1] = {
+    ...payload.value[currentStep.value - 1],
+    ...data,
+  };
+};
+
+const prevStep = () => {
+  if (currentStep.value > 1) {
+    currentStep.value--;
+  }
+};
+
+// Expose the function for parent access
+defineExpose({
+  saveScheduleAsDraft,
+  loading,
+  savingAsDraft
+});
+</script>

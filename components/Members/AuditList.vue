@@ -231,6 +231,7 @@
     setPaginationObj,
     filters
   } = useGetAudits();
+
   
   const handlePageChange = (val: any) => {
     metadata.value.page = val || 1;

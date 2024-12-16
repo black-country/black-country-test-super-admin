@@ -22,7 +22,7 @@ export default {
     },
   },
   modules: ["@nuxtjs/tailwindcss"],
-  css: ["/assets/css/main.css", "vue-multiselect/dist/vue-multiselect.css"],
+  css: ["/assets/css/main.css", "vue-multiselect/dist/vue-multiselect.css", '@vueup/vue-quill/dist/vue-quill.snow.css'],
   tailwindcss: {
     cssPath: "@/assets/css/main.css",
   },
@@ -41,6 +41,7 @@ export default {
       include: ['fast-deep-equal'],
     },
     build: {
+      transpile: ['@vueup/vue-quill'],
       rollupOptions: {
         output: {
           manualChunks(id) {

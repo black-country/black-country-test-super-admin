@@ -688,6 +688,8 @@ const updateLeaseInLocalStorage = () => {
   payload.value.body = leaseContent
 };
 
+const payloadObj = JSON.parse(localStorage.getItem('lease-template-payload') || '{}')
+
 // Save and exit or send functionalities
 const proceedSaveAndExit = async () => {
   const signatureUrl = emittedAgreementData?.value?.signatureObj?.secure_url || leaseSignatureUrl.value;
@@ -706,6 +708,9 @@ const proceedSaveAndExit = async () => {
     isPublished: false,
     houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
     houseOwnerSignatureUrl: signatureUrl,
+    startDate: payloadObj?.startDate,
+    endDate: payloadObj?.endDate,
+    agreementName: payloadObj?.documentName
   };
   setSaveAndExitPayloadObj(reqPayload);
   await handleSaveAndExit(payload.value.tenantId, payload.value.propertyId);
@@ -729,6 +734,9 @@ const proceedSaveAndSend = async () => {
     isPublished: true,
     houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
     houseOwnerSignatureUrl: signatureUrl,
+    startDate: payloadObj?.startDate,
+    endDate: payloadObj?.endDate,
+    agreementName: payloadObj?.documentName
   };
 
   setSaveAndSendPayloadObj(reqPayload);

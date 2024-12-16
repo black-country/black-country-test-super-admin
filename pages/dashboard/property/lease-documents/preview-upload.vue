@@ -391,6 +391,8 @@ const openModal = () => {
   isModalOpen.value = true;
 };
 
+const payloadObj = JSON.parse(localStorage.getItem('lease-template-payload') || '{}')
+
 definePageMeta({
      middleware: 'auth'
 });
@@ -528,7 +530,10 @@ const proceedSaveAndExit = async () => {
     leaseAgreement: editor.value?.innerHTML,
     isPublished: false,
     houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
-    houseOwnerSignatureUrl: leaseSignature
+    houseOwnerSignatureUrl: leaseSignature,
+    startDate: payloadObj?.startDate,
+    endDate: payloadObj?.endDate,
+    agreementName: payloadObj?.documentName
   };
   setSaveAndExitPayloadObj(reqPayload);
   await handleSaveAndExit(payload.value.tenantId, payload.value.propertyId);
@@ -553,7 +558,10 @@ const proceedSaveAndSend = async () => {
     leaseAgreement: editor.value?.innerHTML,
     isPublished: true,
     houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
-    houseOwnerSignatureUrl: leaseSignature
+    houseOwnerSignatureUrl: leaseSignature,
+    startDate: payloadObj?.startDate,
+    endDate: payloadObj?.endDate,
+    agreementName: payloadObj?.documentName
   };
 
   setSaveAndSendPayloadObj(reqPayload);

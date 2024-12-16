@@ -118,18 +118,7 @@
       type: Boolean,
       default: false
     },
-    // queryObj: {
-    //   type: Object,
-    //   default: () => {}
-    // },
-    // maintenanceRequests: {
-    //   type: Array,
-    //   default: () => []
-    // },
-    // loading: {
-    //   type: Boolean,
-    //   default: false
-    // }
+
   })
   
   const activeTab = ref<string>('All');

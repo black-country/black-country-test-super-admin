@@ -2,6 +2,8 @@ import { ref } from 'vue';
 import { core_apis } from '@/api_factory/core/upload';
 import { useCustomToast } from '@/composables/core/useCustomToast';
 import { useAssignLeaseToProperty } from '@/composables/modules/lease/assignLeaseToProperty';
+import { useUser } from "@/composables/auth/user";
+const { user } = useUser();
 
 const { showToast } = useCustomToast();
 
@@ -31,7 +33,10 @@ export const useUploadFile = () => {
         const payloadObj = {
           leaseAgreement: res.data.url,
           isPublished: agreementObj.isPublished,
-          agreementName: agreementObj.agreementName
+          houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
+          agreementName: agreementObj.agreementName,
+          startDate: agreementObj?.startDate,
+          endDate: agreementObj?.endDate,
         };
 
         setAssignPayloadObj(payloadObj);

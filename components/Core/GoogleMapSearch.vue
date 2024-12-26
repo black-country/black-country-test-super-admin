@@ -131,7 +131,7 @@ export default {
       center: null,
       isLocationModalOpen: false,
       zoom: 15,
-      googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+      googleMapsApiKey: 'AIzaSyCBguFgxPOH6AuAiz0ZXXoo_fJAp4AR8WE',
       autocomplete: null,
       placesService: null,
       markers: [],
@@ -171,7 +171,8 @@ export default {
     },
     initAutocomplete() {
       const loader = new Loader({
-        apiKey: this.googleMapsApiKey,
+        // apiKey: this.googleMapsApiKey,
+        apiKey: 'AIzaSyCBguFgxPOH6AuAiz0ZXXoo_fJAp4AR8WE',
         version: "weekly",
         libraries: ["places"],
       });

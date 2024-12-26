@@ -49,6 +49,8 @@ import { useUploadFile } from '@/composables/core/pdfUpload'
 import { ref, onMounted } from "vue";
 import WebViewer from "@pdftron/webviewer";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf"; // Use legacy build for better compatibility
+import { useUser } from "@/composables/auth/user";
+const { user } = useUser();
 
 export default {
   name: "LeaseDocument",
@@ -73,6 +75,7 @@ export default {
       }
     };
 
+    const payloadObj = JSON.parse(localStorage.getItem('lease-template-payload') || '{}')
 
 const submitLeaseDocument = async (item) => {
   if (!instance.value) return
@@ -96,6 +99,9 @@ const submitLeaseDocument = async (item) => {
     })
 
     const agreementObj = {
+      startDate: payloadObj?.startDate,
+      endDate: payloadObj?.endDate,
+      houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
       agreementName: leasePayload.value.documentName,
       isPublished: item === 'save-and-send' ? true : false
     }

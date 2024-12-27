@@ -1,4 +1,3 @@
-import { viteStaticCopy } from 'vite-plugin-static-copy'
 export default {
   ssr: false,
   target: "static",
@@ -31,9 +30,9 @@ export default {
     timeout: 10000, // Example: set timeout to 10 seconds
   },
   runtimeConfig: {
-    // public: {
-    //   googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY // Ensure to set this environment variable
-    // },
+    public: {
+      googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY // Ensure to set this environment variable
+    },
   },
   plugins: [],
   vite: {

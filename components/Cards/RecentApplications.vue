@@ -8,14 +8,15 @@
               <div class="flex items-center justify-between">
                 <div class="flex items-center">
                   <img v-if="application.tenant.profilePicture" :src="application.tenant.profilePicture"
-                    alt="Applicant Image" class="w-12 h-12 rounded-lg object-cover mr-4" />
+                    alt="Applicant Image" class="w-8 h-8 rounded-lg object-cover mr-4" />
                   <img v-else src="@/assets/img/user-avatar.png" alt="Applicant Image"
-                    class="w-12 h-12 rounded-lg object-cover mr-4" />
-                  <div>
-                    <h3 class="text-[#1D2739]">{{ application?.tenant?.firstName }} {{ application?.tenant?.lastName }}</h3>
-                    <p class="text-sm text-gray-500">{{ application?.tenant?.email }}</p>
+                    class="w-8 h-8 rounded-lg object-cover mr-4" />
+                  <div class="-ml-2">
+                    <h3 class="text-[#1D2739] text-xs">{{ application?.tenant?.firstName }} {{ application?.tenant?.lastName }}</h3>
+                    <p class="text-xs text-gray-500">{{ application?.tenant?.email }}</p>
                   </div>
                 </div>
+                <!-- {{ application.status }} -->
                 <div v-if="application.status === 'NEW'"
                   class="bg-blue-100 text-blue-700 px-2.5 py-1.5 rounded-full text-xs font-semibold">
                   New
@@ -28,14 +29,14 @@
                   class="bg-yellow-100 text-yellow-700 px-2.5 py-1.5 rounded-full text-xs font-semibold">
                   Pending
                 </div>
-                <div v-if="application.status === 'CANCELLED'"
+                <div v-if="application.status === 'REJECTED'"
                   class="bg-red-100 text-red-700 px-2.5 py-1.5 rounded-full text-xs font-semibold">
                   Declined
                 </div>
               </div>
               <div class="mt-4">
-                <p class="text-[#1D2739]">{{ application?.house?.name }}</p>
-                <p class="text-sm text-[#667185] font-light">{{ application?.house?.address }}</p>
+                <p class="text-[#1D2739] text-xs">{{ application?.house?.name }}</p>
+                <p class="text-sm text-[#667185] font-light text-xs">{{ application?.house?.address }}</p>
               </div>
             </div>
           </div>

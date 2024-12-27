@@ -20,7 +20,7 @@
       
    </div>
     <GoogleMap
-      :api-key="googleMapsApiKey"
+      api-key="AIzaSyBAfieAIDL1vGbkQd74otnW2t0jkDjiPW0"
       style="width: 100%; height: 500px"
       :center="center"
       :zoom="zoom"
@@ -131,7 +131,7 @@ export default {
       center: null,
       isLocationModalOpen: false,
       zoom: 15,
-      googleMapsApiKey: 'AIzaSyCBguFgxPOH6AuAiz0ZXXoo_fJAp4AR8WE',
+      googleMapsApiKey: 'AIzaSyBAfieAIDL1vGbkQd74otnW2t0jkDjiPW0',
       autocomplete: null,
       placesService: null,
       markers: [],
@@ -172,7 +172,7 @@ export default {
     initAutocomplete() {
       const loader = new Loader({
         // apiKey: this.googleMapsApiKey,
-        apiKey: 'AIzaSyCBguFgxPOH6AuAiz0ZXXoo_fJAp4AR8WE',
+        apiKey: 'AIzaSyBAfieAIDL1vGbkQd74otnW2t0jkDjiPW0',
         version: "weekly",
         libraries: ["places"],
       });

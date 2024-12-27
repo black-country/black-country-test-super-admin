@@ -28,5 +28,9 @@ export const lease_api = {
         let url = `/lease-agreements/${agreementId}`;
         return GATEWAY_ENDPOINT.patch(url, payload);
       },
+      $_fetch_expiring_lease_agreement: (metadata: { page: number; perPage: number }) => {
+        let url = `/lease-agreements?isExpiring=true&page=${metadata.page}&perPage=${metadata.perPage}`;
+        return GATEWAY_ENDPOINT.get(url);
+      },
 }
  

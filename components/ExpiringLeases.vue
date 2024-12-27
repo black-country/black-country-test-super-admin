@@ -3,7 +3,7 @@
         <div
           class="px-4 py-5 bg-white sm:px-6 flex justify-between rounded-lg items-center border [#F9FAFB] border-gray-50">
           <p>Expiring leases</p>
-          <p>View all</p>
+          <NuxtLink to="/dashboard/expiring-lease">View all</NuxtLink>
         </div>
          <div v-if="expiringLeaseList?.length && !loading" class="px-4 sm:px-6 lg:px-8 rounded-lg border border-gray-25 bg-white">
             <div class="flow-root">
@@ -34,9 +34,19 @@
                 </div>
               </div>
             </div>
+            <div v-if="showPagination">
+                <CorePagination
+                    v-if="!loading && expiringLeaseList.length > 0"
+                    :total="metadata.total"
+                    :page="metadata.page"
+                    :perPage="metadata.perPage"
+                    :pages="metadata.pages"
+                    @page-changed="handlePageChange"
+                    />
+              </div>
           </div>
           <section v-else-if="loading && !expiringLeaseList?.length">
-            <div class="animate-pulse h-32 w-full bg-red-700 rounded flex space-x-4"></div>
+            <div class="animate-pulse h-32 w-full bg-white rounded flex space-x-4"></div>
           </section>
           <div v-else
           class="bg-white px-4 py-5 sm:p-6 h-80 rounded-lg flex flex-col gap-y-4 justify-center border items-center border-gray-50">
@@ -53,8 +63,19 @@ const {  fetchExpiringLease, loading, expiringLeaseList, setPaginationObj, metad
 import { dynamicIcons } from "@/utils/assets";
 
 const props = defineProps({
-  expiringLeases: {
-    type: Array,
+    showHeader: {
+    type: Boolean,
+    default: true
   },
+  showPagination: {
+    type: Boolean,
+    default: false
+  }
 });
+
+
+const handlePageChange = (val: any) => {
+  metadata.value.page = val || 1;
+  fetchExpiringLease(); // Explicitly call the method to fetch new data
+};
 </script>

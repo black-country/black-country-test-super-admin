@@ -75,14 +75,15 @@
           <CategoryTabs :activeTab="activeTab" @setTab="setTab" />
           <CardsRecentApplications v-if="activeTab === 'recent_applications'" />
           <CardsMaintanceRequests v-if="activeTab === 'maintenance_requests'" />
-          <UpcomingPayment v-if="activeTab === 'overdue'" :upcomingPayments="upcomingPayments" />
+          <!-- <UpcomingPayment v-if="activeTab === 'overdue'" :upcomingPayments="upcomingPayments" /> -->
+           <OverduePayment v-if="activeTab === 'overdue'" />
   
-          <div class="space-y-5">
+          <div v-if="activeTab === 'upcoming_events'" class="space-y-5">
             <ExpiringLeases :expiringLeases="expiringLeases" />
             <UpcomingPayment :upcomingPayments="upcomingPayments" />
           </div>
         </div>
-        <div class="w-full lg:max-w-lg">
+        <div class="w-full lg:max-w-sm">
           <MembershipActivities :membersActivities="membersActivities" />
         </div>
       </section>

@@ -26,7 +26,7 @@ export const useGetAudits = () => {
     const auditList = ref([] as any);
     const metadata = ref({
         page: 1,
-        perPage: 7,
+        perPage: 5,
         total: 100,
         pages: 0,
     });

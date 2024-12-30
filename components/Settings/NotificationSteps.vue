@@ -239,48 +239,6 @@ const isLastStep = computed(() => {
   return currentStep?.value === steps?.value?.length;
 });
 
-
-// const nextStep = (data: any) => {
-//   // Merge new data with existing notificationPayload
-//   notificationPayload.value = { ...notificationPayload.value, ...data };
-
-//   console.log(notificationPayload.value, "Updated notification payload");
-
-//   const reciepientsArray = notificationPayload?.value?.selectedRecipients?.map(
-//     (item: any) => item.id
-//   );
-//   const filesArray = notificationPayload?.value?.files?.map((itm: any) => ({
-//     fileUrl: itm?.url,
-//     fileName: itm?.name,
-//   }));
-
-//   const payloadObj = {
-//     subject: notificationPayload.value.subject,
-//     notificationType: route?.query?.notification,
-//     scheduleStartDate: "",
-//     recipientType: notificationPayload?.value?.recipientType.toUpperCase(),
-//     recipients: reciepientsArray,
-//     metadata: {
-//       houseId: notificationPayload?.value?.property,
-//     },
-//     message: {
-//       coverImageUrl: notificationPayload?.value?.coverImage,
-//       subject: notificationPayload?.value?.subject,
-//       htmlContent: notificationPayload?.value?.content,
-//       attachments: filesArray,
-//     },
-//     status: "sent",
-//   };
-
-//   setPayload(payloadObj);
-//   createSchedule();
-
-//   // Move to the next step if not the last step
-//   if (currentStep.value < steps.value.length) {
-//     currentStep.value++;
-//   }
-// };
-
 // Initialize payload structure
 watch(
   steps,

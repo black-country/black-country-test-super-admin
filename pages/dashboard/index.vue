@@ -84,7 +84,7 @@
           </div>
         </div>
         <div class="w-full lg:max-w-sm">
-          <MembershipActivities :membersActivities="membersActivities" />
+          <MembershipActivities />
         </div>
       </section>
     </main>
@@ -132,34 +132,6 @@ const setTab = (item: string) => {
   activeTab.value = item;
 };
 
-
-const membersActivities = ref([
-  {
-    description:
-      "Vickie Will assigned Cummings, Frami and Lynch apartments to agent Adetunde Salami",
-    date: "5th April, 2024 | 11:54 am",
-  },
-  {
-    description:
-      "Vickie Will assigned Cummings, Frami and Lynch apartments to agent Adetunde Salami",
-    date: "5th April, 2024 | 11:54 am",
-  },
-  {
-    description:
-      "Vickie Will assigned Cummings, Frami and Lynch apartments to agent Adetunde Salami",
-    date: "5th April, 2024 | 11:54 am",
-  },
-  {
-    description:
-      "Vickie Will assigned Cummings, Frami and Lynch apartments to agent Adetunde Salami",
-    date: "5th April, 2024 | 11:54 am",
-  },
-  {
-    description:
-      "Vickie Will assigned Cummings, Frami and Lynch apartments to agent Adetunde Salami",
-    date: "5th April, 2024 | 11:54 am",
-  },
-]);
 
 const upcomingPayments = ref([
   {

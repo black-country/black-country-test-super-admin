@@ -49,12 +49,6 @@
   } = useGetAudits();
 import { dynamicIcons } from "@/utils/assets";
 
-const props = defineProps({
-    membersActivities: {
-    type: Array,
-  },
-});
-
 const handlePageChange = (val: any) => {
     metadata.value.page = val || 1;
     fetchAudits(); // Explicitly call the method to fetch new data

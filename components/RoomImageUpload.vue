@@ -103,7 +103,7 @@
         
         if (uploadResponse.value.length > 0) {
           // Extract secure URLs from the response and add them to the images array
-          const uploadedUrls = uploadResponse.value.map(response => response.secure_url);
+          const uploadedUrls = uploadResponse.value.map(response => response.url);
           images.push(...uploadedUrls); // Add the URLs to the images array to display in the UI
           
           // Ensure we update the specific room feature images in the payload

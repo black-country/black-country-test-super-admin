@@ -160,9 +160,9 @@
 //     // Upload the file using the composable
 //     await uploadFile(file);
 
-//     if (uploadResponse.value?.secure_url) {
+//     if (uploadResponse.value?.url) {
 //       // Update profile with the secure URL after upload
-//       const uploadPayload = { profilePicture: uploadResponse.value.secure_url }
+//       const uploadPayload = { profilePicture: uploadResponse.value.url }
 //       await updateProfile(uploadPayload);
 //     }
 //   }

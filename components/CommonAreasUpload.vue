@@ -178,7 +178,7 @@ const validateFileSize = (files: FileList): boolean => {
 //       // Handle the upload response and add the images to the appropriate common area's images array
 //       if (uploadResponse.value && uploadResponse.value?.length) {
 //         uploadResponse.value.forEach((uploadedFile: any) => {
-//           commonAreas.value[featureIndex].images.push(uploadedFile.secure_url); // Group images by commonArea
+//           commonAreas.value[featureIndex].images.push(uploadedFile.url); // Group images by commonArea
 //         });
 //         activeImageIndexCommonAreas.value[featureIndex] =
 //           commonAreas.value[featureIndex].images?.length - 1;
@@ -230,7 +230,7 @@ const uploadImagesCommonArea = async (event: Event, featureIndex: number) => {
 
         // Add the uploaded images to the appropriate commonArea's images array
         uploadResponse.value.forEach((uploadedFile: any) => {
-          commonAreas.value[featureIndex].images.push(uploadedFile.secure_url); // Group images by commonArea
+          commonAreas.value[featureIndex].images.push(uploadedFile.url); // Group images by commonArea
         });
 
         // Update the active image index to the last uploaded image

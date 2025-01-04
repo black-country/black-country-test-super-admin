@@ -189,7 +189,7 @@ const handleFileUpload = async (event: Event, featureName: string) => {
 
       if (feature) {
         // Add uploaded image URLs to both feature and room
-        const uploadedImages = uploadResponse.value.map((res: { secure_url: string }) => res.secure_url);
+        const uploadedImages = uploadResponse.value.map((res: { url: string }) => res.url);
         feature.images.push(...uploadedImages); // Update feature images
         room.images.push(...uploadedImages); // Consolidate in room's images
       }

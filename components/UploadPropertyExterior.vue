@@ -146,7 +146,7 @@ const { showToast } = useCustomToast();
       progress.value = 100;
       uploadSuccess.value = true;
   
-      const uploadedUrls = uploadResponse.value.map(response => response.secure_url);
+      const uploadedUrls = uploadResponse.value.map(response => response.url);
       images.push(...uploadedUrls);
   
       if (Array.isArray(props.payload.images.value)) {

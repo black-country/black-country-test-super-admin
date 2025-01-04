@@ -63,7 +63,8 @@
     </template>
   <main>
   <PropertyDetailsHeader v-if="!loading" :propertyObj="propertyObj" />
-  <PropertyImageGallery v-if="propertyObj?.images" :loading="loading" :propertyObj="propertyObj" :images="allImages" class="mt-6" />
+  <!-- <PropertyImageGallery v-if="propertyObj?.images" :loading="loading" :propertyObj="propertyObj" :images="allImages" class="mt-6" /> -->
+   <ImageGallery  v-if="propertyObj?.images" :loading="loading" :propertyObj="propertyObj" :images="allImages" class="mt-6" />
  <section v-if="!loading">
   <div class="pt-4 pb-8">
     <PropertyInfo :propertyObj="propertyObj" :loading="loading" />

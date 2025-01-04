@@ -63,14 +63,14 @@ const submitSignature = async () => {
   //   // const payloadObj = {
   //   //   houseOwnerSigneeName:
   //   //     `${user?.value?.firstName} ${user?.value?.lastName}` || "",
-  //   //   houseOwnerSignatureUrl: signatureObj?.value?.secure_url || "",
+  //   //   houseOwnerSignatureUrl: signatureObj?.value?.url || "",
   //   // };
 
   //   const adminSignPayload = {
   //     // leaseAgreement: "<html></html>",
   //     isPublished: true,
   //     houseOwnerSigneeName:  `${user?.value?.firstName} ${user?.value?.lastName}` || "",
-  //     houseOwnerSignatureUrl: signatureObj?.value?.secure_url || ""
+  //     houseOwnerSignatureUrl: signatureObj?.value?.url || ""
   //   };
 
   //   // Check if the signature URL is valid before proceeding
@@ -124,8 +124,8 @@ const handleSignature = (data: any) => {
 };
 
 const handleUploadedSignature = (data: any) => {
-  console.log(data.secure_url, "uploaded sign data");
-  localStorage.setItem('lease-signature-url', data.secure_url)
+  console.log(data.url, "uploaded sign data");
+  localStorage.setItem('lease-signature-url', data.url)
    payload.value.signatureObj = data;
 };
 </script>

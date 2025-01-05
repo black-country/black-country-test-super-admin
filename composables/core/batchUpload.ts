@@ -18,9 +18,9 @@ export const useBatchUploadFile = () => {
 
       // Make the batch API call with FormData
       const res = await $_batch_upload(formData) as any
-
+       console.log(res, 'here')
       if (res.type !== 'ERROR') {
-        uploadResponse.value = res.data ?? []
+        uploadResponse.value = res?.data ?? []
       } else {
         throw new Error('Error in API response')
       }

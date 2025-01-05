@@ -175,9 +175,9 @@ const handleFileUpload = async (event: Event) => {
       await uploadFiles(formData);
 
       // Add the uploaded images' secure URLs to the `images` array
-      uploadResponse.value.forEach((response: { secure_url: string }) => {
-        images.value.push(response.secure_url);
-        props.payload.images.value.push(response.secure_url)
+      uploadResponse.value.forEach((response: { url: string }) => {
+        images.value.push(response.url);
+        props.payload.images.value.push(response.url)
       });
     } catch (error) {
       console.error("Image upload failed", error);
@@ -218,9 +218,9 @@ const handleDrop = async (event: DragEvent) => {
       await uploadFiles(formData);
 
       // Add uploaded images to the local state
-      uploadResponse.value.forEach((response: { secure_url: string }) => {
-        images.value.push(response.secure_url);
-        props.payload.images.value.push(response.secure_url)
+      uploadResponse.value.forEach((response: { url: string }) => {
+        images.value.push(response.url);
+        props.payload.images.value.push(response.url)
       });
     } catch (error) {
       console.error("Drag-and-drop upload failed", error);
@@ -353,9 +353,9 @@ const handleFileUpload = async (event: Event) => {
       await uploadFiles(formData);
 
       // Add the uploaded images' secure URLs to the `images` array
-      uploadResponse.value.forEach((response: { secure_url: string }) => {
-        images.value.push(response.secure_url);
-        props.payload.images.value.push(response.secure_url)
+      uploadResponse.value.forEach((response: { url: string }) => {
+        images.value.push(response.url);
+        props.payload.images.value.push(response.url)
       });
     } catch (error) {
       console.error("Image upload failed", error);
@@ -396,9 +396,9 @@ const handleDrop = async (event: DragEvent) => {
       await uploadFiles(formData);
 
       // Add uploaded images to the local state
-      uploadResponse.value.forEach((response: { secure_url: string }) => {
-        images.value.push(response.secure_url);
-        props.payload.images.value.push(response.secure_url)
+      uploadResponse.value.forEach((response: { url: string }) => {
+        images.value.push(response.url);
+        props.payload.images.value.push(response.url)
       });
     } catch (error) {
       console.error("Drag-and-drop upload failed", error);

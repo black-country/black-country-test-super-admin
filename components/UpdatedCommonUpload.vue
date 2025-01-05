@@ -176,7 +176,7 @@ const handleFileUpload = async (event: Event, areaId: string) => {
       // Extract secure URLs from the response and add them to the area images
       const areaIndex = commonAreas.value.findIndex((area: any) => area.id === areaId);
       if (areaIndex !== -1) {
-        const uploadedImages = uploadResponse.value.map((response: { secure_url: string }) => response.secure_url);
+        const uploadedImages = uploadResponse.value.map((response: { url: string }) => response.url);
         const updatedImages = [...commonAreas.value[areaIndex].images, ...uploadedImages];
         
         // Replace the images array with the updated one (ensures reactivity)
@@ -331,7 +331,7 @@ const handleFileUpload = async (event: Event, areaId: string) => {
       // Extract secure URLs from the response and add them to the area images
       const areaIndex = commonAreas.value.findIndex((area: any) => area.id === areaId);
       if (areaIndex !== -1) {
-        const uploadedImages = uploadResponse.value.map((response: { secure_url: string }) => response.secure_url);
+        const uploadedImages = uploadResponse.value.map((response: { url: string }) => response.url);
         const updatedImages = [...commonAreas.value[areaIndex].images, ...uploadedImages];
 
         // Replace the images array with the updated one (ensures reactivity)

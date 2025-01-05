@@ -320,8 +320,8 @@ const uploadImages = async (event: Event, featureIndex: number) => {
       // Handle the upload response and add the images to the feature's images array
       if (uploadResponse.value && uploadResponse.value.length) {
         uploadResponse.value.forEach((uploadedFile: any) => {
-          currentRoom.value.features[featureIndex].images.push(uploadedFile.secure_url);
-          currentRoom.value.images.push(uploadedFile.secure_url);
+          currentRoom.value.features[featureIndex].images.push(uploadedFile.url);
+          currentRoom.value.images.push(uploadedFile.url);
         });
         activeImageIndex.value[featureIndex] = currentRoom.value.features[featureIndex].images.length - 1; // Set carousel to the last added image
         showToast({
@@ -363,7 +363,7 @@ const handleDrop = async (event: DragEvent, featureIndex: number) => {
       // Handle the upload response and add the images to the feature's images array
       if (uploadResponse.value && uploadResponse.value.length) {
         uploadResponse.value.forEach((uploadedFile: any) => {
-          currentRoom.value.features[featureIndex].images.push(uploadedFile.secure_url);
+          currentRoom.value.features[featureIndex].images.push(uploadedFile.url);
         });
         activeImageIndex.value[featureIndex] = currentRoom.value.features[featureIndex].images.length - 1; // Set carousel to the last added image
         showToast({

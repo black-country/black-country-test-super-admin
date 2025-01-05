@@ -74,7 +74,7 @@
               <div class="mb-4">
                 <h3 class="text-sm font-medium mb-2">Landlord/Property Manager:</h3>
                 <label class="block text-sm text-gray-500 mb-1">Signature</label>
-                <img :src="emittedAgreementData?.signatureObj?.secure_url || leaseSignatureUrl" alt="Signature" class="w-full border-b-2 border-dotted py-2 mb-4 bg-transparent outline-none placeholder-gray-400" />
+                <img :src="emittedAgreementData?.signatureObj?.url || leaseSignatureUrl" alt="Signature" class="w-full border-b-2 border-dotted py-2 mb-4 bg-transparent outline-none placeholder-gray-400" />
                 <label class="block text-sm text-gray-500 mb-1">Full Name</label>
                 <div class="border-b-2 border-dotted text-gray-800 py-2 mb-4">
                   {{user.firstName}}  {{user.lastName}}

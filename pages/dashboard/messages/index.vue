@@ -9,7 +9,7 @@
 
           <!-- Left -->
           <div class="w-[500px] border-[0.5px] flex flex-col">
-            <div class="flex items-center space-x-2 p-2 ">
+            <div class="flex items-center space-x-2 p-2 relative">
 
               <div class="relative flex items-center bg-[#EAEAEA] rounded-lg px-3 py-2 w-full">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 20 20"
@@ -23,7 +23,57 @@
               </div>
 
 
-              <button @click="toggleDropdown" class="bg-[#EAEAEA] p-2 rounded-lg  transition-colors">
+            <button @click="toggleMembers">
+              <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="44" height="44" rx="8" fill="#EAEAEA"/>
+              <path d="M22 15.332V28.6654" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M15.332 22H28.6654" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+
+
+            <div 
+          v-if="showMembersList" 
+          class="fixed inset-0 z-50 bg-black/50"
+          @click="showMembersList = false"
+        >
+          <div 
+            class="absolute bg-white border-[0.5px] border-gray-100 rounded-xl ml-72 mt-16 w-80"
+            :style="popoverStyle"
+            @click.stop
+          >
+            <div class="divide-y divide-gray-50">
+              <div class="space-y-4 max-h-96 divide-y divide-gray-100 overflow-y-auto py-4">
+                <div @click="handleSelectedMember(member)" v-for="member in membersList" :key="member.id" class="flex cursor-pointer px-4 items-center gap-4 pt-3 first:pt-0">
+                  <img src="@/assets/icons/avatar-placeholder.svg" :alt="member.name" class="w-10 h-10 rounded-full object-cover" />
+                  <div>
+                    <!-- <h3 class="font-medium text-gray-900 text-sm">{{ member.name }}</h3>
+                    <p class="text-gray-500 text-sm">{{ member.role }}</p> -->
+                    <h3 class="font-medium text-gray-900 text-sm">{{ `${member.firstName ?? "--"} ${member.lastName ?? "--"}` }}</h3>
+                    <p class="text-gray-500 text-sm lowercase">{{ member?.group }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+            <!-- <div v-if="showMembersList" class="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center p-4" @click="showMembersList = false">
+              <div class="bg-white absolute rounded-xl w-full max-w-md" @click.stop>
+                <div class="space-y-4 h-44 overflow-y-auto divide-y divide-gray-50 px-4">
+                  <div v-for="member in membersList" :key="member.id" class="flex w-full pt-3 items-center gap-4">
+                    <img :src="member.avatar" :alt="member.firstName" class="w-12 h-12 rounded-full object-cover" />
+                    <div>
+                      <h3 class="font-medium text-gray-900 text-sm">{{ `${member.firstName ?? "--"} ${member.lastName ?? "--"}` }}</h3>
+                      <p class="text-gray-500 text-sm lowercase">{{ member?.group }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+
+
+              <button @click="toggleDropdown" class="bg-[#EAEAEA] p-3 rounded-lg  transition-colors">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M10.8333 3.33398H2.5" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round"
                     stroke-linejoin="round" />
@@ -50,13 +100,7 @@
 
               </button>
 
-              <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="44" height="44" rx="8" fill="#EAEAEA"/>
-              <path d="M22 15.332V28.6654" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M15.332 22H28.6654" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-
-
+  
               <div v-if="showDropdown" class="fixed inset-0 z-50" @click="toggleDropdown">
 
                 <div
@@ -74,6 +118,22 @@
                 </div>
               </div>
             </div>
+
+            <!-- <div v-if="showMembersList" class="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center p-4" @click="showMembersList = false">
+              <div class="bg-white rounded-xl p-4 w-full max-w-md" @click.stop>
+                <div class="space-y-4">
+                  <div v-for="member in availableMembers" :key="member.id" class="flex  items-center gap-4">
+                    <img :src="member.avatar" :alt="member.name" class="w-12 h-12 rounded-full object-cover" />
+                    <div>
+                      <h3 class="font-medium text-gray-900">{{ member.name }}</h3>
+                      <p class="text-gray-500 text-sm">{{ member.role }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+
+            <!-- <CoreTeamMembersList /> -->
 
         
             <div v-if="!loadingActiveChats && activeChatsList.length" class="bg-grey-lighter flex-1 overflow-auto">
@@ -136,14 +196,14 @@
                     </p>
                   </div>
                 </div> -->
-
+<!-- 
                 <div class="flex justify-center mb-4">
                   <div class="rounded py-2 px-4" style="background-color: #FCF4CB">
                     <p class="text-xs">
                       Messages to this chat and calls are now secured with end-to-end encryption. Tap for more info.
                     </p>
                   </div>
-                </div>
+                </div> -->
 
                 <ChatWindow class="z-10" :roomChats="roomChatsList" :messages="messages" :selectedUser="selectedUser" />
               </div>
@@ -207,6 +267,7 @@
 </template>
 
 <script setup lang="ts">
+  import { useGetMembers } from "@/composables/modules/member/fetch";
 // import { useGetTenentDetails } from '@/composables/modules/tenants/useFetchTenantDetails'
 import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -220,6 +281,15 @@ import { useWebSocket } from "@/composables/modules/messages/sockets";
 // Composables
 const { loadingActiveChats, activeChatsList } = useGetActiveChats();
 const { getRoomChats, loadingRoomChats, roomChatsList } = useGetRoomChats();
+const {
+    loadingMembers,
+    membersList,
+    searchQuery,
+    filters,
+    metadata,
+    getMembers,
+    applyFilters,
+  } = useGetMembers();
 const {
   messages,
   newMessage,
@@ -242,6 +312,23 @@ const selectUser = (user: any) => {
   // Optionally update URL
   router.push({ query: { userId: user?.participant?.id } });
 };
+
+const selctedMember = ref({})
+
+const handleSelectedMember = (user: any) => {
+  console.log(user)
+  selctedMember.value = user
+  selectedUser.value = user;
+  // // Optionally update URL
+  router.push({ query: { userId: user?.id } });
+  showMembersList.value = false
+}
+
+const showMembersList = ref(false)
+
+const toggleMembers = () => {
+  showMembersList.value = !showMembersList.value
+}
 
 // Watch for selected user changes
 watch(selectedUser, async (newVal: any) => {
@@ -277,7 +364,7 @@ watch(activeChatsList, (newVal) => {
     }
   }
 
-  if(newVal.length === 1) {
+  if(newVal.length) {
     selectUser(newVal[0])
     console.log('only one item found')
   }
@@ -285,19 +372,60 @@ watch(activeChatsList, (newVal) => {
 }, { immediate: true });
 
 // Message handling
+// const sendMessageToUser = async (content: string) => {
+//   console.log(content, 'content here')
+//   // console.log(selectedUser.value, 'selected user here here')
+//   if (!selectedUser.value?.participant?.id || !selectedUser.value?.id || !isConnected.value) {
+//     console.error('Cannot send message: No recipient selected or not connected');
+//     return;
+//   }
+
+
+//   const userId =  selectedUser?.value?.participant?.id || route?.query?.userId || selectedUser?.value?.id
+
+//   if (!userId || !isConnected.value) {
+//     console.error('Cannot send message: No recipient selected or not connected');
+//     return;
+//   }
+
+//   messageStatus.value = 'sending';
+
+//   try {
+//     const socketPayload = {
+//       content,
+//       recipientId: userId,
+//       recipientType: selectedUser?.value?.participant?.role || selectedUser?.value?.role,
+//       messageType: 'private',
+//       room: userId // Include room ID if needed
+//     };
+
+//     console.log(socketPayload, 'socket payload')
+
+//     await sendMessage(socketPayload);
+//     messageStatus.value = 'sent';
+//     newMessage.value = ''; // Clear input after successful send
+//   } catch (error) {
+//     console.error('Failed to send message:', error);
+//     messageStatus.value = 'error';
+//     // Optionally show error notification to user
+//   }
+// };
+
 const sendMessageToUser = async (content: string) => {
-  console.log(content, 'content here')
-  console.log(selectedUser.value, 'selected user here here')
-  if (!selectedUser.value?.participant?.id || !isConnected.value) {
+  console.log(content, 'content here');
+
+  if (!selectedUser.value || !isConnected.value) {
     console.error('Cannot send message: No recipient selected or not connected');
     return;
   }
 
+  const userId =
+    selectedUser.value.participant?.id ||
+    route?.query?.userId ||
+    selectedUser.value.id;
 
-  const userId =  selectedUser?.value?.participant?.id || route?.query?.userId
-
-  if (!userId || !isConnected.value) {
-    console.error('Cannot send message: No recipient selected or not connected');
+  if (!userId) {
+    console.error('Cannot send message: Invalid recipient ID');
     return;
   }
 
@@ -307,12 +435,13 @@ const sendMessageToUser = async (content: string) => {
     const socketPayload = {
       content,
       recipientId: userId,
-      recipientType: selectedUser?.value?.participant?.role,
+      recipientType:
+        selectedUser.value.participant?.role || selectedUser.value.group,
       messageType: 'private',
-      room: userId // Include room ID if needed
+      room: userId, // Include room ID if needed
     };
 
-    console.log(socketPayload, 'socket payload')
+    console.log(socketPayload, 'socket payload');
 
     await sendMessage(socketPayload);
     messageStatus.value = 'sent';
@@ -323,6 +452,7 @@ const sendMessageToUser = async (content: string) => {
     // Optionally show error notification to user
   }
 };
+
 
 
 // Scroll handling
@@ -365,7 +495,13 @@ onMounted(() => {
     if (user) {
       selectUser(user);
     }
-  }
+  } 
+  // else {
+  //   const user = activeChatsList.value[0]
+  //   if (user) {
+  //     selectUser(user);
+  //   }
+  // }
 
   $emitter.on('customEvent', async (payload: any) => {
     if (payload.data) {
@@ -386,4 +522,32 @@ const showDropdown = ref(false);
 function toggleDropdown() {
   showDropdown.value = !showDropdown.value;
 }
+
+const popoverStyle = ref({
+  top: '0px',
+  left: '0px'
+})
+
+const addButton = ref<HTMLElement | null>(null)
+
+const toggleMembersList = () => {
+  showMembersList.value = !showMembersList.value
+  
+  if (showMembersList.value && addButton.value) {
+    const rect = addButton.value.getBoundingClientRect()
+    popoverStyle.value = {
+      top: `${rect.bottom + 8}px`,
+      left: `${rect.left - 320 + rect.width}px`  // Position to the left of the button
+    }
+  }
+}
+
 </script>
+
+
+
+<style scoped>
+.backdrop-blur {
+  backdrop-filter: blur(4px);
+}
+</style>

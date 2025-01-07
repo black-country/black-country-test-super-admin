@@ -33,4 +33,20 @@ export const settings_api = {
         const url = `/notifications/schedules/${id}`;
         return GATEWAY_ENDPOINT.get(url);
       },
+      $_create_faq: (payload: any) => {
+        const url = '/faqs';
+        return GATEWAY_ENDPOINT.post(url, payload);
+      },
+      $_fetch_faq: (app: any) => {
+        const url = `/faqs?app=${app}`;
+        return GATEWAY_ENDPOINT.get(url);
+      },
+      $_create_policy: (payload: any) => {
+        const url = '/policies';
+        return GATEWAY_ENDPOINT.post(url, payload);
+      },
+      $_fetch_policy: (app: any) => {
+        const url = `/policies?app=${app}`;
+        return GATEWAY_ENDPOINT.get(url);
+      }
 };

@@ -1,6 +1,19 @@
 <template>
     <div class="w-full">
       <h2 class="text-lg font-medium mb-4">Compose the policy content</h2>
+
+
+      <div class="pb-4">
+        <label class="block text-sm text-gray-700 mb-2">
+          Brief Description
+        </label>
+        <textarea
+                v-model="description"
+                placeholder="Enter message"
+                rows="6"
+                class="w-full p-4 bg-[#F0F2F5] border-[0.5px] outline-none border-gray-100 text-sm rounded-lg"
+              ></textarea>
+      </div>
   
       <div class="mb-8">
         <label class="block text-sm text-gray-700 mb-2">
@@ -57,6 +70,7 @@
   import { QuillEditor } from '@vueup/vue-quill'
   
   const content = ref('')
+  const description = ref('')
   
   const editorOptions = {
     modules: {

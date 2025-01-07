@@ -137,7 +137,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useFetchEngagementMetrics } from '@/composables/modules/dashboard/useGetEngagementMetrics'
+// import { useFetchEngagementMetrics } from '@/composables/modules/dashboard/useGetEngagementMetrics'
 import Layout from '@/layouts/dashboard.vue';
 const router = useRouter()
 const selectedTimeFrame = ref("Today");
@@ -147,7 +147,7 @@ const selectedProperties = ref('All properties')
 const selectedTenants = ref('All Tenants')
 const startDate = ref('')
 const endDate = ref('')
-const { metricsObj, loading, getEngagementMetrics } = useFetchEngagementMetrics()
+// const { metricsObj, loading, getEngagementMetrics } = useFetchEngagementMetrics()
 
 definePageMeta({
      middleware: 'auth'

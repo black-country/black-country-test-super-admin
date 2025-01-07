@@ -56,7 +56,7 @@
       </div>
     </section>
 
-    <!-- No Maintenance Requests -->
+
     <section v-else class="flex flex-col justify-between items-center space-y-2 mt-10">
       <svg width="152" height="124" viewBox="0 0 152 124" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="76" cy="58" r="52" fill="#EAEAEA"/>

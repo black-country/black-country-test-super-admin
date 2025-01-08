@@ -49,7 +49,7 @@ export const useFetchHouseMetrics = () => {
 
     // Watch for changes in startDate and endDate
     watch(
-        () => [houseMetricsFilterObj.value.startDate, houseMetricsFilterObj.value.endDate],
+        () => [houseMetricsFilterObj.value.startDate, houseMetricsFilterObj.value.agentId, houseMetricsFilterObj.value.houseId, houseMetricsFilterObj.value.startDate, houseMetricsFilterObj.value.propertyManagerId],
         () => {
             getHouseMetrics()
         }

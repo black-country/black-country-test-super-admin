@@ -1,5 +1,6 @@
-<!-- <template>
-	<date-picker
+<template>
+	<main>
+        <date-picker
 		:value="dateInput"
 		:format="format"
 		:type="type"
@@ -21,6 +22,7 @@
 			</button>
 		</template>
 	</date-picker>
+    </main>
 </template>
 
 <script setup lang="ts">
@@ -48,4 +50,4 @@ const handleDate = (date: any) => {
 .date-picker {
   background-color: blue;
 }
-</style> -->
+</style>

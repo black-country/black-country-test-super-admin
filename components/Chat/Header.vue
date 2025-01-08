@@ -18,7 +18,17 @@
       <path d="M105.5 50C105.5 77.6142 83.1142 100 55.5 100C27.8858 100 5.5 77.6142 5.5 50C5.5 22.3858 27.8858 0 55.5 0C83.1142 0 105.5 22.3858 105.5 50ZM11.3186 50C11.3186 74.4007 31.0993 94.1814 55.5 94.1814C79.9007 94.1814 99.6814 74.4007 99.6814 50C99.6814 25.5993 79.9007 5.81863 55.5 5.81863C31.0993 5.81863 11.3186 25.5993 11.3186 50Z" fill="#F0F2F5"/>
       </svg>
 
-        <h2 class="ml-3 font-semibold text-lg">{{selectedUser?.participant?.firstName}} {{selectedUser?.participant?.lastName}}</h2>
+      <h2 class="ml-3 font-semibold text-lg">
+  {{
+    selectedUser?.participant
+      ? `${selectedUser.participant.firstName || ''} ${selectedUser.participant.lastName || ''}`.trim()
+      : `${selectedUser?.firstName || ''} ${selectedUser?.lastName || ''}`.trim()
+  }}
+</h2>
+
+        <!-- <h2 class="ml-3 font-semibold text-lg">
+          {{`${selectedUser?.participant?.firstName} ${selectedUser?.participant?.lastName}` || `${selectedUser?.firstName} ${selectedUser?.lastName}`}}
+        </h2> -->
       </div>
       <div class="ml-auto flex items-center space-x-4">
         <button

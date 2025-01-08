@@ -10,13 +10,6 @@ export default {
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "format-detection", content: "telephone=no" },
       ],
-      // script: [
-      //   {
-      //     src: `https://maps.googleapis.com/maps/api/js?key=AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg&libraries=places`, // Add your API key
-      //     async: true,
-      //     defer: true,
-      //   },
-      // ],
       link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.svg" }],
     },
   },

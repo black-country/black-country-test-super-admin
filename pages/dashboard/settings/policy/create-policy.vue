@@ -236,6 +236,7 @@ const currentComponent = computed(() => {
 });
 
 function handleNext(formData: any) {
+  console.log(formData, 'form data here')
   currentStep.value = "compose";
 }
 

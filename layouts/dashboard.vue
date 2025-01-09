@@ -50,7 +50,7 @@
                         />
                        <span class="flex justify-between items w-full">
                         {{ item.name }}
-                        <span v-if="item.name === 'Messages'" class="bg-[#BA110B] text-white rounded-full h-3 w-3 p-3 flex justify-center items-center">1</span>
+                        <span v-if="item.name === 'Messages'" class="bg-[#BA110B] text-white rounded-full h-3 w-3 p-3 flex justify-center items-center">{{ totalUnreadMessages }}</span>
                        </span>
                       </NuxtLink>
                     </li>
@@ -116,7 +116,8 @@
                     />
                    <span class="flex justify-between items w-full">
                     {{ item.name }}
-                    <span v-if="item.name === 'Messages'" class="bg-[#BA110B] text-white rounded-full h-3 w-3 p-3 flex justify-center items-center">1</span>
+                    <!-- {{ activeChatsList }} -->
+                    <span v-if="item.name === 'Messages'" class="bg-[#BA110B] text-white text-xs rounded-full h-4 w-4 p-3 flex justify-center items-center">{{ totalUnreadMessages }}</span>
                    </span>
                   </NuxtLink>
                 </li>
@@ -231,10 +232,12 @@
 </template>
 
 <script setup lang="ts">
+import { useGetActiveChats } from "@/composables/modules/messages/fetchActiveChats";
 import { useCustomToast } from '@/composables/core/useCustomToast'
 const { showToast } = useCustomToast();
 const showBLogoutModal = ref(false);
 import { dynamicIcons } from "@/utils/assets";
+const { loadingActiveChats, activeChatsList } = useGetActiveChats();
 const router = useRouter();
 const loading = ref(false)
 const onConfirm = () => {
@@ -253,6 +256,12 @@ const onConfirm = () => {
 const onCancel = () => {
   showBLogoutModal.value = false
 };
+
+
+const totalUnreadMessages = computed(() => {
+  return activeChatsList.value.reduce((sum, chat) => sum + (chat.unreadMessagesCount || 0), 0);
+});
+
 
 
 const isOpen = ref(false)

@@ -1,4 +1,4 @@
-import { GATEWAY_ENDPOINT, STORIPOD_UPLOAD_GATEWAY_ENDPOINT } from '../axios.config'
+import { GATEWAY_ENDPOINT, GATEWAY_ENDPOINT_WITH_AUTH_FORM_DATA } from '../axios.config'
 
 export const core_apis = {
 	$_upload: (payload: any) => {
@@ -11,6 +11,6 @@ export const core_apis = {
 	},
 	$_pdf_upload: (payload: any) => {
 		const url = '/files'
-		return STORIPOD_UPLOAD_GATEWAY_ENDPOINT.post(url, payload)
+		return GATEWAY_ENDPOINT_WITH_AUTH_FORM_DATA.post(url, payload)
 	},
 }

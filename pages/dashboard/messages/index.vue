@@ -18,7 +18,7 @@
                     d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.386a1 1 0 11-1.414 1.415l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z"
                     clip-rule="evenodd" />
                 </svg>
-                <input type="text" class="bg-[#EAEAEA] text-gray-600 text-sm ml-2 py-1.5 focus:outline-none w-full"
+                <input v-model="searchQuery" type="text" class="bg-[#EAEAEA] text-gray-600 text-sm ml-2 py-1.5 focus:outline-none w-full"
                   placeholder="Search" />
               </div>
 
@@ -30,6 +30,17 @@
               <path d="M15.332 22H28.6654" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </button>
+
+            <!-- <ul>
+            <li v-for="user in filteredUserList" :key="user.id">
+              <span v-if="user.participant">
+                {{ user.participant.firstName }} {{ user.participant.lastName }}
+              </span>
+              <span v-else>
+                {{ user.firstName }} {{ user.lastName }}
+              </span>
+            </li>
+          </ul> -->
 
 
             <div 
@@ -119,26 +130,11 @@
               </div>
             </div>
 
-            <!-- <div v-if="showMembersList" class="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center p-4" @click="showMembersList = false">
-              <div class="bg-white rounded-xl p-4 w-full max-w-md" @click.stop>
-                <div class="space-y-4">
-                  <div v-for="member in availableMembers" :key="member.id" class="flex  items-center gap-4">
-                    <img :src="member.avatar" :alt="member.name" class="w-12 h-12 rounded-full object-cover" />
-                    <div>
-                      <h3 class="font-medium text-gray-900">{{ member.name }}</h3>
-                      <p class="text-gray-500 text-sm">{{ member.role }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-
-            <!-- <CoreTeamMembersList /> -->
 
         
             <div v-if="!loadingActiveChats && activeChatsList.length" class="bg-grey-lighter flex-1 overflow-auto">
               <ChatUserList class="px-3 flex items-center bg-grey-light cursor-pointer" :loading="loadingActiveChats"
-                :users="activeChatsList" @selectUser="selectUser" />
+                :users="activeChatsList" :filteredUsers="filteredUserList" @selectUser="selectUser" />
             </div>
             <section v-else-if="loadingActiveChats && !activeChatsList?.length">
         <div class="rounded-md p-4 w-full mx-auto">
@@ -204,7 +200,7 @@
                     </p>
                   </div>
                 </div> -->
-
+<!-- {{ roomChatsList }} -->
                 <ChatWindow class="z-10" :roomChats="roomChatsList" :messages="messages" :selectedUser="selectedUser" />
               </div>
             </div>
@@ -218,46 +214,9 @@
                 </div>
               </div>
             </section>
-            <!-- <section v-else class="flex flex-col justify-between items-center space-y-2 mt-10">
-                  <svg width="152" height="124" viewBox="0 0 152 124" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="76" cy="58" r="52" fill="#EAEAEA"/>
-                  <circle cx="21" cy="25" r="5" fill="#BDBDBD"/>
-                  <circle cx="18" cy="109" r="7" fill="#BDBDBD"/>
-                  <circle cx="145" cy="41" r="7" fill="#BDBDBD"/>
-                  <circle cx="134" cy="14" r="4" fill="#BDBDBD"/>
-                  <g filter="url(#filter0_b_6853_118795)">
-                  <rect x="52" y="34" width="48" height="48" rx="24" fill="#9D9D9D"/>
-                  <path d="M85.9598 56.9707C86.0134 57.8009 86.0134 58.6607 85.9598 59.4909C85.6856 63.7332 82.3536 67.1125 78.1706 67.3905C76.7435 67.4854 75.2536 67.4852 73.8294 67.3905C73.339 67.3579 72.8044 67.2409 72.344 67.0513C71.8318 66.8403 71.5756 66.7348 71.4454 66.7508C71.3153 66.7668 71.1264 66.9061 70.7487 67.1846C70.0827 67.6757 69.2437 68.0285 67.9994 67.9982C67.3703 67.9829 67.0557 67.9752 66.9148 67.7351C66.774 67.495 66.9494 67.1626 67.3002 66.4978C67.7867 65.5758 68.095 64.5203 67.6279 63.6746C66.8234 62.4666 66.1401 61.036 66.0402 59.4909C65.9866 58.6607 65.9866 57.8009 66.0402 56.9707C66.3144 52.7284 69.6464 49.3491 73.8294 49.0711C75.0318 48.9911 75.2812 48.9786 76.5 49.0337" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M72.5 61H79.5M72.5 56H76" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M86 51.5C86 53.433 84.433 55 82.5 55C80.567 55 79 53.433 79 51.5C79 49.567 80.567 48 82.5 48C84.433 48 86 49.567 86 51.5Z" stroke="white" stroke-width="1.5"/>
-                  </g>
-                  <defs>
-                  <filter id="filter0_b_6853_118795" x="44" y="26" width="64" height="64" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                  <feFlood flood-opacity="0" result="BackgroundImageFix"/>
-                  <feGaussianBlur in="BackgroundImageFix" stdDeviation="4"/>
-                  <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_6853_118795"/>
-                  <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_6853_118795" result="shape"/>
-                  </filter>
-                  </defs>
-                  </svg>
-                  <h2 class="text-[#1D2739]">No conversations found</h2>
-                  <p class="text-[#667185]">You have not contacted anyone</p>
-            </section> -->
 
-            <!-- Input -->
             <ChatMessageInput v-model="newMessage" :isConnected="isConnected" :isSending="messageStatus === 'sending'"
               @sendMessage="sendMessageToUser" />
-            <!-- <div class="bg-grey-lighter px-4 py-4 flex items-center">
-                          <div>
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path opacity=".45" fill="#263238" d="M9.153 11.603c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962zm-3.204 1.362c-.026-.307-.131 5.218 6.063 5.551 6.066-.25 6.066-5.551 6.066-5.551-6.078 1.416-12.129 0-12.129 0zm11.363 1.108s-.669 1.959-5.051 1.959c-3.505 0-5.388-1.164-5.607-1.959 0 0 5.912 1.055 10.658 0zM11.804 1.011C5.609 1.011.978 6.033.978 12.228s4.826 10.761 11.021 10.761S23.02 18.423 23.02 12.228c.001-6.195-5.021-11.217-11.216-11.217zM12 21.354c-5.273 0-9.381-3.886-9.381-9.159s3.942-9.548 9.215-9.548 9.548 4.275 9.548 9.548c-.001 5.272-4.109 9.159-9.382 9.159zm3.108-9.751c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962z"></path></svg>
-                          </div>
-                          <div class="flex-1 mx-4">
-                              <input class="w-full border rounded px-2 py-2" type="text"/>
-                          </div>
-                          <div>
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="#263238" fill-opacity=".45" d="M11.999 14.942c2.001 0 3.531-1.53 3.531-3.531V4.35c0-2.001-1.53-3.531-3.531-3.531S8.469 2.35 8.469 4.35v7.061c0 2.001 1.53 3.531 3.53 3.531zm6.238-3.53c0 3.531-2.942 6.002-6.237 6.002s-6.237-2.471-6.237-6.002H3.761c0 4.001 3.178 7.297 7.061 7.885v3.884h2.354v-3.884c3.884-.588 7.061-3.884 7.061-7.885h-2z"></path></svg>
-                          </div>
-                      </div> -->
           </div>
         </div>
       </div>
@@ -284,7 +243,7 @@ const { getRoomChats, loadingRoomChats, roomChatsList } = useGetRoomChats();
 const {
     loadingMembers,
     membersList,
-    searchQuery,
+    // searchQuery,
     filters,
     metadata,
     getMembers,
@@ -296,6 +255,154 @@ const {
   isConnected,
   sendMessage
 } = useWebSocket();
+
+
+// Reactive variable for the search query
+const searchQuery = ref("");
+
+// Reactive variable for the search query
+// const searchQuery = ref("");
+
+// Computed property to filter users based on the search query
+// const filteredUserList = computed(() => {
+//   // Lowercase search query for case-insensitive comparison
+//   const query = searchQuery.value.trim().toLowerCase();
+
+//   if (!query) {
+//     // If search query is empty, return an empty array or all users, based on preference
+//     return [];
+//   }
+
+//   // Filter activeChatsList
+//   const filteredActiveChats = activeChatsList.value.filter((chat) => {
+//     const { firstName, lastName } = chat.participant;
+//     return (
+//       firstName.toLowerCase().includes(query) ||
+//       lastName.toLowerCase().includes(query)
+//     );
+//   });
+
+//   // Filter membersList
+//   const filteredMembers = membersList.value.filter((member) => {
+//     const { firstName, lastName } = member;
+//     return (
+//       firstName.toLowerCase().includes(query) ||
+//       lastName.toLowerCase().includes(query)
+//     );
+//   });
+
+//   // Combine both lists and return
+//   return [...filteredActiveChats, ...filteredMembers];
+// });
+
+// Computed property to filter users based on the search query
+// const filteredUserList = computed(() => {
+//   // Trim and lowercase search query for case-insensitive comparison
+//   const query = searchQuery.value.trim().toLowerCase();
+
+//   // If search query is empty, return all chats
+//   if (!query) {
+//     return [
+//       ...activeChatsList.value.map((chat) => ({
+//         ...chat,
+//         type: "activeChat",
+//       })),
+//       ...membersList.value.map((member) => ({
+//         ...member,
+//         type: "member",
+//       })),
+//     ];
+//   }
+
+//   // Filter activeChatsList
+//   const filteredActiveChats = activeChatsList.value.filter((chat) => {
+//     const { firstName, lastName } = chat.participant;
+//     return (
+//       firstName.toLowerCase().includes(query) ||
+//       lastName.toLowerCase().includes(query)
+//     );
+//   });
+
+//   // Filter membersList
+//   const filteredMembers = membersList.value.filter((member) => {
+//     const { firstName, lastName } = member;
+//     return (
+//       firstName.toLowerCase().includes(query) ||
+//       lastName.toLowerCase().includes(query)
+//     );
+//   });
+
+//   // Combine both lists and return
+//   return [
+//     ...filteredActiveChats.map((chat) => ({ ...chat, type: "activeChat" })),
+//     ...filteredMembers.map((member) => ({ ...member, type: "member" })),
+//   ];
+// });
+
+const filteredUserList = computed(() => {
+  // Trim and lowercase search query for case-insensitive comparison
+  const query = searchQuery.value.trim().toLowerCase();
+
+  // If search query is empty, return all chats with duplicates removed
+  if (!query) {
+    const activeChatsNames = new Set(
+      activeChatsList.value.map(
+        (chat) =>
+          `${chat.participant.firstName.toLowerCase()} ${chat.participant.lastName.toLowerCase()}`
+      )
+    );
+
+    // Return active chats and members not found in active chats
+    return [
+      ...activeChatsList.value.map((chat) => ({
+        ...chat,
+        type: "activeChat",
+      })),
+      ...membersList.value
+        .filter(
+          (member) =>
+            !activeChatsNames.has(
+              `${member.firstName.toLowerCase()} ${member.lastName.toLowerCase()}`
+            )
+        )
+        .map((member) => ({ ...member, type: "member" })),
+    ];
+  }
+
+  // Filter activeChatsList
+  const filteredActiveChats = activeChatsList.value.filter((chat) => {
+    const { firstName, lastName } = chat.participant;
+    return (
+      firstName.toLowerCase().includes(query) ||
+      lastName.toLowerCase().includes(query)
+    );
+  });
+
+  // Filter membersList, excluding names already in filteredActiveChats
+  const filteredActiveNames = new Set(
+    filteredActiveChats.map(
+      (chat) =>
+        `${chat.participant.firstName.toLowerCase()} ${chat.participant.lastName.toLowerCase()}`
+    )
+  );
+
+  const filteredMembers = membersList.value.filter((member) => {
+    const { firstName, lastName } = member;
+    const fullName = `${firstName.toLowerCase()} ${lastName.toLowerCase()}`;
+    return (
+      (firstName.toLowerCase().includes(query) ||
+        lastName.toLowerCase().includes(query)) &&
+      !filteredActiveNames.has(fullName)
+    );
+  });
+
+  // Combine both filtered lists and return
+  return [
+    ...filteredActiveChats.map((chat) => ({ ...chat, type: "activeChat" })),
+    ...filteredMembers.map((member) => ({ ...member, type: "member" })),
+  ];
+});
+
 
 definePageMeta({
   middleware: 'auth'
@@ -541,6 +648,10 @@ const toggleMembersList = () => {
     }
   }
 }
+
+watch(() => route.query.userId, (oldVal, newVal) => {
+  console.log('id updated')
+})
 
 </script>
 

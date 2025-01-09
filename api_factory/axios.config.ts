@@ -5,7 +5,7 @@ const { showToast } = useCustomToast();
 
 const { token, logOut } = useUser();
 
-const $GATEWAY_STORIPOD_ENDPOINT = import.meta.env.VITE_STORIPOD_BASE_URL as string;
+// const $GATEWAY_STORIPOD_ENDPOINT = import.meta.env.VITE_STORIPOD_BASE_URL as string;
 const $GATEWAY_ENDPOINT_WITHOUT_VERSION = import.meta.env
   .VITE_BASE_URL as string;
 const $GATEWAY_ENDPOINT = import.meta.env.VITE_BASE_URL + "/v1";
@@ -28,15 +28,15 @@ export const GATEWAY_ENDPOINT_WITH_AUTH = axios.create({
   },
 });
 
-const storipod_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InByaW5jZWl0YUBvdXRsb29rLmNvbSIsInN1YiI6ImNlYjdkNDEzLTlhZWQtNDBiZC1iYTI4LWUwMzRkNTNhNTIxZCIsImlhdCI6MTczMzY3MjM3NSwiZXhwIjoxNzY4MjMyMzc1fQ.ELgMnfoWWHH62TFIyc2qrbenJ7-7B8Npxk2AAyv4OUg'
+// const storipod_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InByaW5jZWl0YUBvdXRsb29rLmNvbSIsInN1YiI6ImNlYjdkNDEzLTlhZWQtNDBiZC1iYTI4LWUwMzRkNTNhNTIxZCIsImlhdCI6MTczMzY3MjM3NSwiZXhwIjoxNzY4MjMyMzc1fQ.ELgMnfoWWHH62TFIyc2qrbenJ7-7B8Npxk2AAyv4OUg'
 
-export const STORIPOD_UPLOAD_GATEWAY_ENDPOINT = axios.create({
-  baseURL: $GATEWAY_STORIPOD_ENDPOINT,
-  headers: {
-    Authorization: `Bearer ${storipod_token}`,
-    "Content-Type": "multipart/form-data",
-  },
-});
+// export const STORIPOD_UPLOAD_GATEWAY_ENDPOINT = axios.create({
+//   baseURL: $GATEWAY_STORIPOD_ENDPOINT,
+//   headers: {
+//     Authorization: `Bearer ${storipod_token}`,
+//     "Content-Type": "multipart/form-data",
+//   },
+// });
 
 export const GATEWAY_ENDPOINT_WITH_AUTH_FORM_DATA = axios.create({
   baseURL: $GATEWAY_ENDPOINT,

@@ -33,7 +33,9 @@
                 class="w-full p-4 bg-[#F0F2F5] border-[0.5px] outline-none border-gray-100 text-sm rounded-lg"
               >
                 <option value="tenant-app">Tenants</option>
-                <option value="agents-app">Agents</option>
+                <option value="agent-app">Agents</option>
+                <option value="admin-app">Admin</option>
+                <option value="property-manager-app">Property Manager</option>
                 <option value="service-provider-app">Service Provider</option>
               </select>
             </div>

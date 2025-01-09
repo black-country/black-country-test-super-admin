@@ -93,7 +93,7 @@
   
   function handleSubmit() {
     if (content.value) {
-      emit('submit', content.value)
+      emit('submit', { content: content.value, description: description.value})
     }
   }
   </script>

@@ -1,6 +1,6 @@
 <template>
     <div class="w-full">
-      <h2 class="text-lg font-medium mb-4">Compose the policy content</h2>
+      <h2 class="text-lg font-medium my-4 lg:mb-4">Compose the policy content</h2>
 
 
       <div class="pb-4">
@@ -55,11 +55,11 @@
         </button>
         <button
          @click="handleSubmit"
-          :disabled="!content"
-          class="px-6 py-2.5 rounded-lg bg-[#101828] text-white disabled:opacity-90 disabled:cursor-not-allowed"
+          :disabled="!content || loading"
+          class="px-6 py-2.5 rounded-lg bg-[#101828] text-white disabled:opacity-25 disabled:cursor-not-allowed"
           :class="content ? 'bg-gray-900 text-white hover:bg-gray-800' : 'bg-gray-100 text-gray-400'"
         >
-        Submit
+        {{ loading ? 'processing' : 'Submit' }}
         </button>
       </div>
     </div>
@@ -68,6 +68,13 @@
   <script setup lang="ts">
   import '@vueup/vue-quill/dist/vue-quill.snow.css'
   import { QuillEditor } from '@vueup/vue-quill'
+
+  const props = defineProps({
+    loading: {
+      type: Boolean,
+      default: false
+    }
+  })
   
   const content = ref('')
   const description = ref('')

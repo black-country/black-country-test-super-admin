@@ -23,5 +23,5 @@ export const useFetchPolicy = () => {
         fetchPolicy()
     })
 
-    return { loading, fetchFaq, appType, faqList }
+    return { loading, fetchPolicy, appType, faqList }
 }

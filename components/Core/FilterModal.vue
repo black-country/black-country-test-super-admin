@@ -22,21 +22,19 @@
           <div>
             <label class="block text-sm font-medium text-[#1D2739] mb-2">Status</label>
             <select class="w-full px-3 py-3.5 text-[#667185] border-[0.5px] text-sm rounded-md outline-none">
-              <option>All statuses</option>
-              <option>Paid</option>
-              <option>Due</option>
-              <option>Overdue</option>
+              <option value="">All statuses</option>
+              <option value="">Paid</option>
+              <option value="">Due</option>
+              <option value="">Overdue</option>
             </select>
           </div>
   
           <!-- Property -->
           <div>
             <label class="block text-sm font-medium text-[#1D2739] mb-0.5">Property</label>
-            <select class="w-full px-3 py-3.5 text-[#667185] border-[0.5px] text-sm rounded-md outline-none">
+            <select v-if="!loadingProperties" class="w-full px-3 py-3.5 text-[#667185] border-[0.5px] text-sm rounded-md outline-none">
               <option>All properties</option>
-              <option>Sunshine Apartments</option>
-              <option>Green Acres</option>
-              <option>Sunset Villas</option>
+              <option :value="item.id" v-for="(item, idx) in propertiesList" :key="idx">{{ item.name ?? 'Nil' }}</option>
             </select>
           </div>
   
@@ -54,11 +52,9 @@
           <!-- Tenant -->
           <div class="">
             <label class="block text-sm font-medium text-gray-700 mb-0.5">Tenant</label>
-            <select class="w-full px-3 py-3.5 text-[#667185] border-[0.5px] text-sm rounded-md outline-none">
+            <select v-if="!loadingTenants" class="w-full px-3 py-3.5 text-[#667185] border-[0.5px] text-sm rounded-md outline-none">
               <option>All tenants</option>
-              <option>Gary Schimmel</option>
-              <option>Jay Witting</option>
-              <option>Jennie Boyer</option>
+              <option :value="item.id" v-for="(item, idx) in tenantsList" :key="idx">{{ item.name ?? 'Nil' }}</option>
             </select>
           </div>
         </div>
@@ -72,6 +68,10 @@
   </template>
   
   <script lang="ts" setup>
+  import { useGetTenants } from '@/composables/modules/tenants/fetch'
+    import { useGetProperties } from "@/composables/modules/property/fetchProperties";
+    const { tenantsList, loadingTenants } = useGetTenants()
+    const { loadingProperties, propertiesList } = useGetProperties()
   // No script needed for this component, it's just UI handling the props and events
   </script>
   

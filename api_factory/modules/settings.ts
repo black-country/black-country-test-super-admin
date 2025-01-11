@@ -45,6 +45,14 @@ export const settings_api = {
         const url = '/policies';
         return GATEWAY_ENDPOINT.post(url, payload);
       },
+      $_update_policy: (payload: any, id: any) => {
+        const url = `/policies/${id}`;
+        return GATEWAY_ENDPOINT.patch(url, payload);
+      },
+      $_batch_delete_policy: (payload: any) => {
+        const url = '/policies/batch';
+        return GATEWAY_ENDPOINT.delete(url, payload);
+      },
       $_fetch_policy: (app: any) => {
         const url = `/policies?app=${app}`;
         return GATEWAY_ENDPOINT.get(url);

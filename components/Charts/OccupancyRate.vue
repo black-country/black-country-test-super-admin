@@ -7,10 +7,9 @@
             <option>Month</option>
             <option>Year</option>
           </select>
-          <select class="text-sm outline-none font-medium text-sm bg-gray-50 rounded-md px-2.5 py-2">
-            <option>All properties</option>
-            <option>Property 1</option>
-            <option>Property 2</option>
+          <select v-if="!loadingProperties" v-model="selectedProperty" class="text-sm outline-none font-medium bg-gray-50 rounded-md px-2.5 py-2">
+            <option value="all">All properties</option>
+            <option v-for="property in  propertiesList" :key="property" :value="property.id">{{ property.name }}</option>
           </select>
         </div>
       </div>
@@ -23,7 +22,23 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue'
+  import { ref, watch, computed } from 'vue';
+  import { useGetProperties } from '@/composables/modules/property/fetchProperties'
+  const {
+    loadingProperties,
+    propertiesList,
+   } = useGetProperties()
+  
+  const props = defineProps({
+    chatInfo: {
+      type: Array,
+      default: () => [],
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+  });
   
   const chartOptions = ref({
     chart: {
@@ -39,9 +54,7 @@
       enabled: false,
     },
     xaxis: {
-      categories: [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-      ],
+      categories: [],
       title: {
         text: 'Today',
         style: {
@@ -68,14 +81,29 @@
     grid: {
       borderColor: '#E5E7EB',
     },
-  })
+  });
   
   const series = ref([
     {
       name: 'Occupancy rate',
-      data: [10, 30, 40, 35, 50, 70, 60, 80, 70, 85, 90, 95],
+      data: [],
     },
-  ])
+  ]);
+  
+  // Update chart data when chatInfo changes
+  watch(
+    () => props.chatInfo,
+    (newValue) => {
+      if (newValue && newValue.length) {
+        const categories = newValue.map((item) => item.period);
+        const data = newValue.map((item) => parseFloat(item.occupancyRate));
+  
+        chartOptions.value.xaxis.categories = categories;
+        series.value[0].data = data;
+      }
+    },
+    { immediate: true }
+  );
   </script>
   
   <style scoped></style>

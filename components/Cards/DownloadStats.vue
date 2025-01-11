@@ -3,7 +3,7 @@
       <section class="flex justify-between items-center pl-4">
         <div class="flex justify-between items-center gap-x-3">
             <div class="text-md lg:text-xl font-">App Downloads</div>
-            <div class="text-md lg:text-xl font-">200</div>
+            <div class="text-md lg:text-xl font-">{{  computedDownloads  }}</div>
           </div>
           <div class="flex justify-between mt-4 space-x-4">
             <select class="text-sm outline-none font-medium bg-gray-50 rounded-md px-2.5 py-2">
@@ -19,7 +19,7 @@
             <span class="text-gray-600 text-sm lg:text-base">Apple store</span>
           </div>
           <div>
-            <div class="text-lg lg:text-2xl font-bold mt-2">100</div>
+            <div class="text-lg lg:text-2xl font-bold mt-2">{{ metricsObj?.appStoreDownloads ?? 'Nil' }}</div>
           <div class="text-sm text-gray-500 flex items-center space-x-1">
             <span>6% </span>
             <img src="@/assets/icons/gray-arrow-up.svg" alt=""/>
@@ -46,7 +46,7 @@
             <span class="text-gray-600 text-sm lg:text-base">Google playstore</span>
           </div>
          <div>
-          <div class="text-lg lg:text-2xl font-bold mt-2">100</div>
+          <div class="text-lg lg:text-2xl font-bold mt-2">{{ metricsObj?.playStoreDownloads ?? 'Nil'  }}</div>
           <div class="text-sm text-gray-500 flex items-center space-x-1">
             <span>6% </span>
             <img src="@/assets/icons/gray-arrow-up.svg" alt=""/>
@@ -71,6 +71,20 @@
   </template>
   
   <script setup lang="ts">
+  const props = defineProps({
+    loading: {
+      type: Boolean,
+      default: false
+    },
+    metricsObj: {
+      type: Object,
+      default: () => {}
+    }
+  })
+
+  const computedDownloads = computed(() => {
+    return props.metricsObj.appStoreDownloads + props.metricsObj.playStoreDownloads
+  })
   // No specific TypeScript code needed for this component.
   </script>
   

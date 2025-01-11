@@ -1,22 +1,21 @@
 <template>
     <div class="p-4 bg-white shadow rounded-lg">
- <section class="lg:flex justify-between items-center lg:pl-4">
-    <div class="flex justify-between items-center gap-x-5">
-        <div class="text-sm lg:text-xl font-">Revenue</div>
-        <div class="text-sm lg:text-xl font-">0</div>
-      </div>
-      <div class="flex justify-between mt-4 space-x-4">
-        <select class="text-sm outline-none font-medium bg-gray-50 rounded-md px-2.5 py-2">
-          <option>Month</option>
-          <option>Year</option>
-        </select>
-        <select class="text-sm outline-none font-medium bg-gray-50 rounded-md px-2.5 py-2">
-          <option>All properties</option>
-          <option>Property 1</option>
-          <option>Property 2</option>
-        </select>
-      </div>
- </section>
+      <section class="lg:flex justify-between items-center lg:pl-4">
+        <div class="flex justify-between items-center gap-x-5">
+          <div class="text-sm lg:text-xl font-medium">Revenue</div>
+          <div class="text-sm lg:text-xl font-medium">{{ totalRevenue }}</div>
+        </div>
+        <div class="flex justify-between mt-4 space-x-4">
+          <select v-model="selectedPeriod" class="text-sm outline-none font-medium bg-gray-50 rounded-md px-2.5 py-2">
+            <option value="month">Month</option>
+            <option value="year">Year</option>
+          </select>
+          <select v-if="!loadingProperties" v-model="selectedProperty" class="text-sm outline-none font-medium bg-gray-50 rounded-md px-2.5 py-2">
+            <option value="all">All properties</option>
+            <option v-for="property in  propertiesList" :key="property" :value="property.id">{{ property.name }}</option>
+          </select>
+        </div>
+      </section>
       <client-only>
         <div class="mt-4">
           <apexchart width="100%" height="300" type="line" :options="chartOptions" :series="series"></apexchart>
@@ -26,7 +25,32 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue'
+  import { useGetProperties } from '@/composables/modules/property/fetchProperties'
+  const {
+    loadingProperties,
+    propertiesList,
+   } = useGetProperties()
+  import { ref, computed, watch } from 'vue';
+  
+  const props = defineProps({
+    chatInfo: {
+      type: Array,
+      default: () => []
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    }
+  });
+  
+  const selectedPeriod = ref('month');
+  const selectedProperty = ref('all');
+  const properties = ref(['Property 1', 'Property 2']);
+  
+  const totalRevenue = computed(() => {
+    if (!Array.isArray(props.chatInfo)) return 0;
+    return props.chatInfo.reduce((sum, item) => sum + parseFloat(item.total || 0), 0);
+  });
   
   const chartOptions = ref({
     chart: {
@@ -42,9 +66,7 @@
       enabled: false,
     },
     xaxis: {
-      categories: [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-      ],
+      categories: [],
     },
     yaxis: {
       labels: {
@@ -60,18 +82,39 @@
       position: 'top',
       horizontalAlign: 'right',
     },
-  })
+  });
   
   const series = ref([
     {
-      name: 'Income',
-      data: [450, 420, 380, 420, 400, 430, 440, 460, 430, 410, 400, 390],
+      name: 'Revenue',
+      data: [],
+    }
+  ]);
+  
+  const updateChart = () => {
+    if (!Array.isArray(props.chatInfo)) {
+      console.error('Invalid chatInfo data. Expected an array.');
+      return;
+    }
+  
+    const categories = props.chatInfo.map(item => item.period);
+    const data = props.chatInfo.map(item => parseFloat(item.total || 0));
+  
+    chartOptions.value.xaxis.categories = categories;
+    series.value[0].data = data;
+  };
+  
+  watch(
+    () => props.chatInfo,
+    (newValue) => {
+      if (Array.isArray(newValue)) {
+        updateChart();
+      } else {
+        console.error('chatInfo is not an array.');
+      }
     },
-    {
-      name: 'Expense',
-      data: [400, 380, 350, 380, 370, 400, 410, 420, 400, 380, 370, 360],
-    },
-  ])
+    { immediate: true }
+  );
   </script>
   
   <style scoped>

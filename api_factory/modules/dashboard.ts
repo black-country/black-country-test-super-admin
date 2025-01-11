@@ -15,6 +15,14 @@ export const dashboard_api = {
       $_fetch_house_metrics: (startDate: string, endDate: string, agentId: string, houseId: string, propertyManagerId: string) => {
         let url = `/insights/houses?startDate=${startDate}&endDate=${endDate}&agentId=${agentId}&houseId=${houseId}&propertyManagerId=${propertyManagerId}`
         return GATEWAY_ENDPOINT.get(url);
-      }
+      },
+      $_fetch_revenue_metrics: (startDate: string, endDate: string) => {
+        let url = `/insights/revenue-chart-data?startDate=${startDate}&endDate=${endDate}`
+        return GATEWAY_ENDPOINT.get(url);
+      },
+      $_fetch_occupancy_metrics: (startDate: string, endDate: string) => {
+        let url = `/insights/occupancy-chart-data?startDate=${startDate}&endDate=${endDate}`
+        return GATEWAY_ENDPOINT.get(url);
+      },
 }
  

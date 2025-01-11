@@ -20,7 +20,11 @@
         <section v-else-if="loading">
           <div class="animate-pulse h-72 w-full bg-gray-50 rounded flex space-x-4"></div>
         </section>
-        <CardsDownloadStats />
+        <CardsDownloadStats v-if="!loading && Object.keys(engagementMetricsObj)?.length" :metricsObj="engagementMetricsObj"
+        :loading="loading"  />
+        <section v-else-if="loading">
+          <div class="animate-pulse h-72 w-full bg-gray-50 rounded flex space-x-4"></div>
+        </section>
       </div>
       <div class="rounded-lg">
         <ChartsSignup v-if="!loading && Object.keys(signupMetricsObj)?.length" :signupMetricsObj="signupMetricsObj"
@@ -33,10 +37,10 @@
 
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
       <div class="rounded-lg">
-        <ChartsRevenue />
+        <ChartsRevenue :chatInfo="revenueChartInfo" :loading="loadingRevenueChart" />
       </div>
       <div class="rounded-lg">
-        <ChartsOccupancyRate />
+        <ChartsOccupancyRate :chatInfo="occupancyChartInfo" :loading="loadingOccupancyChart" />
       </div>
     </div>
 
@@ -84,10 +88,15 @@ import { useGetProperties } from '@/composables/modules/property/fetchProperties
 import { useFetchAgents } from '@/composables/modules/agents/fetch'
 import { useFetchHouseMetrics } from "@/composables/modules/dashboard/useFetchHouseMetrics";
 import { useFetchUserMetrics } from "@/composables/modules/dashboard/userMetrics";
+import { useFetchOccupancyChart } from '@/composables/modules/dashboard/useFetchOccupancyChart'
+import { useFetchRevenueChart } from '@/composables/modules/dashboard/useFetchRevenueChart'
 import { useGetMembers } from '@/composables/modules/member/fetch'
 const { propertiesList, getProperties } = useGetProperties()
 const { agentsList, loading: loadingAgents } = useFetchAgents()
 const { serviceProviders, loadingMembers } = useGetMembers()
+
+const { occupancyChartInfo, occupancyFilterObj, loading: loadingOccupancyChart, getOccupancyChart  } = useFetchOccupancyChart()
+const { revenueChartInfo, revenueFilterObj, loading: loadingRevenueChart, getRevenueChart } = useFetchRevenueChart()
 
 const {
   filterObj,

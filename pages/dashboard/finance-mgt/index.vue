@@ -75,6 +75,7 @@
           <div class="relative flex-1">
             <input
               type="text"
+             v-model="filters.searchQuery"
               placeholder="Search"
               class="w-6/12 px-4 py-3.5 text-sm outline-none border-[0.5px] bg-gray-25 rounded-lg pl-10 text-gray-700 placeholder-gray-500 "
             />
@@ -96,20 +97,20 @@
           </div>
         </div>
         <div class="w-full lg:flex p-3 border border-gray-25 rounded-lg bg-white">
-          <div v-for="(item, idx) in firstSection" :key="idx" class="h-32 cursor-pointer space-y-4 w-full border-gray-100 lg:border-r last:border-r-0 p-4">
+          <div v-for="(value, key, idx) in transactionSummaries" :key="idx" class="h-32 cursor-pointer space-y-4 w-full border-gray-100 lg:border-r last:border-r-0 p-4">
             <div class="flex justify-end items-end ">
-              <img :src="dynamicIcons(item.icon)" :alt="item.label" class="h-10 w-10 bg-gray-100 p-2 rounded-md" />
+              <img :src="dynamicIcons('total-income')" :alt="key" class="h-10 w-10 bg-gray-100 p-2 rounded-md" />
             </div>
             <div class="space-y-0.5">
               <h2 class="text-[#1D2739] font-medium text-2xl">
-                  {{item.value}}.<span class="text-sm">00</span>
+                  <!-- {{item.value}}.<span class="text-sm">00</span> -->
+                   {{ handleCurrency(value) }}
                 </h2>
-              <h6 class="text-[#667185] font-light text-sm">{{item.label}}</h6>
+              <h6 class="text-[#667185] font-light text-sm">{{formattedKey(key)}}</h6>
             </div>
           </div>
         </div>
-  
-      <div class="p-6 bg-white rounded-lg shadow-md">
+      <div v-if="transactionsList.length && !loadingTtansactions" class="p-6 bg-white rounded-lg shadow-md">
         <table class="min-w-full bg-white">
           <thead class="border-b-[0.5px] border-gray-50">
             <tr>
@@ -124,21 +125,22 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
-            <tr v-for="(item, index) in transactions" :key="index">
+            <tr v-for="(item, index) in transactionsList" :key="index">
               <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">
-                {{ item.date }}
+                <!-- {{ item.transactionDate }} -->
+                {{ moment(item.transactionDate).format('DD MMMM YYYY') ?? 'Nil' }}
                 <br />
-                <span class="text-gray-400 text-xs">{{ item.time }}</span>
+                <!-- <span class="text-gray-400 text-xs">{{ item?.time }}</span> -->
               </td>
               <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">
-                <span class="block font-medium">{{ item.transactionId }}</span>
-                <span class="text-gray-400 text-xs">{{ item.transactionCode }}</span>
+                <span class="block font-medium">{{ item?.trxReference ?? 'Nil' }}</span>
+                <!-- <span class="text-gray-400 text-xs">{{ item.transactionCode }}</span> -->
               </td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item.propertyName }}</td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item.tenantName }}</td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item.paymentMethod }}</td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item.amount }}</td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item.category }}</td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.rentPayment?.house.name ?? 'Nil' }}</td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.tenantId ?? 'Nil' }}</td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.paymentMethod ?? 'Nil' }}</td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.amount ?? 'Nil' }}</td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.transactionType ?? 'Nil' }}</td>
               <td class="py-4 px-5 whitespace-nowrap text-sm">
                 <span
                   :class="{
@@ -154,7 +156,15 @@
             </tr>
           </tbody>
         </table>
-        <nav class="flex justify-between items-center mt-4 px-4 pt-6">
+        <CorePagination
+          v-if="!loadingTtansactions && transactionsList.length > 0"
+          :total="metadata.total"
+          :page="metadata.page"
+          :perPage="metadata.perPage"
+          :pages="metadata.pages"
+          @page-changed="handlePageChange"
+        />
+        <!-- <nav class="flex justify-between items-center mt-4 px-4 pt-6">
           <div class="-mt-px flex w-0 flex-1">
               <button class="px-6 text-sm py-2 bg-[#F9FAFB] text-[#545454] border-[0.5px] rounded-md" disabled>Previous</button>
           </div>
@@ -170,17 +180,51 @@
           <div class="-mt-px flex w-0 flex-1 justify-end">
               <button class="px-6 text-sm py-2 bg-[#292929] text-white rounded-md">Next</button>
           </div>
-        </nav>
+        </nav> -->
         
+      </div>
+      <section id="loader" class="w-full" v-else-if="loadingTtansactions && !loadingTtansactions">
+            <div class="rounded-md p-4 w-full">
+              <div class="animate-pulse flex space-x-4 w-full">
+                <div class="h-44 w-full bg-slate-200 rounded"></div>
+              </div>
+            </div>
+          </section>
+          <div
+        v-else
+        class="flex justify-center items-center flex-col my-20"
+      >
+        <div class="flex justify-center flex-col items-center gap-y-4 items-center">
+          <img src="@/assets/icons/activities-empty-state.svg" />
+          <p class="font-medium text-gray-400">No Transactions Available</p>
+        </div>
       </div>
   </main>
   </Layout>
-  <CoreFilterModal v-if="showModal" @close="closeModal" />
+  <CoreFilterModal
+    @applyFilters="handleApplyFilters"
+    v-if="showModal" 
+    @close="closeModal"
+   />
 </main>
   </template>
   
   <script lang="ts" setup>
+  import moment from "moment";
+  import { useFetchTransactionSummaries } from '@/composables/modules/finance/useFetchTransactionSummaries'
+  import { useGetTransactions } from '@/composables/modules/finance/useFetchTransactions'
   import { useUserInitials } from '@/composables/core/useUserInitials'
+  const {loading: fetchingSummaries, transactionSummaries } = useFetchTransactionSummaries()
+  const { 
+       getTransactions,
+        loadingTtansactions,
+        transactionsList,
+        searchQuery,
+        metadata,
+        filters,
+        setPaginationObj,
+        applyFilters, 
+  } = useGetTransactions()
 import { useUser } from '@/composables/auth/user'
 const { user } = useUser()
   import Layout from "@/layouts/dashboard.vue";
@@ -191,7 +235,21 @@ const toggleDownloadModal = () => {
   isDownloadModalOpen.value = !isDownloadModalOpen.value;
 };
 
+const handlePageChange = (val: any) => {
+  metadata.value.page = val || 1;
+  getTransactions(); 
+};
+
+
 const initials = ref('') as any
+
+// Computed property to format the key
+const formattedKey = (data: any) => {
+    // Convert camelCase to a readable format with spaces
+    const withSpaces = data?.replace(/([a-z])([A-Z])/g, '$1 $2');
+  // Lowercase the first letter
+  return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
+}
 
 onMounted(() => {
   // Get initials from the composable
@@ -205,6 +263,12 @@ const downloadOptions = ref([
   { icon: 'gray-csv', value: '₦5,300,000', label: 'csv' },
 ])
 
+const handleCurrency = (amount: any) => {
+  return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'NGN',
+    }).format(amount);
+}
 
 const firstSection = ref([
   { icon: 'total-income', value: '₦5,300,000', label: 'Rent received' },

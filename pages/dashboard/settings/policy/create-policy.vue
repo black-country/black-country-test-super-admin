@@ -42,7 +42,7 @@
     </template>
     <div class="min-h-screen bg-white">
       <div class="container mx-auto px-4 py-8">
-        <div class="max-w-5xl mx-auto space-x-6 lg:flex">
+        <div class="max-w-5xl mx-auto space-x-0 lg:space-x-6 lg:flex">
           <!-- Steps Sidebar -->
           <div class="lg:w-64">
             <div class="flex flex-col space-y-4">
@@ -211,9 +211,10 @@
           </div>
 
           <!-- Main Content Area -->
-          <div class="flex-1 pr-8">
+          <div class="flex-1">
             <component
               :is="currentComponent"
+              :loading="loading"
               @next="handleNext"
               @back="handleBack"
               @submit="handleSubmit"
@@ -225,8 +226,10 @@
   </Layout>
 </template>
 
-<script setup lang="ts">
+<!-- <script setup lang="ts">
+import { useCreatePloicy } from '@/composables/modules/settings/useCreatePolicy'
 import Layout from "@/layouts/dashboardWithoutSidebar.vue";
+const { createPolicy, setPayload, loading, payload} = useCreatePloicy()
 const currentStep = ref("basic");
 
 const currentComponent = computed(() => {
@@ -234,6 +237,7 @@ const currentComponent = computed(() => {
     ? resolveComponent("SettingsBasicPolicyInfo")
     : resolveComponent("SettingsComposeContent");
 });
+
 
 function handleNext(formData: any) {
   console.log(formData, 'form data here')
@@ -245,7 +249,63 @@ function handleBack() {
 }
 
 function handleSubmit(content: string) {
+  console.log()
   // Handle policy submission
+  const payloadObj = {
+    name: "",
+    content: "",
+    type: "",
+    description: "",
+    app: ""
+  }
+  setPayload(payloadObj)
   console.log("Policy submitted:", content);
+}
+</script> -->
+
+<script setup lang="ts">
+import { useCreatePloicy } from '@/composables/modules/settings/useCreatePolicy';
+import Layout from "@/layouts/dashboardWithoutSidebar.vue";
+const { createPolicy, setPayload, loading, payload } = useCreatePloicy();
+const currentStep = ref("basic");
+const router = useRouter()
+
+const formData = ref({
+  name: "",
+  content: "",
+  type: "",
+  description: "",
+  app: ""
+});
+
+const currentComponent = computed(() => {
+  return currentStep.value === "basic"
+    ? resolveComponent("SettingsBasicPolicyInfo")
+    : resolveComponent("SettingsComposeContent");
+});
+
+function handleNext(data: any) {
+  console.log(data, 'form data here');
+  formData.value = { ...formData.value, ...data }; // Merge new data into formData
+  currentStep.value = "compose";
+}
+
+function handleBack() {
+  currentStep.value = "basic";
+}
+
+async function handleSubmit(content: string) {
+  formData.value = { ...formData.value, content }; // Add content to formData
+
+  // Pass the final payload to setPayload
+  const finalPayload = {
+    content: formData?.value?.content?.content,
+    description: formData?.value?.content?.description,
+    app: formData?.value?.audience,
+    type: formData?.value?.title,
+    name: formData?.value?.title
+  }
+  setPayload(finalPayload);
+  await createPolicy()
 }
 </script>

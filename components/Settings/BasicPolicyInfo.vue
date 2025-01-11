@@ -1,18 +1,34 @@
 <template>
     <div class="w-full">
-      <h2 class="text-xl font-medium mb-8">Basic policy information</h2>
+      <h2 class="text-xl font-medium my-4 lg:mb-4">Basic policy information</h2>
   
       <div class="space-y-6">
         <div>
           <label class="block text-sm font-medium text-[#101828]">
-            Policy title
+            Policy Type
           </label>
-          <input
+          <!-- <input
             v-model="form.title"
             type="text"
             class="w-full text-sm outline-none border py-3.5 pl-4 pr-10 text-[#101828] bg-[#F9FAFB] rounded-lg border-[#E4E7EC] appearance-none"
             placeholder='Enter the policy title (e.g., "Terms & Conditions")'
-          >
+          > -->
+          <div class="relative">
+            <select
+              v-model="form.title"
+              class="w-full text-sm outline-none border py-3.5 pl-4 pr-10 text-[#101828] bg-[#F9FAFB] rounded-lg border-[#E4E7EC] appearance-none"
+            >
+              <option value="" disabled>Select the intended policy type</option>
+              <option v-for="item in policyTypesList" :key="item.key" :value="item.key">
+                {{ item.label }}
+              </option>
+            </select>
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+              <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
         </div>
   
         <div>
@@ -25,8 +41,8 @@
               class="w-full text-sm outline-none border py-3.5 pl-4 pr-10 text-[#101828] bg-[#F9FAFB] rounded-lg border-[#E4E7EC] appearance-none"
             >
               <option value="" disabled>Select the intended audience</option>
-              <option v-for="audience in audiences" :key="audience" :value="audience">
-                {{ audience }}
+              <option v-for="audience in audiences" :key="audience.key" :value="audience.key">
+                {{ audience.label }}
               </option>
             </select>
             <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -79,7 +95,33 @@
     audience: ''
   })
   
-  const audiences = ['Tenants', 'Agents', 'Service Provider']
+  // const audiences = ['Tenants', 'Agents', 'Service Provider']
+  const audiences = ref([
+    {
+       label: 'Tenant',
+       key:'tenant-app'
+    },
+    {
+       label: 'Agents',
+       key:'agent-app'
+    },
+    {
+       label: 'Service Provider',
+       key:'service-provider-app'
+    }
+  ])
+
+    // const audiences = ['Tenants', 'Agents', 'Service Provider']
+    const policyTypesList = ref([
+    {
+       label: 'Privacy Policy',
+       key:'privacy_policy'
+    },
+    {
+       label: 'Terms Of Use',
+       key:'terms_of_use'
+    }
+  ])
   
   const canProceed = computed(() => 
     form.title.trim() !== '' && form.audience !== ''

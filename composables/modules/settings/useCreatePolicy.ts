@@ -24,7 +24,8 @@ export const useCreatePloicy = () => {
                 toastType: "success",
                 duration: 3000
             });
-            // router.push('/dashboard/settings/new-faq')
+            router.push('/dashboard/settings')
+            window.location.href = '/dashboard/settings'
             return res;
         } catch (error) {
             showToast({

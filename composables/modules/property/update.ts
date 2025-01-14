@@ -64,8 +64,8 @@ export const useEditProperty = () => {
     payload.bedroomCount.value = data.bedroomCount || "";
     payload.bathroomCount.value = data.bathroomCount || "";
     payload.floorNumber.value = data.floorNumber || "";
-    payload.longitude.value = data.coordinates.coordinates[0] || "";
-    payload.latitude.value = data.coordinates.coordinates[1] || "";
+    payload.longitude.value = data.coordinates.coordinates[1] || "";
+    payload.latitude.value = data.coordinates.coordinates[0] || "";
     payload.images.value = data.images || [];
     payload.address.value = data.address || "";
     payload.isFurnishedCommonArea.value = data.isFurnishedCommonArea || false;

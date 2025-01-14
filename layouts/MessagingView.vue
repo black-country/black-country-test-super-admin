@@ -58,8 +58,8 @@
                     </li>
              
                     <li class="mt-auto">
-                      <a
-                    href="#"
+                      <NuxtLink
+                    to="/dashboard/seettings"
                     class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <img
@@ -68,7 +68,7 @@
                       class="h-6 w-6"
                     />
                     Settings
-                  </a>
+                  </NuxtLink>
                   <button
                     @click="showBLogoutModal = true"
                     class="group -mx-2 flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
@@ -123,8 +123,8 @@
                   </ul>
                 </li>
                 <li class="mt-auto">
-                  <a
-                    href="#"
+                  <NuxtLink
+                    to="/dashboard/settings"
                     class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <img
@@ -133,7 +133,7 @@
                       class="h-6 w-6"
                     />
                     Settings
-                  </a>
+                  </NuxtLink>
                   <button
                     @click="showBLogoutModal = true"
                     class="group -mx-2 flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"

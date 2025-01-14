@@ -39,12 +39,14 @@
       >
         Draft
       </span>
-      <button
-        class="px-4 py-2 text-sm font-medium text-[#292929] bg-[#F0F2F5] border-[0.5px] border-gray-100 rounded-lg md:text-base"
+      <button @click="handleDeletePolicy"
+      :disabled="loading"
+        class="px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-25 text-[#292929] bg-[#F0F2F5] border-[0.5px] border-gray-100 rounded-lg md:text-base"
       >
-        Delete
+         {{  loading ? 'deleting' : 'Delete' }}
       </button>
       <button
+       @click="router.push(`/dashboard/settings/policy/${route.params.id}/edit`)"
         class="px-4 py-2 text-sm font-medium text-white bg-[#292929] rounded-lg hover:bg-gray-800 md:text-base"
       >
         Edit
@@ -144,10 +146,21 @@
   </template>
   
   <script setup lang="ts">
+  import { useDeletePolicy } from '@/composables/modules/settings/useDeletePolicy'
+  const { deletePolicy, loading, setPayload } = useDeletePolicy()
     import Layout from '@/layouts/dashboard.vue';
     const goBack = () => {
   // Navigate back in history
   window.history.back();
+};
+
+const route = useRoute()
+const router = useRouter()
+
+const handleDeletePolicy = () => {
+  const payloadObj = [String(route.params.id)]; // Convert route.params.id to a string and wrap it in an array
+  setPayload(payloadObj); // Pass the array to setPayload
+  deletePolicy();
 };
   // Add any required functionality here
   </script>

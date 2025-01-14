@@ -61,8 +61,9 @@
         </div>
         <div class="flex justify-between items-center w-full">
           <p class="text-sm text-[#667185]">{{ user.lastMessage?.content }}</p>
+          <!-- {{ user.unreadMessagesCount }} -->
           <svg
-            v-if="user.lastMessage?.receivedAt === null || user.lastMessage?.readAt === null"
+            v-if="user?.unreadMessagesCount > 0"
             width="10"
             height="10"
             viewBox="0 0 10 10"

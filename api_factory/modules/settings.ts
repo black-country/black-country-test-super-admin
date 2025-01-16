@@ -49,6 +49,10 @@ export const settings_api = {
         const url = `/policies/${id}`;
         return GATEWAY_ENDPOINT.patch(url, payload);
       },
+      $_update_faq: (payload: any, id: any) => {
+        const url = `/faqs/${id}`;
+        return GATEWAY_ENDPOINT.patch(url, payload);
+      },
       $_batch_delete_policy: (payload: any) => {
         console.log(payload, 'from api factoruy')
         const url = '/policies/batch';

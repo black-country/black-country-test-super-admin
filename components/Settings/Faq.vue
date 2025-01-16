@@ -47,8 +47,16 @@
               />
             </svg>
           </div>
+          <button @click="handleEditFaq" class="text-[#292929] flex items-center gap-x-2 border border-gray-200 bg-[#F9FAFB] py-3 rounded-lg px-6">
+            <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.5131 4.65199L14.6811 3.48386C15.3263 2.83871 16.3723 2.83871 17.0175 3.48386C17.6626 4.129 17.6626 5.17498 17.0175 5.82012L15.8493 6.98826M13.5131 4.65199L9.15147 9.01358C8.28041 9.88467 7.84485 10.3202 7.54828 10.8509C7.25169 11.3817 6.9533 12.6349 6.66797 13.8333C7.86638 13.548 9.11964 13.2496 9.65039 12.953C10.1811 12.6564 10.6166 12.2209 11.4877 11.3498L15.8493 6.98826M13.5131 4.65199L15.8493 6.98826" stroke="#292929" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17.5 10.5C17.5 14.0355 17.5 15.8033 16.4017 16.9017C15.3033 18 13.5355 18 10 18C6.46447 18 4.6967 18 3.59835 16.9017C2.5 15.8033 2.5 14.0355 2.5 10.5C2.5 6.96447 2.5 5.1967 3.59835 4.09835C4.6967 3 6.46447 3 10 3" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
+
+            Edit
+          </button>
           <NuxtLink
-            to="/dashboard/settings/new-faq"
+            to="/dashboard/settings/faq/create-faq"
             class="px-4 py-3.5 bg-[#292929] text-sm text-white rounded-lg"
           >
             New FAQ
@@ -61,7 +69,10 @@
             @click="toggleFaq(faq.id)"
             class="w-full flex justify-between border-[0.5px] border-gray-50 rounded-lg bg-white px-4 items-center py-3.5 text-left"
           >
-            <span class="text- text-[#1D2739]">{{ faq.question }}</span>
+            <div class="space-x-2">
+              <input @input="handleSelected(faq)" type="checkbox" />
+              <span class="text- text-[#1D2739]">{{ faq.question }}</span>
+            </div>
             <svg
               :class="{ 'rotate-180': openFaqId === faq.id }"
               width="16"
@@ -151,5 +162,18 @@
   const toggleFaq = (id: string) => {
     openFaqId.value = openFaqId.value === id ? null : id;
   };
+
+  const selectedItem = ref({}) as any
+
+  const handleSelected = (item: any) => {
+    selectedItem.value = item
+    localStorage.setItem('selected-faq', JSON.stringify(selectedItem.value))
+  }
+
+  const router = useRouter()
+
+  const handleEditFaq = () => {
+    router.push(`/dashboard/settings/faq/${selectedItem.value.id}/edit`)
+  }
   </script>
   

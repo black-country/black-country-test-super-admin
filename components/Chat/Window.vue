@@ -1,5 +1,8 @@
 <template>
     <div  ref="scrollContainer" class="flex-1 scroll-container z-10 overflow-y-auto p-4 space-y-3 bg-white">
+      <!-- {{messages}} -->
+       <!-- {{roomChats.length}} -->
+        <!-- {{sortedMessagesWithHeaders}} -->
       <div v-for="(msg, index) in sortedMessagesWithHeaders" :key="msg.id || msg.dateHeader">
         <div v-if="msg.isHeader" class="text-center my-3 text-sm text-gray-400">
           {{ msg.dateHeader }}
@@ -49,6 +52,41 @@
   
     return messagesWithHeaders;
   });
+
+//   const sortedMessagesWithHeaders = computed(() => {
+//   // Create a Map of messages from roomChats for quick lookup
+//   const roomChatsMap = new Map(props.roomChats.map((msg) => [msg.id, msg]));
+
+//   // Filter props.messages to only include those that exist in roomChatsMap
+//   const filteredMessages = props.messages.filter((msg) => roomChatsMap.has(msg.id));
+
+//   // Merge and prioritize roomChats
+//   const allMessages = [
+//     ...filteredMessages.map((msg) => ({ ...msg, ...roomChatsMap.get(msg.id) })),
+//     ...props.roomChats.filter((msg) => !filteredMessages.some((m) => m.id === msg.id)),
+//   ];
+
+//   // Sort all messages by createdAt
+//   const sorted = allMessages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+//   // Add date headers
+//   const messagesWithHeaders = [];
+//   let lastDateHeader = '';
+
+//   sorted.forEach((msg) => {
+//     const messageDate = formatMessageDate(msg.createdAt);
+
+//     // Add a date header if it differs from the last one
+//     if (messageDate !== lastDateHeader) {
+//       messagesWithHeaders.push({ isHeader: true, dateHeader: messageDate });
+//       lastDateHeader = messageDate;
+//     }
+//     messagesWithHeaders.push(msg);
+//   });
+
+//   return messagesWithHeaders;
+// });
+
   
   // Helper to format dates into "Today", "Yesterday", or a full date
   const formatMessageDate = (date: string): string => {

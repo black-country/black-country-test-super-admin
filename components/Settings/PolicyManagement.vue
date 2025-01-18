@@ -17,10 +17,10 @@
       </div>
     </div>
 
-    <div v-if="!loading && policyList.length" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div v-if="!loading && policyList.length" class="grid grid-cols-1 max-w-2xl md:grid-cols-2 lg::grid-cols-3 gap-8">
       <SettingsPolicyCard v-for="item in policyList" :key="item.id" v-bind="item" class="rounded-lg" :name="item.name"
         :id="item.id" :type="item.type" :content="item.content" :description="item.description" :app="item.app"
-        :createdAt="item.name" />
+        :createdAt="item.createdAt" />
     </div>
     <section v-else-if="loading && !policyList.length">
       <div class="animate-pulse h-44 w-full bg-gray-100 rounded flex space-x-4"></div>

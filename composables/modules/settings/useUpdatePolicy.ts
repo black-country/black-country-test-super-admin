@@ -1,71 +1,67 @@
-import { settings_api } from '@/api_factory/modules/settings'
+import { settings_api } from '@/api_factory/modules/settings';
 import { useCustomToast } from '@/composables/core/useCustomToast';
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
 const { showToast } = useCustomToast();
 const loading = ref(false);
-const route = useRoute() 
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
-const updatedPayload = ref( {
+const updatedPayload = ref({
     name: "",
     content: "",
     type: "",
     description: "",
-    app: ""
-})
+    app: "",
+});
 
-
-export const useUpdatePloicy = () => {
+export const useUpdatePolicy = () => {
+    const router = useRouter();
+    const route = useRoute();
     const updatePolicy = async () => {
-        loading.value = true;
-        const res = await settings_api.$_update_policy(updatedPayload.value, route.params.id) as any
-        console.log(res, 'tse hee')
-        if(res.status === 200 || res.status === 201){
-           showToast({
-                title: "Success",
-                message: 'Policy was update successfully',
-                toastType: "success",
-                duration: 3000
-            });
-            router.push('/dashboard/settings/new-faq')
-            window.location.href = '/dashboard/settings/new-faq'
-        } else {
-                     showToast({
+        try {
+            loading.value = true;
+
+            const res = await settings_api.$_update_policy(updatedPayload?.value, route?.params?.id) as any;
+
+            if (res.status === 200 || res.status === 201) {
+                showToast({
+                    title: "Success",
+                    message: "Policy was updated successfully",
+                    toastType: "success",
+                    duration: 3000,
+                });
+
+                // Forcefully push to the route by using replace or by adding a key to ensure a fresh view
+                router.push({
+                    path: '/dashboard/settings',
+                    query: { forceReload: new Date().getTime() }, // Adding a query param to ensure uniqueness
+                });
+            } else {
+                showToast({
+                    title: "Error",
+                    message: "Failed to update policy",
+                    toastType: "error",
+                    duration: 3000,
+                });
+            }
+        } catch (error) {
+            console.error("Error updating policy:", error);
+            showToast({
                 title: "Error",
-                message: 'Failed to update policy',
+                message: "Failed to update policy",
                 toastType: "error",
-                duration: 3000
+                duration: 3000,
             });
+        } finally {
+            loading.value = false;
         }
-        loading.value = false;
-        // try {
-        //     const res = await settings_api.$_update_policy(updatedPayload.value, route.params.id);
-        //     showToast({
-        //         title: "Success",
-        //         message: 'Policy was update successfully',
-        //         toastType: "success",
-        //         duration: 3000
-        //     });
-        //     router.push('/dashboard/settings/new-faq')
-        //     window.location.href = '/dashboard/settings/new-faq'
-        //     // return res;
-        //     // console.log(res, 'res here')
-        // } catch (error) {
-        //     console.log(error, 'error ')
-        //     showToast({
-        //         title: "Error",
-        //         message: 'Failed to update policy',
-        //         toastType: "error",
-        //         duration: 3000
-        //     });
-        //     // throw error;
-        // } finally {
-        //     loading.value = false;
-        // }
     };
 
     const setUpdatedPayload = (data: any) => {
-        updatedPayload.value = { ...data}
-    }
+        updatedPayload.value = { ...data };
+    };
 
-    return { updatePolicy, setUpdatedPayload, loading, updatedPayload }
+    return { updatePolicy, setUpdatedPayload, loading, updatedPayload };
 };

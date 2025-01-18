@@ -49,9 +49,17 @@ export const settings_api = {
         const url = `/policies/${id}`;
         return GATEWAY_ENDPOINT.patch(url, payload);
       },
+      $_get_policy_by_id: (id: any) => {
+        const url = `/policies/${id}`;
+        return GATEWAY_ENDPOINT.get(url);
+      },
       $_update_faq: (payload: any, id: any) => {
         const url = `/faqs/${id}`;
         return GATEWAY_ENDPOINT.patch(url, payload);
+      },
+      $_batch_delete_faq: (payload: any, id: any) => {
+        const url = `/faqs/batch`;
+        return GATEWAY_ENDPOINT.delete(url, payload);
       },
       $_batch_delete_policy: (payload: any) => {
         console.log(payload, 'from api factoruy')

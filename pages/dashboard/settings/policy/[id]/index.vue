@@ -1,11 +1,11 @@
 <!-- pages/terms.vue -->
 <template>
-  <Layout class="lg:-ml-10">
+  <Layout class="lg:-ml-2">
     <template class="" #header-content>
       <div class="flex items-center justify-between px-4 md:px-8 w-full">
         <!-- Back Button -->
         <div class="flex  items-center gap-x-3">
-          <button class="flex items-center py-3 rounded-lg px-6 gap-2 text-gray-600 bg-[#F9FAFB]" @click="goBack">
+          <button @click="router.back()" class="flex items-center py-3 rounded-lg px-6 gap-2 text-gray-600 bg-[#F9FAFB]">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
               stroke="currentColor" class="w-5 h-5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -16,7 +16,7 @@
           <!-- Title -->
           <h1 class="text-lg hidden lg:block font-medium text-[#1D2739] md:text-lg">
             <!-- Terms & Conditions -->
-            {{ selectedPolicy?.name ?? 'Nil' }}
+            {{ policyObj?.name === 'privacy_policy' ? 'Privacy policy' : policyObj?.name === 'terms_of_use' ? 'Terms Of Use' : '' ?? 'Nil' }}
           </h1>
 
         </div>
@@ -39,7 +39,7 @@
       <!-- {{ selectedPolicy?.content }} -->
     </template>
       <div
-      v-html="selectedPolicy?.content"
+      v-html="policyObj?.content"
       class="p-4"
     ></div>
 
@@ -48,7 +48,10 @@
 
 <script setup lang="ts">
 import { useDeletePolicy } from '@/composables/modules/settings/useDeletePolicy'
+import { useFetchPolicyById } from '@/composables/modules/settings/useFetchPolicyById'
+const { loading: fetching, fetchPolicyById, policyObj } = useFetchPolicyById()
 const { deletePolicy, loading, setPayload } = useDeletePolicy()
+
 import Layout from '@/layouts/dashboard.vue';
 const goBack = () => {
   // Navigate back in history
@@ -69,6 +72,11 @@ const selectedPolicy = ref({})
 onMounted(() => {
   const policyObj = localStorage.getItem('selected-policy') as any
   selectedPolicy.value = JSON.parse(policyObj)
+})
+
+
+definePageMeta({
+   middleware: 'auth'
 })
 // Add any required functionality here
 </script>

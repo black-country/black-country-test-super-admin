@@ -25,7 +25,7 @@ export const useCreatePloicy = () => {
                 duration: 3000
             });
             router.push('/dashboard/settings')
-            window.location.href = '/dashboard/settings'
+            // window.location.href = '/dashboard/settings'
             return res;
         } catch (error) {
             showToast({

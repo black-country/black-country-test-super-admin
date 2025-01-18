@@ -14,6 +14,7 @@ const payload = ref( {
 const router = useRouter()
 
 export const useUpdateFaq = () => {
+    const router = useRouter()
     const updateFaq = async () => {
         loading.value = true;
         const res = await settings_api.$_update_faq(payload.value, route.params.id) as any
@@ -26,7 +27,7 @@ export const useUpdateFaq = () => {
                 duration: 3000
             });
             router.push('/dashboard/settings/faq-success')
-            window.location.href = '/dashboard/settings/faq-success'
+            // window.location.href = '/dashboard/settings/faq-success'
             localStorage.removeItem('selected-faq')
         } else {
             showToast({

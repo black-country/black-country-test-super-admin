@@ -24,7 +24,7 @@
                   Preview policy
                 </button> -->
           <button
-            @click="router.push('/dashboard/property/review-progress')"
+            @click="router.push(`/dashboard/settings/policy/${route.params.id}`)"
             type="button"
             class="bg-white border text-sm border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-100"
           >
@@ -216,6 +216,7 @@
               :is="currentComponent"
               :loading="loading"
               :formData="formData"
+              :policyObj="policyObj"
               @next="handleNext"
               @back="handleBack"
               @submit="handleSubmit"
@@ -227,85 +228,15 @@
   </Layout>
 </template>
 
-<!-- <script setup lang="ts">
-import { useCreatePloicy } from '@/composables/modules/settings/useCreatePolicy';
-import { useUpdatePloicy } from '@/composables/modules/settings/useUpdatePolicy'
-import Layout from "@/layouts/dashboardWithoutSidebar.vue";
-const { createPolicy, setPayload, loading, payload } = useCreatePloicy();
-const { updatePolicy, setUpdatedPayload, loading: updating, updatedPayload } = useUpdatePloicy()
-const currentStep = ref("basic");
-const router = useRouter()
-
-const formData = ref({
-  name: "",
-  content: "",
-  type: "",
-  description: "",
-  app: ""
-});
-
-const currentComponent = computed(() => {
-  return currentStep.value === "basic"
-    ? resolveComponent("SettingsBasicPolicyInfo")
-    : resolveComponent("SettingsComposeContent");
-});
-
-function handleNext(data: any) {
-  console.log(data, 'form data here');
-  formData.value = { ...formData.value, ...data }; // Merge new data into formData
-  currentStep.value = "compose";
-}
-
-function handleBack() {
-  currentStep.value = "basic";
-}
-
-// async function handleSubmit(content: string) {
-//   formData.value = { ...formData.value, content }; // Add content to formData
-
-//   // Pass the final payload to setPayload
-//   const finalPayload = {
-//     content: formData?.value?.content?.content,
-//     description: formData?.value?.content?.description,
-//     app: formData?.value?.audience,
-//     type: formData?.value?.title,
-//     name: formData?.value?.title
-//   }
-//   setPayload(finalPayload);
-//   await createPolicy()
-// }
-
-
-onMounted(() => {
-  const storedPolicy = localStorage.getItem("selected-policy");
-  if (storedPolicy) {
-    formData.value = JSON.parse(storedPolicy);
-  }
-});
-
-
-async function handleSubmit(content: string) {
-  formData.value = { ...formData.value, content };
-
-  const finalPayload = {
-    content: formData.value.content,
-    description: formData.value.description,
-    app: formData.value.app,
-    type: formData.value.type,
-    name: formData.value.name
-  };
-  setPayload(finalPayload);
-  await createPolicy();
-}
-
-</script> -->
 
 <script setup lang="ts">
 import { useCreatePloicy } from '@/composables/modules/settings/useCreatePolicy';
-import { useUpdatePloicy } from '@/composables/modules/settings/useUpdatePolicy'
+import { useUpdatePolicy } from '@/composables/modules/settings/useUpdatePolicy'
+import { useFetchPolicyById } from '@/composables/modules/settings/useFetchPolicyById'
 import Layout from "@/layouts/dashboardWithoutSidebar.vue";
 const { createPolicy, setPayload, loading, payload } = useCreatePloicy();
-const { updatePolicy, setUpdatedPayload, loading: updating, updatedPayload } = useUpdatePloicy()
+const { updatePolicy, setUpdatedPayload, loading: updating, updatedPayload } = useUpdatePolicy()
+const { loading: fetchingPolicies, policyObj } = useFetchPolicyById()
 const currentStep = ref("basic");
 const router = useRouter()
 const route = useRoute() 
@@ -327,7 +258,9 @@ const currentComponent = computed(() => {
 
 function handleNext(data: any) {
   console.log(data, 'form data here');
-  formData.value = { ...formData.value, ...data }; // Merge new data into formData
+ formData.value.app = data.audience
+ formData.value.name = data.title
+ formData.value.type = data.title
   currentStep.value = "compose";
 }
 
@@ -338,14 +271,18 @@ function handleBack() {
 const localData = ref({});
 
 onMounted(() => {
-  const storedPolicy = localStorage.getItem("selected-policy");
-  if (storedPolicy) {
-    formData.value = JSON.parse(storedPolicy);
+  if(policyObj?.value){
+    console.log(policyObj, 'obj here oooo')
+    formData.value.name = policyObj?.value?.name,
+    formData.value.content = policyObj?.value?.content,
+    formData.value.type = policyObj?.value?.type,
+    formData.value.description = policyObj?.value?.description,
+    formData.value.app = policyObj?.value?.app
   }
 });
 
-const storedPolicyObj = localStorage.getItem("selected-policy");
-const parsedData = JSON.parse(storedPolicyObj);
+// const storedPolicyObj = localStorage.getItem("selected-policy");
+// const parsedData = JSON.parse(storedPolicyObj);
 
 async function handleSubmit(content: any) {
   console.log(content, 'content here')
@@ -371,11 +308,11 @@ async function handleSubmit(content: any) {
   formData.value = { ...formData.value, content: wrappedContent };
 
   const finalPayload = {
-    content: formData?.value?.content || parsedData?.content,
-    description: formData?.value?.description || parsedData?.description,
-    app: formData?.value?.app || parsedData?.app,
-    type: formData?.value?.type || parsedData?.type,
-    name: formData?.value?.name || parsedData?.name,
+    content: formData?.value?.content,
+    description: content.description || formData?.value?.description,
+    app: formData?.value?.app,
+    type: formData?.value?.type,
+    name: formData?.value?.name,
   };
 
   console.log(finalPayload, 'final payload', formData.value)
@@ -413,4 +350,8 @@ async function handleSubmit(content: any) {
 //     await createPolicy();
 //   }
 // }
+
+definePageMeta({
+   middleware: 'auth'
+})
 </script>

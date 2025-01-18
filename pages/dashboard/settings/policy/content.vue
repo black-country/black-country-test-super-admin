@@ -70,4 +70,8 @@
     { label: 'Bullet List', icon: 'List' },
     { label: 'Numbered List', icon: 'OrderedList' }
   ]
+
+  definePageMeta({
+   middleware: 'auth'
+})
   </script>

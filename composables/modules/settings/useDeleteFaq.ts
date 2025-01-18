@@ -1,23 +1,23 @@
 import axios from 'axios';
 import { ref } from 'vue';
 import { useCustomToast } from '@/composables/core/useCustomToast'
-import { useFetchPolicy } from '@/composables/modules/settings/useFetchPolicy'
+import { useFetchFaq } from '@/composables/modules/settings/useFetchFaq'
 import { useUser } from "@/composables/auth/user";
-const { fetchPolicy } = useFetchPolicy()
+const { fetchFaq } = useFetchFaq()
 const { token } = useUser();
 
-export const useDeletePolicy = () => {
+export const useDeleteFaq = () => {
   const loading = ref(false);
   const payload = ref({ ids: [] });
   const { showToast } = useCustomToast()
 
-  const deletePolicy = async () => {
+  const deleteFaq = async () => {
     loading.value = true;
 
     try {
         const response = await axios.request({
           method: 'DELETE',
-          url: 'https://dev.api.blackcountry.africa/v1/policies/batch', // Removed extra `/` in the URL
+          url: 'https://dev.api.blackcountry.africa/v1/faqs/batch', // Removed extra `/` in the URL
           headers: {
             Authorization: `Bearer ${token.value}`, // Ensure token is properly passed
           },
@@ -31,13 +31,13 @@ export const useDeletePolicy = () => {
         if (response.data.type !== 'ERROR') {
           showToast({
             title: "Success",
-            message: "Policies were deleted successfully",
+            message: "Faq were deleted successfully",
             toastType: "success",
             duration: 3000,
           });
       
-          if (typeof fetchPolicy === "function") {
-            fetchPolicy(); // Ensure fetchPolicy exists before calling it
+          if (typeof fetchFaq === "function") {
+            fetchFaq(); // Ensure fetchPolicy exists before calling it
           } else {
             console.warn("fetchPolicy function is not defined.");
           }
@@ -46,7 +46,7 @@ export const useDeletePolicy = () => {
         } else {
           console.error('Error response:', response.data);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error deleting policies:', error.response?.data || error.message);
       } finally {
         loading.value = false;
@@ -58,5 +58,5 @@ export const useDeletePolicy = () => {
     payload.value.ids = data;
   };
 
-  return { deletePolicy, loading, setPayload };
+  return { deleteFaq, loading, setPayload };
 };

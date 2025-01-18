@@ -308,4 +308,9 @@ async function handleSubmit(content: string) {
   setPayload(finalPayload);
   await createPolicy()
 }
+
+
+definePageMeta({
+   middleware: 'auth'
+})
 </script>

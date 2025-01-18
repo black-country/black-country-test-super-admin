@@ -176,8 +176,8 @@ const handleFileUpload = async (event: Event) => {
 
       // Add the uploaded images' secure URLs to the `images` array
       uploadResponse.value.forEach((response: { url: string }) => {
-        images.value.push(response.url);
-        props.payload.images.value.push(response.url)
+        images.value.unshift(response.url);
+        props.payload.images.value.unshift(response.url)
       });
     } catch (error) {
       console.error("Image upload failed", error);
@@ -219,8 +219,8 @@ const handleDrop = async (event: DragEvent) => {
 
       // Add uploaded images to the local state
       uploadResponse.value.forEach((response: { url: string }) => {
-        images.value.push(response.url);
-        props.payload.images.value.push(response.url)
+        images.value.unshift(response.url);
+        props.payload.images.value.unshift(response.url)
       });
     } catch (error) {
       console.error("Drag-and-drop upload failed", error);
@@ -354,8 +354,8 @@ const handleFileUpload = async (event: Event) => {
 
       // Add the uploaded images' secure URLs to the `images` array
       uploadResponse.value.forEach((response: { url: string }) => {
-        images.value.push(response.url);
-        props.payload.images.value.push(response.url)
+        images.value.unshift(response.url);
+        props.payload.images.value.unshift(response.url)
       });
     } catch (error) {
       console.error("Image upload failed", error);
@@ -397,8 +397,8 @@ const handleDrop = async (event: DragEvent) => {
 
       // Add uploaded images to the local state
       uploadResponse.value.forEach((response: { url: string }) => {
-        images.value.push(response.url);
-        props.payload.images.value.push(response.url)
+        images.value.unshift(response.url);
+        props.payload.images.value.unshift(response.url)
       });
     } catch (error) {
       console.error("Drag-and-drop upload failed", error);

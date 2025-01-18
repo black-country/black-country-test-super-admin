@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div class="container mx-auto space-y-2">
+    <div class="container mx-auto space-y-2 mb-4 lg:mb-0">
       <!-- <p class="text-[#1D2739] font-medium text-sm">
         Can you provide references from previous landlords or property managers?
       </p> -->
@@ -91,7 +91,7 @@
         </section>
                 <!-- Question Title -->
                 <section>
-                  <p class="text-sm -mt-5 text-[#1D2739] font-medium">select response type</p>
+                  <p class="text-sm lg:-mt-5 text-[#1D2739] font-medium">select response type</p>
         
                   <!-- Question Type Selector -->
                   <div

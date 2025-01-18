@@ -14,9 +14,9 @@
             <span class="text-lg font-semibold">BlackCountry</span>
           </div>
           <div class="flex space-x-4 items-center">
-            <button @click="router.push(`/dashboard/property/preview`)" class="text-[#326543] py-3 font-semibold text-sm hover:text-[#326543]">
+            <NuxtLink :to="`/dashboard/property/${route.params.id}/edit-review-progress`" class="text-[#326543] py-3 font-semibold text-sm hover:text-[#326543]">
               Preview
-            </button>
+            </NuxtLink>
             <button
               @click="openCancelModal = true"
               type="button"
@@ -34,6 +34,7 @@
           </div>
         </header>
       </template>
+      <main v-if="!isReviewMode">
         <main v-if="!fetchingProperty">
           <section v-if="!isPreviewMode && !fetchingProperty">
             <div
@@ -167,6 +168,7 @@
                   :totalSteps="2"
                   :currentStep="basicPropertyInformationStep"
                 />
+                <!-- {{ payload }} -->
                 <CreatePropertyForm
                   :payload="payload"
                   @updateFormData="handleBasicPropertyInformationFormData"
@@ -433,7 +435,7 @@
                     <!-- Interior Area -->
                     <div v-if="currentRoom" class="mb-6">
                       <h3 class="text-[#667185] font-normal text-sm mb-4">Interior area</h3>
-                      <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4">
+                      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         <div
                           v-for="(feature, index) in currentRoom.features"
                           :key="index"
@@ -639,7 +641,49 @@
                   </div>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-sm">
+                <div 
+  v-for="(questionObj, index) in (Array.isArray(payload?.questions?.value) && payload.questions.value.length > 0 ? payload.questions.value : localQuestions)" 
+  :key="index" 
+  class="mb-6"
+>
+  <label :for="'question-' + index" class="block text-gray-700 text-sm font-normal mb-2">
+    {{ questionObj?.question }}
+  </label>
+
+  <!-- Check if widgetType is select -->
+              <div v-if="questionObj?.widgetType === 'select'">
+                <select :id="'question-' + index" class="block w-full px-3 py-3.5 border-[0.5px] border-gray-200 outline-none bg-[#F0F2F5] rounded-md sm:text-sm">
+                  <option v-for="(option, optionIndex) in questionObj?.widgetOptions" :key="optionIndex" :value="option">
+                    {{ option }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Handle other widget types -->
+              <div v-else-if="questionObj?.widgetType === 'input'">
+                <input 
+                  :id="'question-' + index" 
+                  type="text" 
+                  placeholder="e.g short response goes here"
+                  class="block w-full px-3 py-3.5 border-[0.5px] border-gray-200 outline-none bg-[#F0F2F5] rounded-md sm:text-sm"
+                />
+              </div>
+
+              <div v-else-if="questionObj?.widgetType === 'long-response'">
+                <textarea 
+                  :id="'question-' + index" 
+                  rows="4" 
+                  placeholder="e.g long response goes here"
+                  class="block w-full px-3 py-3.5 border-[0.5px] border-gray-200 outline-none bg-[#F0F2F5] rounded-md sm:text-sm"
+                ></textarea>
+              </div>
+
+              <!-- Fallback for unsupported widget types -->
+              <div v-else>
+                <p class="text-gray-500">Unsupported widget type: {{ questionObj?.widgetType }}</p>
+              </div>
+            </div>
+                <!-- <div class="bg-white rounded-lg shadow-sm">
                   <p class="pb-3">Pre-screening questions</p>
                   <form @submit.prevent="submitAnswers">
                     <div v-for="(questionObj, index) in payload?.questions.value" :key="index" class="mb-6">
@@ -648,7 +692,7 @@
                       </label>
                     </div>
                   </form>
-                </div>
+                </div> -->
               </div>
             </section>
         </main>
@@ -661,22 +705,434 @@
             </div>
           </div>
          </main>
-      <!-- <section v-else>
-        <div class="rounded-md p-4 w-full mx-auto mt-10">
-          <div class="animate-pulse flex space-x-4">
-            <div class="flex-1 space-y-6 py-1">
-              <div class="h-32 bg-slate-200 rounded"></div>
-              <div class="space-y-3">
-                <div class="grid grid-cols-3 gap-4">
-                  <div class="h-32 w-full bg-slate-200 rounded col-span-2"></div>
-                  <div class="h-32 w-full bg-slate-200 rounded col-span-1"></div>
+      </main>
+      <main class="pb-20" v-if="isReviewMode">
+            <div class="max-w-3xl mx-auto py-10 border border-gray-100 rounded-xl mt-6 p-10">
+              <p class="text-[#1D2739] font-normal  text-2xl max-w-lg pb-10">Review property details and proceed to publish to the public</p>
+              <div class="flex justify-between items-center mb-10">
+                <p class="text-[#1D2739] font-normal">Basic property information</p>
+                <a href="#part1" class="text-[#326543] font-semibold">Edit</a>
+              </div>
+              <div class="pb-6">
+                <div class="flex justify-between items-center">
+                  <div class="space-y-2">
+                    <!-- {{editPayload}} -->
+                    <h4 class="font-normal text-sm text-[#667185]">Property name</h4>
+                    <p>{{payload?.name?.value || persistedPayload?.name}}</p>
+                  </div>
+                  <!-- <button @click="router.push('/dashboard/property/new')" class="text-green-600 font-semibold">Edit</button> -->
                 </div>
-                <div class="h-32 w-full bg-slate-200 rounded"></div>
+                <div class="mt-4">
+                  <h4 class="font-normal text-[#667185] text-sm">Brief description</h4>
+                  <p class="text-sm text-[#1D2739]">{{payload?.description?.value || persistedPayload?.description }}</p>
+                  <!-- <a href="#" class="text-blue-500">View more</a> -->
+                </div>                            
+                <div class="mt-4 space-y-6">
+                  <div>
+                    <h4 class="font-normal text-[#667185] text-sm">Building/property type</h4>
+                    <p class="text-sm text-[#1D2739]">{{ propertyObj?.name }}</p>
+                  </div>
+                  <div>
+                    <h4 class="font-normal text-[#667185] text-sm">Floor type</h4>
+                    <p class="text-sm text-[#1D2739]">{{ floorObj?.name }}</p>
+                  </div>
+                  <div>
+                    <h4 class="font-normal text-[#667185] text-sm">Property size</h4>
+                    <p class="text-sm text-[#1D2739]">{{ payload?.size?.value || persistedPayload?.size }} {{payload?.sizeUnit?.value || persistedPayload?.sizeUnit }}</p>
+                  </div>
+              <div class="grid grid-cols-2 gap-6">
+                <div>
+                  <h4 class="font-normal text-[#667185] text-sm">Number of bedrooms</h4>
+                  <p class="text-sm text-[#1D2739]">{{ payload?.bedroomCount?.value || persistedPayload?.bedroomCount  }}</p>
+                </div>
+                <div>
+                  <h4 class="font-normal text-[#667185] text-sm">Number of bathrooms/Rest room</h4>
+                  <p class="text-sm text-[#1D2739]">{{ payload?.bathroomCount?.value || persistedPayload?.bathroomCount }}</p>
+                </div>
+              </div>
+                  <div>
+                    <h4 class="font-normal text-[#667185] text-sm">Property location</h4>
+                    <p class="text-sm text-[#1D2739]">{{ payload?.address?.value || persistedPayload?.address }}</p>
+                  </div>
+                </div>
+              </div>
+  
+              <div class="border-t border-gray-50 py-4 ">
+                <div class="flex justify-between items-center mb-10">
+                  <p class="text-[#1D2739] font-normal">Detailed property information</p>
+                  <button @click="router.push('/dashboard/property/new?parentStep=2&childStep=1')" class="text-[#326543] font-semibold">Edit</button>
+                </div>
+                <div>
+                  <h4 class="font-normal text-[#667185] text-sm">Is the common area furnished?</h4>
+                  <p>{{ payload.isFurnishedCommonArea.value ? 'Yes' : 'No' }}</p>
+                </div>
+                <div class="mt-4">
+                  <h4 class="font-normal text-[#667185] text-sm">Interior amenities</h4>
+                  <div class="flex flex-wrap gap-2 mt-2">
+                    <span v-for="item in interiorAmenities" :key="item" class="bg-white border-[0.5px] border-[#E4E7EC] font-normal text-sm flex items-center gap-x-2 p-2 px-3 rounded-md">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <g clip-path="url(#clip0_6590_54802)">
+                          <g opacity="0.8">
+                          <g clip-path="url(#clip1_6590_54802)">
+                          <rect width="20" height="20" rx="4" fill="#292929"/>
+                          <path d="M0.191618 14.7782C0.191618 14.1829 1.45648 13.9055 2.31137 13.9055C2.55384 13.9055 2.96093 13.9543 2.96093 14.2805C2.96093 14.9187 1.64513 15.2669 0.969097 15.2669C0.610362 15.2669 0.191618 15.1388 0.191618 14.7782ZM3.39046 14.2805C3.39046 13.8915 3.10698 13.476 2.31137 13.476C1.42957 13.476 -0.238053 13.7482 -0.238053 14.7782C-0.238053 15.3275 0.247165 15.6964 0.969097 15.6964C1.81334 15.6964 3.39046 15.2812 3.39046 14.2805ZM-2.55566 18.6281C-1.45643 19.0225 0.210613 19.4316 2.39727 19.4316C5.84189 19.4316 10.4214 19.0265 10.4214 15.5243C10.4214 14.1852 9.58106 13.5934 8.90575 13.1178C8.31189 12.6995 7.94595 12.4144 7.9084 11.8469C7.88365 11.4728 8.05978 11.1335 8.26397 10.7408C8.49291 10.3003 8.75235 9.80112 8.75235 9.16984C8.75235 8.31307 8.11691 7.39084 6.72182 7.39084C5.61338 7.39084 4.59085 7.82425 3.50846 8.28329C2.11639 8.87355 0.538274 9.54268 -1.6917 9.54268C-1.99979 9.54268 -2.28686 9.52167 -2.55566 9.48425V7.1242C-2.04498 7.18765 -1.53086 7.21952 -1.01625 7.2196C1.65175 7.2196 3.52212 6.31996 5.17234 5.52622C6.57792 4.85005 7.90552 4.21157 9.52825 4.21157C11.7713 4.21157 12.9448 5.48233 12.9448 6.73755C12.9448 7.58078 12.5074 8.09435 12.0443 8.63785C11.5671 9.1979 11.0737 9.77709 11.0737 10.7164C11.0737 11.618 11.4278 12.1025 11.7703 12.571C12.1701 13.1178 12.5835 13.6835 12.5835 15.0269C12.5835 17.5906 10.1565 19.1775 7.79141 20.1152H-2.55566V18.6281ZM-2.55566 16.5168C-1.49641 16.8984 -0.379105 17.0937 0.746778 17.0943C2.69543 17.0943 5.96449 16.6643 5.96449 13.7851C5.96449 12.9381 5.28429 11.745 3.77193 11.745C2.75386 11.745 1.95163 12.0127 1.17588 12.2715C0.386747 12.5347 -0.358496 12.7834 -1.33599 12.7834C-1.76293 12.7834 -2.17203 12.7099 -2.55566 12.5929V10.4374C-2.26891 10.4711 -1.98042 10.4879 -1.6917 10.4876C0.73052 10.4876 2.47527 9.74787 3.87726 9.15343C4.91188 8.71469 5.80534 8.33581 6.72182 8.33581C7.52203 8.33581 7.80723 8.76664 7.80723 9.16984C7.80723 9.57016 7.62175 9.92703 7.42533 10.305C7.18992 10.758 6.92313 11.2715 6.96529 11.9095C7.03479 12.9559 7.73961 13.4524 8.36139 13.8904C8.98432 14.3291 9.4763 14.6755 9.4763 15.5243C9.4763 16.796 8.74242 18.4865 2.39727 18.4865C0.115353 18.4865 -1.56551 18.0051 -2.55566 17.6133V16.5168ZM-2.55566 13.0441C-2.16959 13.15 -1.76149 13.2131 -1.33599 13.2131C-0.288706 13.2131 0.525033 12.9415 1.31186 12.6791C2.08934 12.4196 2.8235 12.1747 3.77193 12.1747C5.10399 12.1747 5.53496 13.2597 5.53496 13.7851C5.53496 15.669 3.87928 16.6647 0.746778 16.6647C-0.595351 16.6647 -1.73272 16.3657 -2.55566 16.0533V13.0441ZM-2.55566 4.83853C-2.16832 4.92467 -1.7728 4.96867 -1.376 4.96977C1.134 4.96977 3.06353 3.91846 5.10629 2.80555C7.16632 1.68316 9.29658 0.522625 12.1059 0.522625C13.4066 0.522625 14.5149 0.898771 15.3106 1.61049C16.0833 2.30148 16.4919 3.24314 16.4919 4.3336C16.4919 5.47772 15.7894 6.50731 15.0457 7.59719C14.2376 8.78189 13.4017 10.0067 13.4017 11.4928C13.4017 14.641 15.9528 16.4834 20.4184 16.5836V17.7153C20.3992 17.7169 20.3803 17.7211 20.3623 17.7278C17.1234 18.9779 15.0302 16.7472 14.9363 16.6427C14.9161 16.6145 14.8893 16.5916 14.8583 16.5759C14.8273 16.5603 14.7929 16.5525 14.7582 16.553C14.7235 16.5536 14.6894 16.5626 14.6589 16.5792C14.6284 16.5958 14.6024 16.6196 14.5831 16.6485C14.5584 16.686 14.5465 16.7305 14.549 16.7754H14.5474C14.5474 16.7813 14.5317 17.3908 13.9974 18.289C13.7049 18.781 13.2122 19.425 12.3931 20.1152H8.89136C9.38679 19.881 9.91806 19.5935 10.4254 19.2475C12.1424 18.0765 13.013 16.6565 13.013 15.0269C13.013 13.5432 12.537 12.892 12.1171 12.3174C11.7877 11.8669 11.5032 11.4777 11.5032 10.7164C11.5032 9.93523 11.9249 9.44036 12.3712 8.91644C12.8644 8.33768 13.3743 7.73907 13.3743 6.73755C13.3743 5.26879 12.0532 3.78189 9.52825 3.78189C7.80753 3.78189 6.43705 4.44109 4.98613 5.13899C3.29865 5.95071 1.55375 6.78992 -1.01625 6.78992C-1.59932 6.78992 -2.12354 6.74603 -2.55566 6.68991V4.83853ZM-2.55566 0.82826C-2.0621 1.16743 -1.33038 1.45652 -0.266114 1.45652C2.12833 1.45652 3.91684 0.387938 5.81038 -0.743526C7.73472 -1.89326 9.72452 -3.08215 12.4494 -3.08215C14.9159 -3.08215 17.0476 -2.21373 18.785 -0.501205C19.6012 0.303324 20.1333 1.11534 20.4184 1.61279V4.19229C20.4136 4.20746 20.4096 4.22288 20.4064 4.23848C20.305 4.73119 19.5231 5.3675 18.6952 6.04108C17.1203 7.32263 15.1601 8.91744 15.1692 11.4073C15.1729 12.4546 15.616 13.3998 16.3847 14.0008C17.1017 14.5611 17.9861 14.7486 18.8483 14.7486C19.3971 14.7484 19.9365 14.6722 20.4184 14.5683V16.1542C16.2258 16.0569 13.8313 14.3704 13.8313 11.4928C13.8313 10.1394 14.6291 8.97011 15.4006 7.83937C16.1482 6.74344 16.9214 5.61025 16.9214 4.3336C16.9214 1.83684 14.9411 0.092947 12.1059 0.092947C9.18707 0.092947 7.00817 1.2801 4.9008 2.4284C2.90739 3.51439 1.0245 4.54009 -1.376 4.54009C-1.79488 4.54009 -2.19132 4.48397 -2.55566 4.39734V0.82826ZM20.4184 7.54783C20.1412 7.77648 19.8745 7.98283 19.6164 8.18227C18.5008 9.04422 17.6197 9.72514 17.6197 10.9897C17.6197 11.5706 17.8413 12.0204 18.2602 12.2904C18.5972 12.5075 19.0227 12.589 19.4527 12.589C19.7851 12.589 20.1197 12.5401 20.4184 12.4677V13.5989C18.9126 13.9622 17.7192 13.8443 16.9667 13.2561C16.4277 12.8348 16.1169 12.1596 16.1143 11.4038C16.1068 9.36554 17.7987 7.98873 19.2917 6.77409C19.7035 6.43896 20.0913 6.12267 20.4184 5.80926V7.54783ZM20.4184 12.0235C19.7973 12.1897 18.9827 12.2446 18.4929 11.9294C18.1945 11.737 18.0494 11.4296 18.0494 10.9897C18.0494 9.93609 18.8168 9.34295 19.8791 8.52216C20.0599 8.38299 20.2397 8.2424 20.4184 8.1004V12.0235ZM20.4184 20.1152H13.0464C14.3468 18.9039 14.7719 17.806 14.9094 17.2087C15.1907 17.4523 15.6597 17.8002 16.3026 18.0824C17.2106 18.4808 18.6558 18.8128 20.4184 18.1651V20.1152Z" fill="white" fill-opacity="0.9"/>
+                          </g>
+                          </g>
+                          </g>
+                          <defs>
+                          <clipPath id="clip0_6590_54802">
+                          <rect width="20" height="20" fill="white"/>
+                          </clipPath>
+                          <clipPath id="clip1_6590_54802">
+                          <rect width="20" height="20" rx="4" fill="white"/>
+                          </clipPath>
+                          </defs>
+                          </svg>                
+                      {{ item.name }}</span>
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <h4 class="font-normal text-[#667185] text-sm">Exterior amenities</h4>
+                  <div class="flex flex-wrap gap-2 mt-2">
+                    <span v-for="item in exteriorAmenities" :key="item" class="bg-white border-[0.5px] border-[#E4E7EC] font-normal text-sm flex items-center gap-x-2 p-2 px-3 rounded-md">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <g clip-path="url(#clip0_6590_54802)">
+                          <g opacity="0.8">
+                          <g clip-path="url(#clip1_6590_54802)">
+                          <rect width="20" height="20" rx="4" fill="#292929"/>
+                          <path d="M0.191618 14.7782C0.191618 14.1829 1.45648 13.9055 2.31137 13.9055C2.55384 13.9055 2.96093 13.9543 2.96093 14.2805C2.96093 14.9187 1.64513 15.2669 0.969097 15.2669C0.610362 15.2669 0.191618 15.1388 0.191618 14.7782ZM3.39046 14.2805C3.39046 13.8915 3.10698 13.476 2.31137 13.476C1.42957 13.476 -0.238053 13.7482 -0.238053 14.7782C-0.238053 15.3275 0.247165 15.6964 0.969097 15.6964C1.81334 15.6964 3.39046 15.2812 3.39046 14.2805ZM-2.55566 18.6281C-1.45643 19.0225 0.210613 19.4316 2.39727 19.4316C5.84189 19.4316 10.4214 19.0265 10.4214 15.5243C10.4214 14.1852 9.58106 13.5934 8.90575 13.1178C8.31189 12.6995 7.94595 12.4144 7.9084 11.8469C7.88365 11.4728 8.05978 11.1335 8.26397 10.7408C8.49291 10.3003 8.75235 9.80112 8.75235 9.16984C8.75235 8.31307 8.11691 7.39084 6.72182 7.39084C5.61338 7.39084 4.59085 7.82425 3.50846 8.28329C2.11639 8.87355 0.538274 9.54268 -1.6917 9.54268C-1.99979 9.54268 -2.28686 9.52167 -2.55566 9.48425V7.1242C-2.04498 7.18765 -1.53086 7.21952 -1.01625 7.2196C1.65175 7.2196 3.52212 6.31996 5.17234 5.52622C6.57792 4.85005 7.90552 4.21157 9.52825 4.21157C11.7713 4.21157 12.9448 5.48233 12.9448 6.73755C12.9448 7.58078 12.5074 8.09435 12.0443 8.63785C11.5671 9.1979 11.0737 9.77709 11.0737 10.7164C11.0737 11.618 11.4278 12.1025 11.7703 12.571C12.1701 13.1178 12.5835 13.6835 12.5835 15.0269C12.5835 17.5906 10.1565 19.1775 7.79141 20.1152H-2.55566V18.6281ZM-2.55566 16.5168C-1.49641 16.8984 -0.379105 17.0937 0.746778 17.0943C2.69543 17.0943 5.96449 16.6643 5.96449 13.7851C5.96449 12.9381 5.28429 11.745 3.77193 11.745C2.75386 11.745 1.95163 12.0127 1.17588 12.2715C0.386747 12.5347 -0.358496 12.7834 -1.33599 12.7834C-1.76293 12.7834 -2.17203 12.7099 -2.55566 12.5929V10.4374C-2.26891 10.4711 -1.98042 10.4879 -1.6917 10.4876C0.73052 10.4876 2.47527 9.74787 3.87726 9.15343C4.91188 8.71469 5.80534 8.33581 6.72182 8.33581C7.52203 8.33581 7.80723 8.76664 7.80723 9.16984C7.80723 9.57016 7.62175 9.92703 7.42533 10.305C7.18992 10.758 6.92313 11.2715 6.96529 11.9095C7.03479 12.9559 7.73961 13.4524 8.36139 13.8904C8.98432 14.3291 9.4763 14.6755 9.4763 15.5243C9.4763 16.796 8.74242 18.4865 2.39727 18.4865C0.115353 18.4865 -1.56551 18.0051 -2.55566 17.6133V16.5168ZM-2.55566 13.0441C-2.16959 13.15 -1.76149 13.2131 -1.33599 13.2131C-0.288706 13.2131 0.525033 12.9415 1.31186 12.6791C2.08934 12.4196 2.8235 12.1747 3.77193 12.1747C5.10399 12.1747 5.53496 13.2597 5.53496 13.7851C5.53496 15.669 3.87928 16.6647 0.746778 16.6647C-0.595351 16.6647 -1.73272 16.3657 -2.55566 16.0533V13.0441ZM-2.55566 4.83853C-2.16832 4.92467 -1.7728 4.96867 -1.376 4.96977C1.134 4.96977 3.06353 3.91846 5.10629 2.80555C7.16632 1.68316 9.29658 0.522625 12.1059 0.522625C13.4066 0.522625 14.5149 0.898771 15.3106 1.61049C16.0833 2.30148 16.4919 3.24314 16.4919 4.3336C16.4919 5.47772 15.7894 6.50731 15.0457 7.59719C14.2376 8.78189 13.4017 10.0067 13.4017 11.4928C13.4017 14.641 15.9528 16.4834 20.4184 16.5836V17.7153C20.3992 17.7169 20.3803 17.7211 20.3623 17.7278C17.1234 18.9779 15.0302 16.7472 14.9363 16.6427C14.9161 16.6145 14.8893 16.5916 14.8583 16.5759C14.8273 16.5603 14.7929 16.5525 14.7582 16.553C14.7235 16.5536 14.6894 16.5626 14.6589 16.5792C14.6284 16.5958 14.6024 16.6196 14.5831 16.6485C14.5584 16.686 14.5465 16.7305 14.549 16.7754H14.5474C14.5474 16.7813 14.5317 17.3908 13.9974 18.289C13.7049 18.781 13.2122 19.425 12.3931 20.1152H8.89136C9.38679 19.881 9.91806 19.5935 10.4254 19.2475C12.1424 18.0765 13.013 16.6565 13.013 15.0269C13.013 13.5432 12.537 12.892 12.1171 12.3174C11.7877 11.8669 11.5032 11.4777 11.5032 10.7164C11.5032 9.93523 11.9249 9.44036 12.3712 8.91644C12.8644 8.33768 13.3743 7.73907 13.3743 6.73755C13.3743 5.26879 12.0532 3.78189 9.52825 3.78189C7.80753 3.78189 6.43705 4.44109 4.98613 5.13899C3.29865 5.95071 1.55375 6.78992 -1.01625 6.78992C-1.59932 6.78992 -2.12354 6.74603 -2.55566 6.68991V4.83853ZM-2.55566 0.82826C-2.0621 1.16743 -1.33038 1.45652 -0.266114 1.45652C2.12833 1.45652 3.91684 0.387938 5.81038 -0.743526C7.73472 -1.89326 9.72452 -3.08215 12.4494 -3.08215C14.9159 -3.08215 17.0476 -2.21373 18.785 -0.501205C19.6012 0.303324 20.1333 1.11534 20.4184 1.61279V4.19229C20.4136 4.20746 20.4096 4.22288 20.4064 4.23848C20.305 4.73119 19.5231 5.3675 18.6952 6.04108C17.1203 7.32263 15.1601 8.91744 15.1692 11.4073C15.1729 12.4546 15.616 13.3998 16.3847 14.0008C17.1017 14.5611 17.9861 14.7486 18.8483 14.7486C19.3971 14.7484 19.9365 14.6722 20.4184 14.5683V16.1542C16.2258 16.0569 13.8313 14.3704 13.8313 11.4928C13.8313 10.1394 14.6291 8.97011 15.4006 7.83937C16.1482 6.74344 16.9214 5.61025 16.9214 4.3336C16.9214 1.83684 14.9411 0.092947 12.1059 0.092947C9.18707 0.092947 7.00817 1.2801 4.9008 2.4284C2.90739 3.51439 1.0245 4.54009 -1.376 4.54009C-1.79488 4.54009 -2.19132 4.48397 -2.55566 4.39734V0.82826ZM20.4184 7.54783C20.1412 7.77648 19.8745 7.98283 19.6164 8.18227C18.5008 9.04422 17.6197 9.72514 17.6197 10.9897C17.6197 11.5706 17.8413 12.0204 18.2602 12.2904C18.5972 12.5075 19.0227 12.589 19.4527 12.589C19.7851 12.589 20.1197 12.5401 20.4184 12.4677V13.5989C18.9126 13.9622 17.7192 13.8443 16.9667 13.2561C16.4277 12.8348 16.1169 12.1596 16.1143 11.4038C16.1068 9.36554 17.7987 7.98873 19.2917 6.77409C19.7035 6.43896 20.0913 6.12267 20.4184 5.80926V7.54783ZM20.4184 12.0235C19.7973 12.1897 18.9827 12.2446 18.4929 11.9294C18.1945 11.737 18.0494 11.4296 18.0494 10.9897C18.0494 9.93609 18.8168 9.34295 19.8791 8.52216C20.0599 8.38299 20.2397 8.2424 20.4184 8.1004V12.0235ZM20.4184 20.1152H13.0464C14.3468 18.9039 14.7719 17.806 14.9094 17.2087C15.1907 17.4523 15.6597 17.8002 16.3026 18.0824C17.2106 18.4808 18.6558 18.8128 20.4184 18.1651V20.1152Z" fill="white" fill-opacity="0.9"/>
+                          </g>
+                          </g>
+                          </g>
+                          <defs>
+                          <clipPath id="clip0_6590_54802">
+                          <rect width="20" height="20" fill="white"/>
+                          </clipPath>
+                          <clipPath id="clip1_6590_54802">
+                          <rect width="20" height="20" rx="4" fill="white"/>
+                          </clipPath>
+                          </defs>
+                          </svg>  
+                      {{ item.name }}</span>
+                  </div>
+                </div>
+  
+  
+                <div class="bg-white rounded-lg shadow-sm mt-9">
+        
+                  <div class="flex space-x-4 mb-6">
+                    <!-- Room Tabs -->
+                    <button
+                      v-for="room in (Array.isArray(payload?.rooms?.value) && payload?.rooms?.value?.length > 0 ? payload?.rooms?.value : localStorageRooms)"
+                      :key="room.name"
+                      :class="[
+                        'px-6 py-2.5 rounded-lg text-sm',
+                        currentRoom.name === room.name ? 'bg-[#EBE5E0] text-[#1D2739]' : 'bg-white border border-gray-100 text-[#1D2739]'
+                      ]"
+                      @click="selectRoom(room)"
+                    >
+                      {{ room.name }}
+                    </button>
+                  </div>
+  
+                  <div class="flex justify-between items-center my-4">
+                    <p class="text-[#1D2739] font-normal text-sm">Is the room furnished?</p>
+    
+                    <button :class="[currentRoom?.isFurnished ? 'bg-[#292929] py-2.5 px-4 rounded-lg text-white' : 'border-[0.5px] border-[#292929] px-5 py-2.5 rounded-lg']" @click="router.push('/dashboard/property/new')" class="font-medium text-sm">{{currentRoom?.isFurnished ? 'Yes' : 'No'}}</button>
+                  </div>
+              
+                  <!-- Interior Area -->
+                  <div v-if="currentRoom" class="mb-6">
+                    <h3 class="text-[#667185] font-normal text-sm mb-4">Interior area</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4">
+                      <div
+                        v-for="(feature, index) in currentRoom.features"
+                        :key="index"
+                        class="flex items-center px-4 py-2.5 border rounded-lg bg-white gap-x-2 hover:bg-gray-100 cursor-pointer"
+                      >
+                        <img :src="dynamicImage('roomBg.png')" alt="Living room" class="w-5 h-5">
+                        <span class="text-gray-700 text-xs">{{ feature.name }}</span>
+                      </div>
+                      <div @click="addManually" class="flex items-center px-4 py-2.5 border rounded-lg bg-white hover:bg-gray-100 cursor-pointer">
+                        <span class="text-gray-600 font-normal text-lg">+</span>
+                        <span class="ml-2 text-gray-700 text-sm">Add manually</span>
+                      </div>
+                    </div>
+                  </div>
+              
+                  <!-- Room Availability and Price -->
+                  <div v-if="currentRoom" class="mt-4">
+                    <div class="flex justify-between items-center mb-4">
+                      <div class="space-y-2">
+                        <p class="text-gray-500 text-sm font-normal">When is the room available?</p>
+                        <p class="text-gray-800 text-sm">{{ currentRoom.availability === 'available_now' ? 'Available Now' : currentRoom.availableFrom }}</p>
+                      </div>
+                      <div class="space-y-2">
+                        <p class="text-gray-500 font-normal text-sm">Price</p>
+                        <p class="text-gray-800 text-sm">{{ currentRoom.rentAmount ? currentRoom.rentAmount.toLocaleString() : '0' }} per {{ currentRoom.rentFrequency }}</p>
+                      </div>
+                    </div>
+                    <div class="flex justify-between items-center mt-6 pb-10">
+                      <!-- <p class="text-[#1D2739] text-sm">{{ currentRoom.isMaster ? 'Master\'s bedroom' : '' }}</p> -->
+                      <p class="text-[#1D2739] text-sm">Master's bedroom</p>
+                      <label for="Toggle1" class="inline-flex items-center space-x-4 cursor-pointer dark:text-gray-100">
+                        <span class="relative">
+                          <!-- Bind v-model to the checkbox to make it dynamic -->
+                          <input id="Toggle1" type="checkbox" class="hidden peer" v-model="currentRoom.isMaster">
+                          <!-- Conditional classes based on the toggle state -->
+                          <div
+                            :class="[
+                              'w-10 h-6 rounded-full shadow-inner peer-checked:dark:bg-[#099137]',
+                              currentRoom.isMaster ? 'bg-white' : 'dark:bg-gray-400'
+                            ]"
+                          ></div>
+                          <!-- Ball that changes position and color based on the toggle state -->
+                          <div
+                            class="absolute inset-y-0 left-0 w-4 h-4 m-1 rounded-full shadow"
+                            :class="[
+                              currentRoom.isMaster ? 'right-0 left-auto bg-white' : 'dark:bg-gray-800'
+                            ]"
+                          ></div>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <div class="flex justify-between items-center my-5 pb-8">
+                <p class="text-[#1D2739] font-semibold">Add visuals</p>
+                <button @click="router.push('/dashboard/property/new?parentStep=3&childStep=1')" class="text-[#326543] font-semibold">Edit</button>
+              </div>
+  
+              <div>    
+                <p class="text-sm font-medium my-6">Property Cover Images</p>    
+                <section 
+                v-if="(Array.isArray(payload?.images?.value) && payload.images.value.length > 0) || (Array.isArray(localStoragePropertyImages) && localStoragePropertyImages.length > 0)" 
+                class="grid grid-cols-2 gap-6"
+              >
+                <div 
+                  v-for="(item, index) in (Array.isArray(payload?.images?.value) && payload.images.value.length > 0 ? payload.images.value : localStoragePropertyImages)" 
+                  :key="index" 
+                  class="border p-2"
+                >
+                  <img 
+                    :src="item" 
+                    :alt="'Image ' + (index + 1)" 
+                    class="w-full h-44 w-auto object-cover"
+                  />
+                </div>
+              </section>
+                
+                <!-- Display a fallback message when no images are available -->
+                <p v-else>No images available.</p>
+              </div>
+
+              <div class="bg-white rounded-lg shadow-sm">
+                <h2 class="text-sm font-medium my-6">Common Area</h2>
+                <!-- Display common areas in a grid layout -->
+                <div class="grid grid-cols-2 gap-6">
+
+<div 
+  v-for="(area, index) in (Array.isArray(payload?.commonAreas?.value) && payload.commonAreas.value.length > 0 ? payload.commonAreas.value : localStorageCommonAreas)" 
+  :key="index" 
+  class="relative"
+>
+  <div class="relative rounded-lg overflow-hidden shadow-md bg-white border">
+    <div class="relative w-full h-52 flex items-center justify-center overflow-hidden">
+      <!-- Carousel Images -->
+      <img
+        v-if="Array.isArray(area?.images) && area.images.length > 0"
+        :src="area.images[currentImageIndex[index] || 0]"
+        alt="common area image"
+        class="w-full h-full object-cover transition-opacity"
+      />
+      <img v-else src="@/assets/icons/image-unavailable.svg" alt="No image available" class="h-20 w-20" />
+      
+      <!-- Previous button -->
+      <button
+        v-if="Array.isArray(area?.images) && area.images.length > 1"
+        @click="prevImage(index)"
+        class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow hover:bg-gray-200"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      
+      <!-- Next button -->
+      <button
+        v-if="Array.isArray(area?.images) && area.images.length > 1"
+        @click="nextImage(index)"
+        class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow hover:bg-gray-200"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Image description overlay -->
+    <div class="absolute bottom-0 left-0 w-full bg-gray-700 bg-opacity-70 text-white p-2 flex justify-between items-center">
+      <span class="text-sm">{{ area?.name }}</span>
+      <span class="text-sm">{{ Array.isArray(area?.images) ? area.images.length : 0 }} {{ area?.images?.length > 1 ? 'images' : 'image' }}</span>
+    </div>
+  </div>
+</div>
+
+
+                </div>
+              </div>
+  
+              <div class="bg-white rounded-lg shadow-sm mx-auto mt-6">
+                <h2 class="text-sm font-semibold">Rooms</h2>
+
+                <div 
+  v-for="(room, index) in (Array.isArray(payload?.rooms?.value) && payload.rooms.value.length > 0 ? payload.rooms.value : localStorageRooms)" 
+  :key="index" 
+  class="mb-8 border-b pb-6 text-sm"
+>
+  <h3 class="font-semibold mb-2">
+    {{ room?.name }}
+    <span v-if="room?.isMaster" class="text-sm font-normal">(Master Room)</span>
+  </h3>
+
+  <div class="mt-4">
+    <h3 class="text-gray-500 font-normal mb-2">Interior Area</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div
+        v-for="(feature, fIndex) in room?.features || []"
+        :key="fIndex"
+        class="relative rounded-lg overflow-hidden shadow-md bg-white border"
+      >
+        <div class="relative w-full h-44 flex items-center justify-center overflow-hidden">
+          <img
+            v-if="Array.isArray(feature?.images) && feature.images.length > 0"
+            :src="feature.images[0]"
+            alt="Feature image"
+            class="w-full h-full object-cover transition-opacity"
+          />
+          <img v-else src="@/assets/icons/image-unavailable.svg" class="h-20 w-20 mb-3" alt="No image available" />
+        </div>
+        <p class="absolute bottom-0 left-0 w-full bg-gray-700 bg-opacity-70 text-white p-2 text-sm">
+          {{ feature.name }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+              
+            
+              </div>
+  
+              <div class="bg-white rounded-lg">
+                <!-- <h2 class="text font-normal mb-6">Finalize listings and edit</h2> -->
+                <div class="flex justify-between items-center my-5 pb-8">
+                  <p class="text-[#1D2739] font-semibold">Finalize listings and edit</p>
+                  <button @click="router.push('/dashboard/property/new?parentStep=4&childStep=1')" class="text-[#326543] font-semibold">Edit</button>
+                </div>
+                <div class="mb-6">
+                  <h3 class="text font-normal text-gray-600">
+                    Define your rules for potential tenants
+                  </h3>
+                  <div class="mt-4">
+                
+                    <div 
+  v-for="(ruleObj, index) in (Array.isArray(payload?.rules?.value) && payload.rules.value.length > 0 ? payload.rules.value : localRules)" 
+  :key="index" 
+  class="flex justify-between py-2"
+>
+  <div v-if="ruleObj.options" class="flex-1 mr-4">
+    <label class="block text-gray-700 text-sm font-normal mb-1">
+      {{ ruleObj.rule }}
+    </label>
+  </div>
+  
+  <div v-else class="flex-1">
+    <span class="block text-gray-700 flex items-center gap-x-3">
+      <svg width="16" height="16" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1.29675 1.29724C1.7605 0.833496 2.50689 0.833496 3.99967 0.833496C5.49244 0.833496 6.23884 0.833496 6.70261 1.29724C7.16634 1.76099 7.16634 2.50738 7.16634 4.00016C7.16634 5.49293 7.16634 6.23933 6.70261 6.7031C6.23884 7.16683 5.49244 7.16683 3.99967 7.16683C2.50689 7.16683 1.7605 7.16683 1.29675 6.7031C0.833008 6.23933 0.833008 5.49293 0.833008 4.00016C0.833008 2.50738 0.833008 1.76099 1.29675 1.29724Z" fill="#292929" stroke="#292929" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      {{ ruleObj.rule }}
+    </span>
+  </div>
+  
+  <div v-if="ruleObj.answer" class="ml-4 text-gray-900 font-normal">
+    {{ ruleObj.answer }}
+  </div>
+</div>
+
+                  </div>
+                </div>
+              </div>
+  <!-- {{ payload.questions}} -->
+              <div class="rounded-lg shadow-sm">
+                <p class="pb-3">Pre-screening questions</p>
+                <form @submit.prevent="submitAnswers">
+                  <!-- <div v-for="(questionObj, index) in localQuestions" :key="index" class="mb-6">
+                    <label :for="'question-' + index" class="block text-gray-700 text-sm font-normal mb-2">
+                      {{ questionObj?.question }}
+                    </label>
+                  </div> -->
+                  <!-- {{ payload?.questions }}
+                  <div 
+                    v-for="(questionObj, index) in (Array.isArray(payload?.questions?.value) && payload.questions.value.length > 0 ? payload.questions.value : localQuestions)" 
+                    :key="index" 
+                    class="mb-6"
+                  >
+                    <label :for="'question-' + index" class="block text-gray-700 text-sm font-normal mb-2">
+                      {{ questionObj?.question }}
+                    </label>
+                  </div> -->
+                  <div 
+  v-for="(questionObj, index) in (Array.isArray(payload?.questions?.value) && payload.questions.value.length > 0 ? payload.questions.value : localQuestions)" 
+  :key="index" 
+  class="mb-6"
+>
+  <label :for="'question-' + index" class="block text-gray-700 text-sm font-normal mb-2">
+    {{ questionObj?.question }}
+  </label>
+
+  <!-- Check if widgetType is select -->
+              <div v-if="questionObj?.widgetType === 'select'">
+                <select :id="'question-' + index" class="block w-full px-3 py-3.5 border-[0.5px] border-gray-200 outline-none bg-[#F0F2F5] rounded-md sm:text-sm">
+                  <option v-for="(option, optionIndex) in questionObj?.widgetOptions" :key="optionIndex" :value="option">
+                    {{ option }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Handle other widget types -->
+              <div v-else-if="questionObj?.widgetType === 'input'">
+                <input 
+                  :id="'question-' + index" 
+                  type="text" 
+                  placeholder="e.g short response goes here"
+                  class="block w-full px-3 py-3.5 border-[0.5px] border-gray-200 outline-none bg-[#F0F2F5] rounded-md sm:text-sm"
+                />
+              </div>
+
+              <div v-else-if="questionObj?.widgetType === 'long-response'">
+                <textarea 
+                  :id="'question-' + index" 
+                  rows="4" 
+                  placeholder="e.g long response goes here"
+                  class="block w-full px-3 py-3.5 border-[0.5px] border-gray-200 outline-none bg-[#F0F2F5] rounded-md sm:text-sm"
+                ></textarea>
+              </div>
+
+              <!-- Fallback for unsupported widget types -->
+              <div v-else>
+                <p class="text-gray-500">Unsupported widget type: {{ questionObj?.widgetType }}</p>
               </div>
             </div>
-          </div>
-        </div>
-       </section> -->
+
+
+                </form>
+              </div>
+            </div>
+          </main>
     </LayoutWithoutSidebar>
     <CoreReusableModal
       :isOpen="openCancelModal"
@@ -760,6 +1216,7 @@ const steps = ref([
   { id: 4, title: "Finalize listing and publish", completed: false },
 ]);
 
+// const route = useRoute()
 
 //Preview section code
 
@@ -912,16 +1369,46 @@ const router = useRouter();
 const openCancelModal = ref(false)
 
 const handleConfirm = () => {
-  clearLocalStorage();
+  console.log('clickd me')
+  // clearLocalStorage();
+  // router.push('/dashboard/property')
   openCancelModal.value = false
 
+
 }
+
+// function togglePreviewMode(isPreview: boolean) {
+//     isReviewMode.value = isPreview;
+  
+//     // Update query parameter based on preview mode
+//     if (isPreview) {
+//       router.push({
+//         query: { ...route.query, preview: 'true' }
+//       });
+//     } else {
+//       const query = { ...route.query };
+//       delete query.preview; // Remove the preview query parameter
+//       router.push({ query });
+//     }
+//   }
+
+const isReviewMode = ref(false);
 
 const handleClose = () => {
+  // clearLocalStorage();
+  router.replace('/dashboard/property'); // Forcefully replaces the current history entry
+  window.location.replace('/dashboard/property'); // Ensures a hard redirect to the desired page
   clearLocalStorage();
-  router.push('/dashboard/property')
-  openCancelModal.value = false
+  openCancelModal.value = false;
 }
+
+
+// const handleClose = () => {
+//   clearLocalStorage();
+//   router.push('/dashboard/property')
+//   window.location.href = '/dashboard/property'
+//   openCancelModal.value = false
+// }
 
 function updateQueryParams() {
   router.push({

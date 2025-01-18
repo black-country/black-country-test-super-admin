@@ -45,8 +45,8 @@
       </div>
 
       <!-- Custom Rule Input -->
-   <section class="flex justify-between items-center">
-    <div class="w-10/12">
+   <section class="lg:flex space-y-3 lg:space-y-0 justify-between items-center">
+    <div class="lg:w-10/12">
       <h3 class="text-sm font-medium mb-2">Add Additional house rules</h3>
       <input
         v-model="newCustomRule"
@@ -56,7 +56,7 @@
     </div>
     <button
     @click="addCustomRule"
-    class="mt-4 text-[#1D2739] font-medium bg-[#F0F2F5] border py-2.5 flex justify-between items-center gap-x-3 text-sm px-3 rounded-lg"
+    class="lg:mt-6 text-[#1D2739] font-medium bg-[#F0F2F5] border py-2.5 flex justify-between items-center gap-x-3 text-sm px-3 rounded-lg"
   >
     <svg
       width="12"

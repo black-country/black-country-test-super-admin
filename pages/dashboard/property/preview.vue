@@ -29,6 +29,7 @@
   </header>
 
     <!-- Main Content -->
+     {{ payload }}
     <main class="flex flex-col py-3 mt-20 overflow-y-auto max-w-7xl lg:w-6/12 mx-auto px-4">
       <PreviewPropertyPreview :payload="payload" class="" />
     </main>

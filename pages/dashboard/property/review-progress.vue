@@ -1,15 +1,15 @@
 <template>
 <Layout>
   <template #header-content>
-   <!-- <div class="w-full max-w-7xl mx-auto">
-    <button @click="router.back()" class="bg-[#F9FAFB] text-[#1D2739] text-sm font-semibold rounded-md px-4 py-3 flex items-center gap-x-2">
+   <div class="w-full max-w-7xl mx-auto my-3 pl-6 lg:pl-0">
+    <button @click="router.back()" class="bg-gray-100 text-[#1D2739] text-sm font-semibold rounded-md px-4 py-3 flex items-center gap-x-2">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12.5 5C12.5 5 7.50001 8.68242 7.5 10C7.49999 11.3177 12.5 15 12.5 15" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         
       Go back</button>
-   </div> -->
-   <header
+   </div>
+   <!-- <header
    class="px-4 py-5 flex items-center bg-white justify-between max-w-7xl mx-auto fixed top-0 left-0 right-0 z-50"
  >
    <div
@@ -35,16 +35,16 @@
      {{saving ? 'saving...' : 'Save & exit'}}
      </button>
    </div>
- </header>
+ </header> -->
   </template>
   <main>
-    <div class="p-6 max-w-7xl mx-auto bg-white pt-20 pb-32">
+    <div class="p-6 max-w-7xl mx-auto bg-white">
       <!-- {{occupiedRoomsCount}} -->
       <!-- Breadcrumb & Share Icon -->
       <div class="flex justify-between items-center mb-6">
         <div class="text-sm text-gray-600">Listings | <span class="font-semibold">{{ payload.name.value ?? 'Nil' }}</span></div>
         <div class="flex space-x-2 items-center">
-          <button class="p-2 rounded-full hover:bg-gray-100">
+          <button disabed class="p-2 rounded-full disabled:cursor-not-allowed disabled:opacity-25 hover:bg-gray-100">
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="36" height="36" rx="18" fill="#EAEAEA"/>
               <path d="M25.5 13.4165C25.5 14.7972 24.3807 15.9165 23 15.9165C21.6192 15.9165 20.5 14.7972 20.5 13.4165C20.5 12.0358 21.6192 10.9165 23 10.9165C24.3807 10.9165 25.5 12.0358 25.5 13.4165Z" stroke="#1D2739" stroke-width="1.5"/>
@@ -54,7 +54,7 @@
               </svg>
               
           </button>
-          <button>
+          <button disabed class="                                                                                                                                                         disabled:cursor-not-allowed disabled:opacity-25">
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="36" height="36" rx="18" fill="#EAEAEA"/>
               <path d="M24.2192 11.3285C21.9844 9.95769 20.034 10.5101 18.8623 11.39C18.3818 11.7508 18.1417 11.9312 18.0003 11.9312C17.859 11.9312 17.6188 11.7508 17.1383 11.39C15.9667 10.5101 14.0162 9.95769 11.7815 11.3285C8.84872 13.1275 8.18509 19.0624 14.9499 24.0695C16.2384 25.0232 16.8827 25.5 18.0003 25.5C19.118 25.5 19.7622 25.0232 21.0507 24.0695C27.8156 19.0624 27.1519 13.1275 24.2192 11.3285Z" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round"/>
@@ -528,12 +528,12 @@
   
     </div>
   </main>
-  <section class="fixed bottom-0 left-0 right-0 bg-white py-3 mt-32 border-t shadow-md z-50 px-6">
+  <!-- <section class="fixed bottom-0 left-0 right-0 bg-white py-3 mt-32 border-t shadow-md z-50 px-6">
     <div class="flex justify-between items-center container mx-auto">
       <button @click="router.back()" class="text-[#292929] bg-[#EBE5E0] px-6 py-3 rounded-md">Previous</button>
       <button :disabled="loading" @click="create_property" class="bg-[#292929] disabled:opacity-25 disabled:cursor-not-allowed text-white text-sm px-6 py-3 rounded-md">{{loading ? 'Processing...' : 'Publish'}}</button>
     </div>
-  </section>
+  </section> -->
 
   <CoreReusableModal
   :isOpen="openCancelModal"

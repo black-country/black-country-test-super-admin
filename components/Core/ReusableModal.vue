@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click.self="closeModal">
+    <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm text-center">
         <!-- Icon (Optional) -->
         <div v-if="icon" class="flex justify-center items-center bg-yellow-500 rounded-full w-16 h-16 mx-auto mb-4">

@@ -1,7 +1,7 @@
 <template>
     <LayoutWithoutSidebar>
       <header
-      class="px-4 py-5 flex items-center justify-between container mx-auto fixed top-0 left-0 right-0 z-50"
+      class="px-4 py-5 flex items-center justify-between container mx-auto fixed top-0 left-0 right-0 z-10"
     >
       <div
         @click="router.push('/dashboard')"
@@ -11,25 +11,25 @@
         <span class="text-lg font-semibold">BlackCountry</span>
       </div>
       <div class="flex space-x-4 items-center">
-        <button class="text-[#326543] text-sm hover:text-[#326543]">
+        <NuxtLink to="/dashboard/property/review-progress" class="text-[#326543] text-sm hover:text-[#326543]">
           Preview
-        </button>
+        </NuxtLink>
         <button
         @click="openCancelModal = true"
           class="bg-white border text-sm border-gray-300 text-gray-700 px-4 py-3 rounded-md hover:bg-gray-100"
         >
           Cancel
         </button>
-        <button :disabled="saving" @click="handleSaveAndExit"
+        <button :disabled="saving" @click="save_property"
           class="bg-gray-900 text-sm disabled:cursor-not-allowed disabled:opacity-25 text-white px-4 py-3 rounded-md hover:bg-gray-800"
         >
-        {{saving ? 'saving...' : 'Save & exit'}}
+           {{ saving ? 'saving..' : 'Save & exit'}}
         </button>
       </div>
     </header>
   
-    <!-- {{payload}} -->
       <!-- Main Content -->
+       {{ payload }}
       <main class="flex flex-col py-3 mt-20 overflow-y-auto max-w-7xl lg:w-6/12 mx-auto px-4">
         <PreviewPropertyPreview :payload="payload" class="" />
       </main>
@@ -56,13 +56,13 @@
   <script lang="ts" setup>
   import { useRouter } from 'vue-router';
   const router = useRouter();
-  import { useEditProperty } from '@/composables/modules/property/update'
-  import { use_create_property } from '@/composables/modules/property/create'
-  const { editProperty, payload, loading, fetchingProperty, saving, savingProperty }  = useEditProperty()
-  const { resetPayload } = use_create_property()
+  import { useEditProperty } from '@/composables/modules/property/update';
+  const { editProperty, payload, loading, initForm, fetchingProperty, saving, savingProperty } = useEditProperty();
   import { useClearLocalStorage } from '@/composables/core/useClearLocalStorage';
-const { clearLocalStorage } = useClearLocalStorage();
-
+  const { clearLocalStorage } = useClearLocalStorage();
+  import { useUnsavedChangesWarning } from '@/composables/core/useUnsavedChangesWarning'
+  const { enableUnsavedChangesWarning, disableUnsavedChangesWarning } = useUnsavedChangesWarning()
+  enableUnsavedChangesWarning()
   // editProperty();
   definePageMeta({
        middleware: 'auth'
@@ -71,39 +71,25 @@ const { clearLocalStorage } = useClearLocalStorage();
   const openCancelModal = ref(false)
   
   const handleConfirm = () => {
-    // clearLocalStorage();
+    clearLocalStorage();
     openCancelModal.value = false
   
   }
   
-  // const handleClose = () => {
-  //   clearLocalStorage();
-  //   router.push('/dashboard/property')
-  //   openCancelModal.value = false
-  // }
-
   const handleClose = () => {
-  router.replace('/dashboard/property'); // Forcefully replaces the current history entry
-  window.location.replace('/dashboard/property'); // Ensures a hard redirect to the desired page
-  clearLocalStorage();
-  openCancelModal.value = false;
-}
-
+    clearLocalStorage();
+    router.push('/dashboard/property')
+    openCancelModal.value = false
+  }
   
-  const handleSaveAndExit = () => {
-    savingProperty();
-  };
+  // const handleSaveAndExit = () => {
+  //   create_property();
+  // };
   
   const handlePublish = () => {
-    editProperty();
+    create_property();
   };
   
-  const property = {
-    title: 'Luxury Apartment',
-    description: 'Spacious apartment in downtown.',
-    price: 500000,
-    location: 'New York, NY',
-  };
   
   const showPreview = (propertyDetails: any) => {
     openModal(propertyDetails);

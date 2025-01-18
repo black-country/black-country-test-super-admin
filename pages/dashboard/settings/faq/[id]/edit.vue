@@ -17,9 +17,9 @@
                 </defs>
               </svg>
             </button>
-            <h2 class="text-lg font-medium text-[#1D2739]">New FAQ</h2>
+            <h2 class="text-lg font-medium text-[#1D2739]">Edit FAQ</h2>
           </div>
-          <button class="text-gray-600 bg-[#F9FAFB]">Save & exit</button>
+          <!-- <button class="text-gray-600 bg-[#F9FAFB]">Save & exit</button> -->
         </div>
   
         <div class="p-6 space-y-6 w-full max-w-xl mx-auto flex-1">
@@ -118,12 +118,12 @@
    -->
 
    <script setup lang="ts">
-import { useCreateFAQ } from '@/composables/modules/settings/useCreateFaq';
+import { useUpdateFaq } from '@/composables/modules/settings/useUpdateFaq';
 import LayoutWithoutSidebar from "@/layouts/dashboardWithoutSidebar.vue";
 import { ref, computed, onMounted } from "vue";
 
 const emit = defineEmits(["close", "submit"]);
-const { createFaq, setPayload, loading, payload } = useCreateFAQ();
+const { updateFaq, setPayload, loading, payload } = useUpdateFaq();
 const router = useRouter();
 
 const form = ref({
@@ -147,7 +147,7 @@ const handleSubmit = () => {
       app: form.value.audience,
     };
     setPayload(payload);
-    createFaq();
+    updateFaq();
   }
 };
 

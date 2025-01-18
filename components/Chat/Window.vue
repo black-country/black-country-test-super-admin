@@ -2,7 +2,7 @@
     <div  ref="scrollContainer" class="flex-1 scroll-container z-10 overflow-y-auto p-4 space-y-3 bg-white">
       <!-- {{messages}} -->
        <!-- {{roomChats.length}} -->
-        {{sortedMessagesWithHeaders}}
+        <!-- {{sortedMessagesWithHeaders}} -->
       <div v-for="(msg, index) in sortedMessagesWithHeaders" :key="msg.id || msg.dateHeader">
         <div v-if="msg.isHeader" class="text-center my-3 text-sm text-gray-400">
           {{ msg.dateHeader }}

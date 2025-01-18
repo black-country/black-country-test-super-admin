@@ -16,28 +16,27 @@ const router = useRouter()
 export const useUpdateFaq = () => {
     const updateFaq = async () => {
         loading.value = true;
-        try {
-            const res = await settings_api.$_update_faq(payload.value, route.params.id);
+        const res = await settings_api.$_update_faq(payload.value, route.params.id) as any
+        console.log(res, 'here')
+        if(res.status !== 'ERROR'){
             showToast({
                 title: "Success",
                 message: 'FAQ was update successfully',
                 toastType: "success",
                 duration: 3000
             });
-            router.push('/dashboard/settings/faq/faq-success')
-            window.location.href = '/dashboard/settings/faq/faq-success'
-            return res;
-        } catch (error) {
+            router.push('/dashboard/settings/faq-success')
+            window.location.href = '/dashboard/settings/faq-success'
+            localStorage.removeItem('selected-faq')
+        } else {
             showToast({
                 title: "Error",
                 message: 'Failed to update Faq',
                 toastType: "error",
                 duration: 3000
             });
-            throw error;
-        } finally {
-            loading.value = false;
         }
+        loading.value = false;
     };
 
     const setPayload = (data: any) => {

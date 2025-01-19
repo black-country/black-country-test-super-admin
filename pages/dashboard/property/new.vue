@@ -15,27 +15,27 @@
                 <span class="text-lg font-semibold">BlackCountry</span>
               </div>
               <div class="flex space-x-4 items-center">
-                <button @click="router.push('/dashboard/property/review-progress')" class="text-[#326543] text-sm hover:text-[#326543]">
+                <button @click="router.push('/dashboard/property/review-progress')" class="text-[#1D2739] border-[0.5px] py-2.5 px-6 rounded-lg border-gray-200 font-semibold text-sm">
                   Preview
                 </button>
                 <button
                   @click="openCancelModal = true"
                   type="button"
-                  class="bg-white border text-sm border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-100"
+                  class="bg-white border text-sm border-gray-300 text-gray-700 px-4 py-2.5 rounded-md hover:bg-gray-100"
                 >
                   Cancel
                 </button>
                 <button
                   @click="handleSaveAndExAssiit"
                   :disabled="saving"
-                  class="bg-gray-900 disabled:cursor-not-allowed disabled:opacity-25 text-sm text-white px-4 py-2 rounded-md hover:bg-gray-800"
+                  class="bg-gray-900 disabled:cursor-not-allowed disabled:opacity-25 text-sm text-white px-4 py-2.5 rounded-md hover:bg-gray-800"
                 >
                   {{ saving ? "saving..." : "Save & exit" }}
                 </button>
               </div>
             </header>
           </template>
-          <main v-if="!isPreviewMode">
+          <main v-if="!isReviewMode">
             <div
               class="lg:flex space-y-10 lg:space-y-0 lg:max-w-6xl w-full mx-auto py-10"
             >
@@ -159,6 +159,7 @@
                 class="lg:pl-10 p-4 space-y-6 lg:max-w-screen-7xl w-full custom-scrollbar-container"
               >
                 <CoreProgressStepper
+                 id="part1"
                   v-if="activeParentStep === 1"
                   :titles="[
                     'Let’s start with the basics',
@@ -180,6 +181,7 @@
                 :payload="payload"
                 v-if="activeParentStep === 1 && basicPropertyInformationStep === 2"></CoreGoogleMapSearch>
                 <CoreProgressStepper
+                 id="part2"
                   v-if="activeParentStep === 2"
                   :titles="[
                     'Details about Common areas',
@@ -214,6 +216,7 @@
                 >
                 </RoomDetails>
                 <CoreProgressStepper
+                 id="part3"
                   v-if="activeParentStep === 3"
                   :titles="[
                     'Upload Property Exterior and Street View Images',
@@ -223,24 +226,12 @@
                   :totalSteps="2"
                   :currentStep="visualsStep"
                 />
-                <!-- <UploadPropertyExterior
-                :payload="payload"
-                v-if="activeParentStep === 3 && visualsStep === 1"
-                >
-                </UploadPropertyExterior> -->
-                <!-- <p>Hello</p> -->
-                <!-- {{payload?.commonAreas}} -->
                 <UpdatedOutsideUpload :payload="payload"
                 v-if="activeParentStep === 3 && visualsStep === 1" />
                 <UpdatedCommonUpload  v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload"  />
-                <!-- <CommonAreasUpload v-if="activeParentStep === 3 && visualsStep === 2" :payload="payload" /> -->
-                <!-- <AddVideoTours
-                :payload="payload"
-                v-if="activeParentStep === 3 && visualsStep === 3"
-              >
-              </AddVideoTours> -->
               <UpdatedRoomUpload :payload="payload" v-if="activeParentStep === 3 && visualsStep === 3" />
                 <CoreProgressStepper
+                 id="part4"
                   v-if="activeParentStep === 4"
                   :titles="[
                     'Define house rules',
@@ -272,12 +263,12 @@
               </div>
             </div>
           </main>
-          <main class="pb-20" v-if="isPreviewMode">
+          <main class="pb-20" v-if="isReviewMode">
             <div class="max-w-3xl mx-auto py-10 border border-gray-100 rounded-xl mt-6 p-10">
               <p class="text-[#1D2739] font-normal  text-2xl max-w-lg pb-10">Review property details and proceed to publish to the public</p>
               <div class="flex justify-between items-center mb-10">
                 <p class="text-[#1D2739] font-normal">Basic property information</p>
-                <button @click="router.push('/dashboard/property/new')" class="text-[#326543] font-semibold">Edit</button>
+                <a href="#part1" class="text-[#326543] font-semibold">Edit</a>
               </div>
               <div class="pb-6">
                 <div class="flex justify-between items-center">
@@ -641,6 +632,16 @@
                       {{ questionObj?.question }}
                     </label>
                   </div> -->
+                  <!-- {{ payload?.questions }}
+                  <div 
+                    v-for="(questionObj, index) in (Array.isArray(payload?.questions?.value) && payload.questions.value.length > 0 ? payload.questions.value : localQuestions)" 
+                    :key="index" 
+                    class="mb-6"
+                  >
+                    <label :for="'question-' + index" class="block text-gray-700 text-sm font-normal mb-2">
+                      {{ questionObj?.question }}
+                    </label>
+                  </div> -->
                   <div 
   v-for="(questionObj, index) in (Array.isArray(payload?.questions?.value) && payload.questions.value.length > 0 ? payload.questions.value : localQuestions)" 
   :key="index" 
@@ -649,7 +650,41 @@
   <label :for="'question-' + index" class="block text-gray-700 text-sm font-normal mb-2">
     {{ questionObj?.question }}
   </label>
-</div>
+
+  <!-- Check if widgetType is select -->
+              <div v-if="questionObj?.widgetType === 'select'">
+                <select :id="'question-' + index" class="block w-full px-3 py-3.5 border-[0.5px] border-gray-200 outline-none bg-[#F0F2F5] rounded-md sm:text-sm">
+                  <option v-for="(option, optionIndex) in questionObj?.widgetOptions" :key="optionIndex" :value="option">
+                    {{ option }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Handle other widget types -->
+              <div v-else-if="questionObj?.widgetType === 'input'">
+                <input 
+                  :id="'question-' + index" 
+                  type="text" 
+                  placeholder="e.g short response goes here"
+                  class="block w-full px-3 py-3.5 border-[0.5px] border-gray-200 outline-none bg-[#F0F2F5] rounded-md sm:text-sm"
+                />
+              </div>
+
+              <div v-else-if="questionObj?.widgetType === 'long-response'">
+                <textarea 
+                  :id="'question-' + index" 
+                  rows="4" 
+                  placeholder="e.g long response goes here"
+                  class="block w-full px-3 py-3.5 border-[0.5px] border-gray-200 outline-none bg-[#F0F2F5] rounded-md sm:text-sm"
+                ></textarea>
+              </div>
+
+              <!-- Fallback for unsupported widget types -->
+              <div v-else>
+                <p class="text-gray-500">Unsupported widget type: {{ questionObj?.widgetType }}</p>
+              </div>
+            </div>
+
 
                 </form>
               </div>
@@ -670,7 +705,7 @@
     >
     <div class="container mx-auto w-full flex justify-between items-center">
     <button
-       v-if="!isPreviewMode"
+       v-if="!isReviewMode"
       @click="handlePreviousStep"
       :disabled="activeParentStep === 1 && basicPropertyInformationStep === 1"
       class="bg-[#EBE5E0] text-[#292929] text-sm font-semibold px-4 py-2 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
@@ -678,14 +713,14 @@
       Previous
     </button>
     <button
-    v-if="isPreviewMode"
-    @click="isPreviewMode = false"
+    v-if="isReviewMode"
+    @click="isReviewMode = false"
     class="bg-[#EBE5E0] text-[#292929] text-sm font-semibold px-4 py-3 rounded-md disabled:bg-gray-200 disabled:text-gray-500"
   >
     Previous
   </button>
     <button
-      v-if="!isPreviewMode"
+      v-if="!isReviewMode"
       @click="handleNextStep"
       :disabled="isNextButtonDisabled"
       class="bg-[#292929] text-white text-sm font-semibold px-6 py-2.5 rounded-md disabled:opacity-25 disabled:cursor-not-allowed"
@@ -693,7 +728,7 @@
       Next
     </button>
     <button
-    v-if="isPreviewMode"
+    v-if="isReviewMode"
     @click="create_property"
     :disabled="loading"
     class="bg-[#292929] text-white text-sm font-semibold px-6 py-2.5 rounded-md disabled:opacity-25 disabled:cursor-not-allowed"
@@ -772,6 +807,10 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
   ? payload.rules.value
   : storedRules;
 
+
+  const routeToBasics = () => {
+    router.push(`/dashboard/property/new?parentStep=1&childStep=1`)
+  }
   
   //Preview section code
   
@@ -798,7 +837,7 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
       const currentRoomImage = ref<number[]>(Array.isArray(localStorageRooms) ? Array(localStorageRooms.length).fill(0) : []);
   
   // State to manage if we are in preview mode
-  const isPreviewMode = ref(false);
+  const isReviewMode = ref(false);
   
   // Function to show the next image
   const nextRoomImage = (index: number) => {
@@ -959,7 +998,7 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
   }
   
   function togglePreviewMode(isPreview: boolean) {
-    isPreviewMode.value = isPreview;
+    isReviewMode.value = isPreview;
   
     // Update query parameter based on preview mode
     if (isPreview) {

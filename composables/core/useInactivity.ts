@@ -1,73 +1,89 @@
 // composables/useInactivity.ts
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-export function useInactivity(timeout = 600000, warningTime = 60000) { // default timeout 10 mins, warning 1 min
+export function useInactivity(timeout = 1800000) { // 30 minutes default timeout (30 * 60 * 1000)
   const router = useRouter();
   const lastActivity = ref(Date.now());
   const isWarningVisible = ref(false);
-  const countdown = ref(warningTime / 1000); // Countdown in seconds
+  const countdown = ref(180); // 3 minutes countdown in seconds
+  let countdownInterval: NodeJS.Timer | null = null;
   
-  // Function to update the last activity time
   const updateActivity = () => {
     lastActivity.value = Date.now();
     if (isWarningVisible.value) {
-      isWarningVisible.value = false;
+      hideWarning();
     }
   };
 
-  // Function to check if the user is inactive
   const checkInactivity = () => {
     const elapsedTime = Date.now() - lastActivity.value;
-    if (elapsedTime > timeout - warningTime && elapsedTime <= timeout && !isWarningVisible.value) {
+    if (elapsedTime > timeout && !isWarningVisible.value) {
       showWarning();
-    } else if (elapsedTime > timeout) {
-      handleLogout();
     }
   };
 
-  // Function to show the warning modal
   const showWarning = () => {
     isWarningVisible.value = true;
     startCountdown();
   };
 
-  // Function to start the countdown timer
+  const hideWarning = () => {
+    isWarningVisible.value = false;
+    stopCountdown();
+    countdown.value = 180; // Reset countdown to 3 minutes
+  };
+
   const startCountdown = () => {
-    const interval = setInterval(() => {
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+    }
+    countdownInterval = setInterval(() => {
       countdown.value--;
       if (countdown.value <= 0) {
-        clearInterval(interval);
         handleLogout();
       }
     }, 1000);
   };
 
-  // Function to log out the user
-  const handleLogout = () => {
-    // Clear any user data or tokens here
-    localStorage.removeItem('userToken'); // Adjust based on how you're storing user data
-    router.push('/login'); // Redirect to login page
+  const stopCountdown = () => {
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+    }
   };
 
-  // Set up event listeners to detect user activity
+  const handleLogout = () => {
+    hideWarning();
+    localStorage.removeItem('userToken');
+    router.push('/login');
+  };
+
+  const stayLoggedIn = () => {
+    hideWarning();
+    lastActivity.value = Date.now(); // Reset the activity timer
+  };
+
   const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
   
   onMounted(() => {
-    events.forEach(event => window.addEventListener(event, updateActivity));
+    // Only set up inactivity detection if not on login page
+    if (!router.currentRoute.value.path.includes('/login')) {
+      events.forEach(event => window.addEventListener(event, updateActivity));
+      const inactivityInterval = setInterval(checkInactivity, 1000);
 
-    // Check for inactivity every 1 minute (adjust the interval as needed)
-    const inactivityInterval = setInterval(checkInactivity, 1000);
-
-    // Cleanup when the component is unmounted
-    onUnmounted(() => {
-      events.forEach(event => window.removeEventListener(event, updateActivity));
-      clearInterval(inactivityInterval);
-    });
+      onUnmounted(() => {
+        events.forEach(event => window.removeEventListener(event, updateActivity));
+        clearInterval(inactivityInterval);
+        stopCountdown();
+      });
+    }
   });
 
   return {
     isWarningVisible,
     countdown,
+    handleLogout,
+    stayLoggedIn,
   };
 }

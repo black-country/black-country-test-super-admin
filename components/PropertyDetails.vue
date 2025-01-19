@@ -21,7 +21,7 @@
     </div>
 
     <!-- Displaying combined common areas with selected ones highlighted -->
-     {{  }}
+     <!-- {{  }} -->
     <div v-for="(category, index) in visibleCategories" :key="index" class="mb-8">
       <h2 class="text-base font-medium mb-2">{{ category.title }}</h2>
       <div class="grid grid-cols-3 gap-4">
@@ -105,22 +105,6 @@ const mandatoryExteriorAreas = [
   'Patio',
   'Recreational area',
 ];
-
-// Function to merge mandatory areas and avoid duplicates
-// function mergeWithMandatoryAreas(
-//   filteredAreas: CommonArea[],
-//   mandatoryAreas: string[],
-//   type: 'interior' | 'exterior'
-// ) {
-//   const mandatoryAreaObjects = commonAreasList.value.filter(
-//     (area) => area.type === type && mandatoryAreas.includes(area.name)
-//   );
-//   const combinedAreas = [...filteredAreas, ...mandatoryAreaObjects, ...selectedCommonAreas.value];
-
-//   // Remove duplicates by using a Map
-//   const uniqueAreas = new Map(combinedAreas.map((area) => [area.id, area]));
-//   return Array.from(uniqueAreas.values());
-// }
 
 function mergeWithMandatoryAreas(
   filteredAreas: CommonArea[],
@@ -281,13 +265,39 @@ function addCommonArea(type: 'interior' | 'exterior', canBeFurnished: boolean, i
 }
 
 function toggleAreaSelection(area: CommonArea) {
-  const index = selectedCommonAreas.value.findIndex((selected) => selected.id === area.id);
-  if (index !== -1) {
-    selectedCommonAreas.value.splice(index, 1); // Deselect if already selected
+  // Check if the area is already selected
+  const existingIndex = selectedCommonAreas.value.findIndex(
+    (selected) => selected.id === area.id
+  );
+
+  if (existingIndex !== -1) {
+    // Remove the item if it already exists in the array
+    selectedCommonAreas.value.splice(existingIndex, 1);
   } else {
-    selectedCommonAreas.value.push(area); // Select if not already selected
+    // Add the item if it doesn't exist
+    selectedCommonAreas.value.push(area);
   }
 }
+
+
+// function toggleAreaSelection(area: CommonArea) {
+//   console.log(area, 'area here')
+//   const index = selectedCommonAreas.value.findIndex(
+//     (selected) => selected.id === area.id
+//   );
+//   selectedCommonAreas.value = index !== -1
+//     ? selectedCommonAreas.value.filter((selected) => selected.id !== area.id)
+//     : [...selectedCommonAreas.value, area];
+// }
+
+// function toggleAreaSelection(area: CommonArea) {
+//   const index = selectedCommonAreas.value.findIndex((selected) => selected.id === area.id);
+//   if (index !== -1) {
+//     selectedCommonAreas.value.splice(index, 1); // Deselect if already selected
+//   } else {
+//     selectedCommonAreas.value.push(area); // Select if not already selected
+//   }
+// }
 
 // function getMergedAreas() {
 //   const allAreas = [...commonAreasList.value, ...selectedCommonAreas.value];
@@ -311,19 +321,6 @@ function getMergedAreas() {
   );
   return Array.from(uniqueAreas.values());
 }
-
-
-// // Load existing selected areas and isFurnished state when the component mounts
-// onMounted(() => {
-//   if (persistedCommonAreas.value.length > 0) {
-//     selectedCommonAreas.value = [...persistedCommonAreas.value];
-//     // Ensure that common areas are reloaded into categories if needed
-//     commonAreasList.value.push(...persistedCommonAreas.value);
-//   } else {
-//     getCommonAreas();
-//   }
-//   isFurnished.value = persistedIsFurnished.value;
-// });
 
 // Ensure that `commonAreasList` is fetched on mount and when empty
 onMounted(() => {

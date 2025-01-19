@@ -136,9 +136,9 @@
                 <span class="block font-medium">{{ item?.trxReference ?? 'Nil' }}</span>
                 <!-- <span class="text-gray-400 text-xs">{{ item.transactionCode }}</span> -->
               </td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.rentPayment?.house.name ?? 'Nil' }}</td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.tenantId ?? 'Nil' }}</td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.paymentMethod ?? 'Nil' }}</td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.rentPayment?.house?.name ?? 'Nil' }}</td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{  `${item?.rentPayment?.tenant?.firstName} ${item?.rentPayment?.tenant?.lastName}` ?? 'Nil' }}</td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.channel ?? 'Nil' }}</td>
               <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.amount ?? 'Nil' }}</td>
               <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.transactionType ?? 'Nil' }}</td>
               <td class="py-4 px-5 whitespace-nowrap text-sm">

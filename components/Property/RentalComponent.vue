@@ -19,6 +19,11 @@
             </a>
           </li>
           <li>
+            <a class="pb-3" href="#" @click="setActiveTab('CANCELLED')" :class="activeTab === 'CANCELLED' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
+              Cancelled
+            </a>
+          </li>
+          <li>
             <a class="pb-3" href="#" @click="setActiveTab('REJECTED')" :class="activeTab === 'REJECTED' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
               Declined
             </a>
@@ -47,6 +52,7 @@
           @click="router.push(`/dashboard/property/rental-applications/${application?.id}`)">
           <div class="flex items-center justify-between">
             <div class="flex items-center">
+              <!-- {{  }} -->
               <img v-if="application.tenant.profilePicture" :src="application.tenant.profilePicture"
                 alt="Applicant Image" class="w-12 h-12 rounded-lg object-cover mr-4" />
               <img v-else src="@/assets/img/user-avatar.png" alt="Applicant Image"

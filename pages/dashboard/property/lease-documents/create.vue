@@ -605,67 +605,6 @@
       // Logic to handle duplicating the template
     };
 
-
-    // Function to save the editor content to local storage in real-time
-// const saveContentToLocalStorage = () => {
-//     const currentHTMLContent = editor.value?.innerHTML || '';
-
-//     const signatureHTML = `
-//         <div class="signature-section">
-//             <h2>Signature</h2>
-//             <p>The parties hereto have executed this Lease Agreement as of the date first above written.</p>
-//             <div class="signature">
-//                 <h3>Landlord/Property Manager:</h3>
-//                 <img src="${emittedAgreementData.value.signature}" alt="Signature" style="width: 100px; border-bottom: 2px dotted;" />
-//                 <p>${user.firstName} ${user.lastName}</p>
-//                 <p>${new Date().toLocaleDateString()}</p>
-//             </div>
-//             <div class="signature">
-//                 <h3>Tenant:</h3>
-//                 <p>Full Name: ${emittedAgreementData.value.fullName || 'N/A'}</p>
-//                 <p>Date: ${new Date().toLocaleDateString()}</p>
-//             </div>
-//         </div>
-//     `;
-
-//     const fullHTMLContent = `
-//             ${currentHTMLContent}
-//             ${signatureHTML}
-//     `;
-
-//     const newPayload = {
-//         body: fullHTMLContent,
-//         documentName: payload.value.documentName,
-//         propertyId: payload.value.propertyId,
-//         startDate: payload.value.startDate,
-//         endDate: payload.value.endDate,
-//         tenantId: payload.value.tenantId
-//     };
-
-//     // Save to local storage
-//     localStorage.setItem('lease-template-payload', JSON.stringify(newPayload));
-// };
-
-// Listen for input events to save data to local storage in real-time
-// const handleEditorInput = () => {
-//     editor.value?.addEventListener('input', saveContentToLocalStorage);
-// };
-
-// // Retrieve content from local storage on mount
-// onMounted(() => {
-//     const localStorageObj = JSON.parse(localStorage.getItem('lease-template-payload') || '{}');
-//     localData.value = localStorageObj;
-
-//     if (localStorageObj.body) {
-//         editor.value.innerHTML = localStorageObj.body;
-//     } else {
-//         editor.value.innerHTML = leaseAgreementContent;
-//     }
-
-//     // Attach input listener to save content in real-time
-//     handleEditorInput();
-// });
-
 onMounted(() => {
   const localStorageObj = JSON.parse(localStorage.getItem('lease-template-payload') || '{}');
   localData.value = localStorageObj;

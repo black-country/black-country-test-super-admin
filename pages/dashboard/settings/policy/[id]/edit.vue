@@ -328,29 +328,6 @@ async function handleSubmit(content: any) {
   }
 }
 
-
-// async function handleSubmit(content: string) {
-//   formData.value = { ...formData.value, content };
-
-//   const finalPayload = {
-//     content: formData.value.content,
-//     description: formData.value.description,
-//     app: formData.value.app,
-//     type: formData.value.type,
-//     name: formData.value.name
-//   };
-
-//   if (formData.value.id) {
-//     // Editing an existing policy
-//     setUpdatedPayload({ ...finalPayload });
-//     await updatePolicy();
-//   } else {
-//     // Creating a new policy
-//     setPayload(finalPayload);
-//     await createPolicy();
-//   }
-// }
-
 definePageMeta({
    middleware: 'auth'
 })

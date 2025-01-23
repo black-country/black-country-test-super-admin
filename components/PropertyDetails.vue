@@ -20,8 +20,6 @@
       </div>
     </div>
 
-    <!-- Displaying combined common areas with selected ones highlighted -->
-     <!-- {{  }} -->
     <div v-for="(category, index) in visibleCategories" :key="index" class="mb-8">
       <h2 class="text-base font-medium mb-2">{{ category.title }}</h2>
       <div class="grid grid-cols-3 gap-4">

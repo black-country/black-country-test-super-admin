@@ -278,10 +278,15 @@ const sidebarItems = ref([
     url: "/dashboard/property",
   },
   {
-    name: "Tenants Management",
-    icon: "tenants-mgt",
-    url: "/dashboard/tenant-mgt",
+    name: "User Management",
+    icon: "users-mgt",
+    url: "/dashboard/users-mgt",
   },
+  // {
+  //   name: "Tenants Management",
+  //   icon: "tenants-mgt",
+  //   url: "/dashboard/tenant-mgt",
+  // },
   {
     name: "Messages",
     icon: "messages",

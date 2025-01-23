@@ -92,8 +92,14 @@
                   <p v-else-if="column.key === 'isActive'">
                    <span class="px-4 py-2 rounded-full" :class="[tenant.isActive ? 'text-[#099137] bg-[#E7F6EC]' : 'text-[#DD900D] bg-[#FEF6E7]']">{{ tenant.isActive ? 'Active' : 'In active' }}</span>
                   </p>
+                  <p v-else-if="column.key === 'accountStatus'">
+                   <span class="px-4 py-2 rounded-full" :class="[tenant.accountStatus === 'Active' ? 'text-[#099137] bg-[#E7F6EC]' : tenant.accountStatus === 'inActive' ? 'text-[#099137] bg-[#E7F6EC]'  : tenant.accountStatus === 'deleted' ? 'text-[#BA110B] bg-[#FBEAE9]' : 'text-[#DD900D] bg-[#FEF6E7]']">{{ tenant.isActive ? 'Active' : 'In active' }}</span>
+                  </p>
                   <p v-else-if="column.key === 'createdAt'">
                     <p> {{ moment(tenant?.createdAt).format('DD MMMM YYYY, HH:mm:ss A') ?? 'Nil' }}</p>
+                  </p>
+                  <p v-else-if="column.key === 'updatedAt'">
+                    <p> {{ moment(tenant?.upatedAt).format('DD MMMM YYYY, HH:mm:ss A') ?? 'Nil' }}</p>
                   </p>
                   <p class="inline px-3 py-2 rounded-full text-sm"
                     :class="[tenant.status === 'not paid' ? 'text-[#BA110B] bg-[#FBEAE9]' : 'bg-[#E7F6EC] text-[#099137]']"
@@ -338,9 +344,9 @@ const showModal = ref(false);
 const columns = ref([
   { label: "Full Name", key: "firstName", visible: true },
   { label: "Email Address", key: "email", visible: true },
-  { label: "User Type", key: "userType", visible: true },
-  { label: "Last Login", key: "lastLogin", visible: true },
-  { label: "Account Status", key: "isActive", visible: true },
+  { label: "User Type", key: "type", visible: true },
+  { label: "Last Login", key: "updatedAt", visible: true },
+  { label: "Account Status", key: "accountStatus", visible: true },
   { label: "Date Joined", key: "createdAt", visible: true },
 ]);
 

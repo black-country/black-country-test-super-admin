@@ -12,7 +12,7 @@
 
         <!-- Search Bar -->
         <div class="relative">
-          <input v-model="filters.searchQuery" type="text" placeholder="Search properties by name..."
+          <input v-model="filters.searchQuery" type="text" placeholder="Search users by name..."
             class="bg-[#F0F2F5] pl-10 border-[#F0F2F5] border text-sm text-gray-700 px-4 py-3 rounded w-full sm:w-[500px] focus:outline-none focus:bg-white transition-all" />
           <span class="absolute inset-y-0 left-3 flex items-center pr-2">
             <img class="" :src="dynamicIcons('gray-search')" />

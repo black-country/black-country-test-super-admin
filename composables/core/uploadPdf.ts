@@ -8,7 +8,7 @@ export const useUploadFile = () => {
   const loading = ref(false); // Combined loader state
   const uploadResponse = ref<any>({});
   
-  const { $_pdf_upload } = core_apis;
+  const { $_upload } = core_apis;
 
   // Upload PDF file and assign lease to property
   const pdfUploadFile = async (file: File) => {
@@ -19,7 +19,7 @@ export const useUploadFile = () => {
       formData.append('file', file); // Append file to FormData
 
       // Make the API call to upload the PDF
-      const res = await $_pdf_upload(formData);
+      const res = await $_upload(formData);
 
       if (res.status === 201) {
         uploadResponse.value = res.data ?? {};

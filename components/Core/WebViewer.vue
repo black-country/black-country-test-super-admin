@@ -10,7 +10,7 @@
           </button>
           <h1 class="text-sm font-semibold">{{ leasePayload?.documentName ?? 'Nil' }}</h1>
         </div>
-        <div class="flex justify-between items-center text-xs gap-x-3 -mt-4">
+        <div class="flex justify-between items-center py-3 lg:p-0 text-xs gap-x-3 -mt-4">
           <button
           class="flex items-center px-4 text-sm py-3 text-xs bg-[#5B8469] text-white text-sm font-medium gap-x-3 rounded-md shadow-md cursor-pointer"
           v-if="isDocumentEdited" @click="submitLeaseDocument('save-and-send')">

@@ -4,7 +4,7 @@
     <template #header-content>
       <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 justify-between">
         <div class="flex items-center gap-x-4">
-          <h4 class="text-[#1D2739] text-lg">Finance Management</h4>
+          <h4 class="text-[#1D2739] text-l font-semibold">Finance Management</h4>
         </div>
         <div class="flex items-center gap-x-4 lg:gap-x-6">
           <NuxtLink
@@ -67,7 +67,7 @@
       </div>
     </template>
   <main class="space-y-6 min-h-screen">
-      <div class="flex items-center space-x-4">
+       <div class="flex items-center space-x-4">
           <button @click="openModal" class="flex text-sm gap-x-2 border-[0.5px] items-center px-4 py-3 bg-gray-25 hover:bg-gray-200 rounded-lg text-[#292929]">
             Filter
             <img :src="dynamicIcons('gray-filter')" />
@@ -95,7 +95,7 @@
               </div>
             </div>
           </div>
-        </div>
+      </div>
         <div class="w-full lg:flex p-3 border border-gray-25 rounded-lg bg-white">
           <div v-for="(value, key, idx) in transactionSummaries" :key="idx" class="h-32 cursor-pointer space-y-4 w-full border-gray-100 lg:border-r last:border-r-0 p-4">
             <div class="flex justify-end items-end ">
@@ -110,8 +110,9 @@
             </div>
           </div>
         </div>
-      <div v-if="transactionsList.length && !loadingTtansactions" class="p-6 bg-white rounded-lg shadow-md">
-        <table class="min-w-full bg-white">
+        <section v-if="transactionsList.length && !loadingTtansactions" class="border-gray-100 rounded-lg border-[0.5px]">
+          <div class="p-6 bg-white rounded-lg overflow-x-auto">
+        <table class="min-w-full bg-white table-auto">
           <thead class="border-b-[0.5px] border-gray-50">
             <tr>
               <th class="py-3 px-5 text-left text-sm font-medium text-gray-500 tracking-wider">Date</th>
@@ -127,26 +128,32 @@
           <tbody class="divide-y divide-gray-50">
             <tr v-for="(item, index) in transactionsList" :key="index">
               <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">
-                <!-- {{ item.transactionDate }} -->
                 {{ moment(item.transactionDate).format('DD MMMM YYYY') ?? 'Nil' }}
-                <br />
-                <!-- <span class="text-gray-400 text-xs">{{ item?.time }}</span> -->
               </td>
               <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">
                 <span class="block font-medium">{{ item?.trxReference ?? 'Nil' }}</span>
-                <!-- <span class="text-gray-400 text-xs">{{ item.transactionCode }}</span> -->
               </td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.rentPayment?.house?.name ?? 'Nil' }}</td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{  `${item?.rentPayment?.tenant?.firstName} ${item?.rentPayment?.tenant?.lastName}` ?? 'Nil' }}</td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.channel ?? 'Nil' }}</td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.amount ?? 'Nil' }}</td>
-              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">{{ item?.transactionType ?? 'Nil' }}</td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">
+                {{ item?.rentPayment?.house?.name ?? 'Nil' }}
+              </td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">
+                {{ `${item?.rentPayment?.tenant?.firstName} ${item?.rentPayment?.tenant?.lastName}` ?? 'Nil' }}
+              </td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">
+                {{ item?.channel ?? 'Nil' }}
+              </td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">
+                {{ handleCurrency(item?.amount) ?? 'Nil' }}
+              </td>
+              <td class="py-4 px-5 whitespace-nowrap text-sm text-gray-700">
+                {{ item?.transactionType ?? 'Nil' }}
+              </td>
               <td class="py-4 px-5 whitespace-nowrap text-sm">
                 <span
                   :class="{
-                    'bg-green-100 text-green-800': item.status === 'Paid',
-                    'bg-yellow-100 text-yellow-800': item.status === 'Due',
-                    'bg-red-100 text-red-800': item.status === 'Overdue',
+                    'bg-green-100 text-green-800': item.status === 'paid',
+                    'bg-yellow-100 text-yellow-800': item.status === 'due',
+                    'bg-red-100 text-red-800': item.status === 'overdue',
                   }"
                   class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
                 >
@@ -156,33 +163,18 @@
             </tr>
           </tbody>
         </table>
+        </div>
         <CorePagination
-          v-if="!loadingTtansactions && transactionsList.length > 0"
-          :total="metadata.total"
-          :page="metadata.page"
-          :perPage="metadata.perPage"
-          :pages="metadata.pages"
-          @page-changed="handlePageChange"
-        />
-        <!-- <nav class="flex justify-between items-center mt-4 px-4 pt-6">
-          <div class="-mt-px flex w-0 flex-1">
-              <button class="px-6 text-sm py-2 bg-[#F9FAFB] text-[#545454] border-[0.5px] rounded-md" disabled>Previous</button>
-          </div>
-          <div class="hidden md:-mt-px md:flex">
-            <a href="#" class="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">1</a>
-            <a href="#" class="inline-flex items-center px-4 pt-4 text-sm font-medium text-[#1D2739]" aria-current="page">2</a>
-            <a href="#" class="inline-flex items-center border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">3</a>
-            <span class="inline-flex items-center border-transparent px-4 pt-4 text-sm font-medium text-gray-500">...</span>
-            <a href="#" class="inline-flex items-center border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">8</a>
-            <a href="#" class="inline-flex items-center border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">9</a>
-            <a href="#" class="inline-flex items-center border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">10</a>
-          </div>
-          <div class="-mt-px flex w-0 flex-1 justify-end">
-              <button class="px-6 text-sm py-2 bg-[#292929] text-white rounded-md">Next</button>
-          </div>
-        </nav> -->
-        
-      </div>
+            class=""
+            v-if="!loadingTtansactions && transactionsList.length > 0"
+            :total="metadata.total"
+            :page="metadata.page"
+            :perPage="metadata.perPage"
+            :pages="metadata.pages"
+            @page-changed="handlePageChange"
+          />
+        </section>
+
       <section id="loader" class="w-full" v-else-if="loadingTtansactions && !loadingTtansactions">
             <div class="rounded-md p-4 w-full">
               <div class="animate-pulse flex space-x-4 w-full">

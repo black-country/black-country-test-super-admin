@@ -20,8 +20,6 @@
       </div>
     </div>
 
-    <!-- Displaying combined common areas with selected ones highlighted -->
-     <!-- {{  }} -->
     <div v-for="(category, index) in visibleCategories" :key="index" class="mb-8">
       <h2 class="text-base font-medium mb-2">{{ category.title }}</h2>
       <div class="grid grid-cols-3 gap-4">
@@ -279,33 +277,6 @@ function toggleAreaSelection(area: CommonArea) {
   }
 }
 
-
-// function toggleAreaSelection(area: CommonArea) {
-//   console.log(area, 'area here')
-//   const index = selectedCommonAreas.value.findIndex(
-//     (selected) => selected.id === area.id
-//   );
-//   selectedCommonAreas.value = index !== -1
-//     ? selectedCommonAreas.value.filter((selected) => selected.id !== area.id)
-//     : [...selectedCommonAreas.value, area];
-// }
-
-// function toggleAreaSelection(area: CommonArea) {
-//   const index = selectedCommonAreas.value.findIndex((selected) => selected.id === area.id);
-//   if (index !== -1) {
-//     selectedCommonAreas.value.splice(index, 1); // Deselect if already selected
-//   } else {
-//     selectedCommonAreas.value.push(area); // Select if not already selected
-//   }
-// }
-
-// function getMergedAreas() {
-//   const allAreas = [...commonAreasList.value, ...selectedCommonAreas.value];
-//   // Remove duplicates by using a Map with a unique key of `name + type`
-//   const uniqueAreas = new Map(allAreas.map((area) => [area.name.toLowerCase() + area.type, area])
-//   );
-//   return Array.from(uniqueAreas.values());
-// }
 
 // Combine `commonAreasList` with `selectedCommonAreas` and remove duplicates
 function getMergedAreas() {

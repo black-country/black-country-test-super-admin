@@ -1377,20 +1377,6 @@ const handleConfirm = () => {
 
 }
 
-// function togglePreviewMode(isPreview: boolean) {
-//     isReviewMode.value = isPreview;
-  
-//     // Update query parameter based on preview mode
-//     if (isPreview) {
-//       router.push({
-//         query: { ...route.query, preview: 'true' }
-//       });
-//     } else {
-//       const query = { ...route.query };
-//       delete query.preview; // Remove the preview query parameter
-//       router.push({ query });
-//     }
-//   }
 
 const isReviewMode = ref(false);
 
@@ -1431,38 +1417,6 @@ const basicPropertyInformationStep = ref(1);
 const propertyDetailsStep = ref(1);
 const visualsStep = ref(1);
 const finalizeStep = ref(1);
-
-// function handleNextStep() {
-//   if (activeParentStep.value === 1) {
-//     if (basicPropertyInformationStep.value < 2) {
-//       basicPropertyInformationStep.value += 1;
-//     } else {
-//       handleNextParentStep();
-//     }
-//   } else if (activeParentStep.value === 2) {
-//     if (propertyDetailsStep.value < 2) {
-//       propertyDetailsStep.value += 1;
-//     } else {
-//       handleNextParentStep();
-//     }
-//   } else if (activeParentStep.value === 3) {
-//     if (visualsStep.value < 3) { // Ensure this is correctly checking for up to step 3
-//       visualsStep.value += 1;
-//     } else {
-//       handleNextParentStep();
-//     }
-//   } else if (activeParentStep.value === 4) {
-//     if (finalizeStep.value < 3) {
-//       finalizeStep.value += 1;
-//     } else {
-//       // This means we've reached the last step of the final stage
-//       router.push(`/dashboard/property/${route?.params?.id}/edit-preview`); // Adjust the route name/path as needed
-//       return;
-//     }
-//   }
-
-//   updateQueryParams();
-// }
 
 function handleNextStep() {
   if (activeParentStep.value === 1) {
@@ -1559,13 +1513,6 @@ function handlePreviousParentStep() {
   }
 }
 
-// function handleStepClick(stepId: any) {
-//   // Only allow navigation to previous steps or the current step
-//   if (stepId <= activeParentStep.value) {
-//     activeParentStep.value = stepId;
-//     resetSubSteps();
-//   }
-// }
 function handleStepClick(stepId: any) {
   // Allow navigation to any step
   activeParentStep.value = stepId;

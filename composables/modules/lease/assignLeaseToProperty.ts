@@ -35,6 +35,7 @@ export const useAssignLeaseToProperty = () => {
                 toastType: "success",
                 duration: 3000
               });
+              window.location.href = '/dashboard/property/lease-documents/lease-document-success'
               router.push('/dashboard/property/lease-documents/lease-document-success')
         } else {
             showToast({

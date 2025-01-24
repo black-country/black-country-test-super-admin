@@ -12,7 +12,7 @@ export const useUploadFile = () => {
   const uploadResponse = ref<any>({});
   const { assignLeaseToProperty, loading: processing, setAssignPayloadObj } = useAssignLeaseToProperty();
   
-  const { $_pdf_upload } = core_apis;
+  const { $_upload } = core_apis;
   const localStorageObj = JSON.parse(localStorage.getItem('lease-template-payload') || '{}');
 
   // Upload PDF file and assign lease to property
@@ -24,7 +24,7 @@ export const useUploadFile = () => {
       formData.append('file', file); // Append file to FormData
 
       // Make the API call to upload the PDF
-      const res = await $_pdf_upload(formData);
+      const res = await $_upload(formData);
 
       if (res.status === 201) {
         uploadResponse.value = res.data ?? {};

@@ -18,12 +18,15 @@
           <span class="text-xl font-medium text-[#1D2739]">{{rentalObj?.tenant?.firstName}} {{rentalObj?.tenant?.lastName}}</span>
         </div>
 
+     <div class="flex itemsp-center gap-x-3">
+      <NuxtLink to="/dashboard/property/lease-documents/create-methods" v-if="rentalObj.status === 'APPROVED' && !rentalObj?.rentalLeaseAgreement" class="border rounded-lg flex justify-center items-center bg-black text-sm px-3 py-2.5 text-white">Attach lease</NuxtLink>
         <p
-          :class="`${computedColorMap(rentalObj.status)} text-xs px-3 py-2 rounded-lg border-[0.5px]`"
+          :class="`${computedColorMap(rentalObj.status)} text-xs flex justify-center items-center px-3 py-2 rounded-lg border-[0.5px]`"
         >
           {{ rentalObj.status }}
         </p>
 
+     </div>
         <!-- <p class="text-sm px-3 py-2 rounded-lg border-[0.5px]">{{ rentalObj.status }}</p> -->
         <!-- <div v-if="rentalObj.status !== 'PENDING'" class="flex space-x-4">
           <button v-if="rentalObj.status === 'APPROVED'" @click="declineModal = true" class="bg-[#EBE5E0] text-sm text-[#292929] px-6 py-2.5 rounded-md">

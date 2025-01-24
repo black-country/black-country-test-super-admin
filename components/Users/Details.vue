@@ -14,17 +14,57 @@
           User’s details
         </a>
         <a 
+  href="#" 
+  :class="{
+    'border-[#326543] text-[#326543]': activeTab === 'paymentHistory' && tenantObj.home !== null,
+    'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'paymentHistory' && tenantObj.home !== null,
+    'cursor-not-allowed text-gray-400': tenantObj.home === null
+  }"
+  class="whitespace-nowrap border-b-4 px-1 py-3 text-sm font-medium"
+  :disabled="tenantObj.home === null"
+  @click.prevent="tenantObj.home !== null && setActiveTab('paymentHistory')"
+>
+  Payment history
+</a>
+<a
+  href="#" 
+  :class="{
+    'border-[#326543] text-[#326543]': activeTab === 'leaseDocument' && tenantObj.home !== null,
+    'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'leaseDocument' && tenantObj.home !== null,
+    'cursor-not-allowed text-gray-400': tenantObj.home === null
+  }"
+  class="whitespace-nowrap border-b-4 px-1 py-3 text-sm font-medium"
+  :disabled="tenantObj.home === null"
+  @click.prevent="tenantObj.home !== null && setActiveTab('leaseDocument')"
+>
+  Lease Document
+</a>
+<a 
+  href="#" 
+  :class="{
+    'border-[#326543] text-[#326543]': activeTab === 'maintenanceRequest' && tenantObj.home !== null,
+    'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'maintenanceRequest' && tenantObj.home !== null,
+    'cursor-not-allowed text-gray-400': tenantObj.home === null
+  }"
+  class="whitespace-nowrap border-b-4 px-1 py-3 text-sm font-medium"
+  :disabled="tenantObj.home === null"
+  @click.prevent="tenantObj.home !== null && setActiveTab('maintenanceRequest')"
+>
+  Maintenance request
+</a>
+
+        <!-- <a 
           href="#" 
           :class="{
             'border-[#326543] text-[#326543]': activeTab === 'paymentHistory',
             'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'paymentHistory'
           }"
-          class="whitespace-nowrap border-b-4 px-1 py-3 text-sm font-medium" 
+          class="whitespace-nowrap border-b-4 px-1 py-3 text-sm font-medium disabled" 
           @click.prevent="setActiveTab('paymentHistory')"
         >
           Payment history
         </a>
-        <a 
+        <a
           href="#" 
           :class="{
             'border-[#326543] text-[#326543]': activeTab === 'leaseDocument',
@@ -45,7 +85,7 @@
           @click.prevent="setActiveTab('maintenanceRequest')"
         >
           Maintenance request
-        </a>
+        </a> -->
       </nav>
   </div>
 
@@ -58,7 +98,7 @@
     <section class="space-y-6" v-if="activeTab === 'tenantDetails'">
         <div class="max-w-2xl mx-auto">
     <!-- Property Information -->
-    <div class="mb-8">
+    <div v-if="tenantObj?.home" class="mb-8">
       <h1 class="text-sm font-medium mb-6 bg-white py-3 rounded-lg px-5">Current residence</h1>
       
       <div class="space-y-6 bg-white rounded-lg p-5">

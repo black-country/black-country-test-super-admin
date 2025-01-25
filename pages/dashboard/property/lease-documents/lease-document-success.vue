@@ -14,11 +14,11 @@
         <h2 class="text-lg text-[#1D2739] font-medium mb-2">Lease agreement was signed and sent to tenant successfully</h2>
         <p class="text-gray-500 mb-6 text-sm">You've successfully created a new lease </p>
             <div class="space-y-4 w-full">
-                <button @click="router.push('/dashboard/property/')"
-                class="bg-[#292929] w-full  text-white py-3.5 text-sm px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
+                <NuxtLink to='/dashboard/property/'
+                class="bg-[#292929] w-full  text-white py-3.5 w-full text-sm px-4 rounded-md hover:bg-gray-800 px-6 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
             >
             Continue
-            </button>
+            </NuxtLink>
             <!-- <button @click="router.push('/dashboard/property/')"
             class="w-full bg-[#EBE5E0] py-3.5 text-[#292929] text-sm px-4 rounded-md  "
             >

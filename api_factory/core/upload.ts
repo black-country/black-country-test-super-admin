@@ -9,8 +9,8 @@ export const core_apis = {
 		const url = '/utilities/files/batch'
 		return GATEWAY_ENDPOINT.post(url, payload)
 	},
-	$_pdf_upload: (payload: any) => {
-		const url = '/files'
-		return GATEWAY_ENDPOINT_WITH_AUTH_FORM_DATA.post(url, payload)
-	},
+	// $_pdf_upload: (payload: any) => {
+	// 	const url = '/files'
+	// 	return GATEWAY_ENDPOINT_WITH_AUTH_FORM_DATA.post(url, payload)
+	// },
 }

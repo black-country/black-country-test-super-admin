@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90">
     <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full">
       <h2 class="text-lg font-medium mb-4">Generate lease agreement</h2>
       <div class="space-y-6">

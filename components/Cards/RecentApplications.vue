@@ -7,10 +7,10 @@
               @click="router.push(`/dashboard/property/rental-applications/${application?.id}`)">
               <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                  <img v-if="application.tenant.profilePicture" :src="application.tenant.profilePicture"
+                  <img v-if="application?.tenant?.profilePicture" :src="application?.tenant?.profilePicture"
                     alt="Applicant Image" class="w-8 h-8 rounded-lg object-cover mr-4" />
-                  <img v-else src="@/assets/img/user-avatar.png" alt="Applicant Image"
-                    class="w-8 h-8 rounded-lg object-cover mr-4" />
+                  <img v-else src="@/assets/icons/users-avatar.svg" alt="Applicant Image"
+                    class="w-14 h-14 rounded-lg object-cover mr-4" />
                   <div class="-ml-2">
                     <h3 class="text-[#1D2739] text-xs">{{ application?.tenant?.firstName }} {{ application?.tenant?.lastName }}</h3>
                     <p class="text-xs text-gray-500">{{ application?.tenant?.email }}</p>

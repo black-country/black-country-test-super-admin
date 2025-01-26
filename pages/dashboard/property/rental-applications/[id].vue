@@ -19,7 +19,7 @@
         </div>
 
      <div class="flex itemsp-center gap-x-3">
-      <NuxtLink to="/dashboard/property/lease-documents/create-methods" v-if="rentalObj.status === 'APPROVED' && !rentalObj?.rentalLeaseAgreement" class="border rounded-lg flex justify-center items-center bg-black text-sm px-3 py-2.5 text-white">Attach lease</NuxtLink>
+      <button @click="generateLeaseDocument = true" v-if="rentalObj.status === 'APPROVED' && !rentalObj?.rentalLeaseAgreement" class="border rounded-lg flex justify-center items-center bg-black text-sm px-3 py-2.5 text-white">Attach lease</button>
         <p
           :class="`${computedColorMap(rentalObj.status)} text-xs flex justify-center items-center px-3 py-2 rounded-lg border-[0.5px]`"
         >
@@ -125,6 +125,8 @@
               </div>
            </CoreModal>
   </Layout>
+
+  <PropertyGenerateLeaseAgreementModal v-if="generateLeaseDocument" @close="generateLeaseDocument = false" />
 </template>
 
 <script lang="ts" setup>
@@ -139,6 +141,7 @@ import Layout from "@/layouts/dashboard.vue";
 const approveModal = ref(false);
 const declineModal = ref(false);
 const showReasonModal = ref(false)
+const generateLeaseDocument = ref(false);
 
 // State for reason
 const reason = ref('');

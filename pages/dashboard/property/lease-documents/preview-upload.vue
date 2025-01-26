@@ -63,7 +63,7 @@
           <!-- Left Side: Text Editor -->
           <div class="flex-1 lg:w-6/12 lg:p-10 bg-gray-25">
             <div contenteditable="true" class="border border-gray-300 lg:px-10 bg-white p-4 outline-none border-none rounded-lg shadow-sm min-h-[500px]" ref="editor">
-              Start editing your text here...sadsddsadsadasdsadasdsa
+              Start editing your text here...
             </div>
             <div contenteditable="true" class="border border-gray-300 lg:px-10 bg-white pb-4 px-4 outline-none border-none rounded-lg shadow-sm min-h-[500px]" ref="signatureSection">
               <h2 class="text-sm font-medium mb-2">Signature</h2>

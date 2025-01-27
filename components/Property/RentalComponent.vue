@@ -53,10 +53,10 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center">
               <!-- {{  }} -->
-              <img v-if="application.tenant.profilePicture" :src="application.tenant.profilePicture"
+              <img v-if="application?.tenant?.profilePicture" :src="application?.tenant?.profilePicture"
                 alt="Applicant Image" class="w-12 h-12 rounded-lg object-cover mr-4" />
-              <img v-else src="@/assets/img/user-avatar.png" alt="Applicant Image"
-                class="w-12 h-12 rounded-lg object-cover mr-4" />
+              <img v-else src="@/assets/icons/users-avatar.svg" alt="Applicant Image"
+                class="w-14 h-14 rounded-lg object-cover mr-4" />
               <div>
                 <h3 class="text-[#1D2739]">{{ application?.tenant?.firstName }} {{ application?.tenant?.lastName }}</h3>
                 <p class="text-sm text-gray-500">{{ application?.tenant?.email }}</p>

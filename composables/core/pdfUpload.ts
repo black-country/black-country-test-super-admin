@@ -27,6 +27,7 @@ export const useUploadFile = () => {
       const res = await $_upload(formData);
 
       if (res.status === 201) {
+        console.log(res.data, 'upload respomse')
         uploadResponse.value = res.data ?? {};
 
         // Prepare payload for lease assignment
@@ -42,7 +43,7 @@ export const useUploadFile = () => {
         setAssignPayloadObj(payloadObj);
 
         // Assign lease to property
-        await assignLeaseToProperty(localStorageObj?.tenantId, localStorageObj?.propertyId);
+        await assignLeaseToProperty(localStorageObj?.tenantId, localStorageObj?.propertyId, 'pdf');
 
         // Show success toast
         // showToast({

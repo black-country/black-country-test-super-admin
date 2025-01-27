@@ -17,10 +17,10 @@ const router = useRouter()
 const localStorageObj = JSON.parse(localStorage.getItem('lease-template-payload') || '{}');
 
 export const useAssignLeaseToProperty = () => {
-	const assignLeaseToProperty = async (tenantId: string | number, houseId: string | number) => {
+	const assignLeaseToProperty = async (tenantId: string | number, houseId: string | number, type?: string) => {
 		loading.value = true
 		const res = await  lease_api.$_assign_lease_to_property(tenantId, houseId, {
-            leaseAgreement: `<html>${assignPayload.value.leaseAgreement}</html>`,
+            leaseAgreement: type === 'pdf' ? assignPayload.value.leaseAgreement :  `<html>${assignPayload.value.leaseAgreement}</html>`,
             houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
             agreementName: assignPayload.value.agreementName,
             isPublished: assignPayload.value.isPublished,

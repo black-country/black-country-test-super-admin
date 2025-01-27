@@ -3,8 +3,8 @@
       <!-- Profile Section -->
       <div class="flex flex-col items-center">
         <img
-          v-if="!tenantObj?.profilePicture"
-          :src="dynamicImage('male-avatar.png')"
+          v-if="!tenantObj?.profilePicture?.length"
+          src="@/assets/icons/users-avatar.svg"
           alt="Profile Picture"
           class="w-32 h-32 rounded-full mb-4"
         />

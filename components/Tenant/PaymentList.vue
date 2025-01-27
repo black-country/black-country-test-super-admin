@@ -28,7 +28,7 @@
             </p>
           </div>
         </div>
-        <p class="text-base font-medium text-[#292929]">{{ formatCurrency(transaction?.amountSubunit) ?? '0.00' }}</p>
+        <p class="text-base font-medium text-[#292929]">{{ formatCurrency(transaction?.amount) ?? '0.00' }}</p>
       </div>
     </div>
 </main>

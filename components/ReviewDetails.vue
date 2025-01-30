@@ -56,7 +56,7 @@
     </div>
     <button
     @click="addCustomRule"
-    class="lg:mt-6 text-[#1D2739] font-medium bg-[#F0F2F5] border py-2.5 flex justify-between items-center gap-x-3 text-sm px-3 rounded-lg"
+    class="sm:mt-6 lg:mt-0 text-[#1D2739] font-medium bg-[#F0F2F5] border py-2.5 flex justify-between items-center gap-x-3 text-sm px-3 rounded-lg"
   >
     <svg
       width="12"

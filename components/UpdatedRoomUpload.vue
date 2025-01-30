@@ -1,15 +1,16 @@
 <template>
   <div class="">
     <!-- Tabbed navigation for rooms -->
-    <div class="flex space-x-4 mb-6">
+    <div class="flex space-x-4 mb-6 overflow-x-auto whitespace-nowrap">
       <button
         v-for="(room, index) in rooms"
         :key="index"
         @click="setActiveRoom(index)"
         :class="[
-          'px-6 py-3 rounded-md border font-medium', 
-          { 'bg-[#EBE5E0] text-[#1D2739]': activeRoom === index, 'bg-white text-[#1D2739] border-gray-100': activeRoom !== index }
-        ]"
+      'px-6 py-3 min-w-[120px] rounded-md border font-medium text-center',
+      { 'bg-[#EBE5E0] text-[#1D2739]': activeRoom === index, 
+        'bg-white text-[#1D2739] border-gray-100': activeRoom !== index }
+    ]"
       >
         {{ room.name }}
       </button>

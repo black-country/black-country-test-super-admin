@@ -3,7 +3,9 @@ import { io, Socket } from "socket.io-client";
 import { useUser } from "@/composables/auth/user";
 import { useGetRoomChats } from '@/composables/modules/messages/fetchRoomMessages';
 import { useCustomToast } from '@/composables/core/useCustomToast'
+import { useGetActiveChats } from '@/composables/modules/messages/fetchActiveChats'
 const { showToast } = useCustomToast();
+const { loadingActiveChats, activeChatsList } =  useGetActiveChats()
 
 export const useWebSocket = () => {
   const { token } = useUser();
@@ -70,7 +72,7 @@ export const useWebSocket = () => {
     //   }
     // });
     socket.value.on("message.new", (message: any) => {
-      // console.log("New message receivedssssssss:", message.message);
+      console.log("New message receivedssssssss:", message.message);
       if (message && !messages.value.some(msg => msg.id === message?.message?.id)) {
         const newMessage = {
           ...message.message, // Use only the message object

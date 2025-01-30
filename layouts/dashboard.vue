@@ -116,8 +116,7 @@
                     />
                    <span class="flex justify-between items w-full">
                     {{ item.name }}
-                    <!-- {{ activeChatsList }} -->
-                    <span v-if="item.name === 'Messages'" class="bg-[#BA110B] text-white text-xs rounded-full h-4 w-4 p-3 flex justify-center items-center">{{ totalUnreadMessages }}</span>
+                    <span v-if="item.name === 'Messages' && totalUnreadMessages !== 0" class="bg-[#BA110B] text-white text-xs rounded-full h-4 w-4 p-3 flex justify-center items-center">{{ totalUnreadMessages }}</span>
                    </span>
                   </NuxtLink>
                 </li>

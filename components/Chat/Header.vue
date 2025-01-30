@@ -1,6 +1,9 @@
 <template>
     <div class="flex items-center p-4 border-b-[0.5px] border-gray-100">
       <div class="flex items-center">
+      <div class="lg:hidden">
+        <slot name="backBtn"></slot>
+      </div>
         <img
           v-if="selectedUser?.participant?.profilePicture"
           :src="selectedUser?.participant?.profilePicture"

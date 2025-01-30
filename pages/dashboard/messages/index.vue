@@ -1,5 +1,4 @@
-<template>
-  <!-- component -->
+<!-- <template>
    <MessagingView>
   <div>
     <div class="w-full h-32" style="background-color: white"></div>
@@ -7,7 +6,7 @@
       <div class="h-screen">
         <div class="flex border-[0.5px] border-gray-25 rounded h-full">
 
-          <!-- Left -->
+
           <div class="w-[500px] border-[0.5px] flex flex-col">
             <div class="flex items-center space-x-2 p-2 relative">
 
@@ -31,18 +30,6 @@
               </svg>
             </button>
 
-            <!-- <ul>
-            <li v-for="user in filteredUserList" :key="user.id">
-              <span v-if="user.participant">
-                {{ user.participant.firstName }} {{ user.participant.lastName }}
-              </span>
-              <span v-else>
-                {{ user.firstName }} {{ user.lastName }}
-              </span>
-            </li>
-          </ul> -->
-
-
             <div 
           v-if="showMembersList" 
           class="fixed inset-0 z-50 bg-black/50"
@@ -58,8 +45,6 @@
                 <div @click="handleSelectedMember(member)" v-for="member in membersList" :key="member.id" class="flex cursor-pointer px-4 items-center gap-4 pt-3 first:pt-0">
                   <img src="@/assets/icons/avatar-placeholder.svg" :alt="member.name" class="w-10 h-10 rounded-full object-cover" />
                   <div>
-                    <!-- <h3 class="font-medium text-gray-900 text-sm">{{ member.name }}</h3>
-                    <p class="text-gray-500 text-sm">{{ member.role }}</p> -->
                     <h3 class="font-medium text-gray-900 text-sm">{{ `${member.firstName ?? "--"} ${member.lastName ?? "--"}` }}</h3>
                     <p class="text-gray-500 text-sm lowercase">{{ member?.group }}</p>
                   </div>
@@ -68,22 +53,6 @@
             </div>
           </div>
         </div>
-
-            <!-- <div v-if="showMembersList" class="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center p-4" @click="showMembersList = false">
-              <div class="bg-white absolute rounded-xl w-full max-w-md" @click.stop>
-                <div class="space-y-4 h-44 overflow-y-auto divide-y divide-gray-50 px-4">
-                  <div v-for="member in membersList" :key="member.id" class="flex w-full pt-3 items-center gap-4">
-                    <img :src="member.avatar" :alt="member.firstName" class="w-12 h-12 rounded-full object-cover" />
-                    <div>
-                      <h3 class="font-medium text-gray-900 text-sm">{{ `${member.firstName ?? "--"} ${member.lastName ?? "--"}` }}</h3>
-                      <p class="text-gray-500 text-sm lowercase">{{ member?.group }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-
-
               <button @click="toggleDropdown" class="bg-[#EAEAEA] p-3 rounded-lg  transition-colors">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M10.8333 3.33398H2.5" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round"
@@ -174,33 +143,16 @@
           </div>
 
 
-          <!-- Right -->
+
           <div class="w-full border-[0.5px] border-gray-100 flex flex-col">
 
-            <!-- Header -->
+
             <ChatHeader :selectedUser="selectedUser || roomChatsList" :isConnected="isConnected" />
   
 
-            <!-- Messages -->
+
             <div v-if="!loadingRoomChats" class="flex-1 overflow-auto" style="background-color: white">
               <div class="py-2 px-3">
-
-                <!-- <div class="flex justify-center mb-2">
-                  <div class="rounded py-2 px-4" style="background-color: white">
-                    <p class="text-sm uppercase">
-                      February 20, 2018
-                    </p>
-                  </div>
-                </div> -->
-<!-- 
-                <div class="flex justify-center mb-4">
-                  <div class="rounded py-2 px-4" style="background-color: #FCF4CB">
-                    <p class="text-xs">
-                      Messages to this chat and calls are now secured with end-to-end encryption. Tap for more info.
-                    </p>
-                  </div>
-                </div> -->
-<!-- {{ roomChatsList }} -->
                 <ChatWindow class="z-10" :roomChats="roomChatsList" :messages="messages" :selectedUser="selectedUser" />
               </div>
             </div>
@@ -223,7 +175,111 @@
     </div>
   </div>
 </MessagingView>
+</template> -->
+
+<template>
+  <MessagingView>
+    <div class="w-full min-h-screen flex flex-col bg-white">
+
+      <div class="w-full h-32 bg-white"></div>
+
+      <div class="relative -mt-32 flex flex-col md:flex-row h-screen overflow-hidden">
+
+        <div  class="w-full md:w-[320px] hidden lg:block lg:w-[350px] border-r border-gray-200 flex flex-col overflow-hidden">
+
+          <div class="flex items-center space-x-2 p-2 relative bg-gray-100">
+            <div class="relative flex items-center bg-white rounded-lg px-3 py-2 w-full shadow">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.386a1 1 0 11-1.414 1.415l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
+              </svg>
+              <input v-model="searchQuery" type="text" class="bg-white text-gray-600 text-sm ml-2 py-1.5 focus:outline-none w-full" placeholder="Search" />
+            </div>
+
+
+            <button @click="toggleMembers" class="p-3 rounded-lg bg-white shadow">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.8333 3.33398H2.5" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M9.16667 15.834H2.5" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M17.5001 15.834H14.1667" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M17.5001 9.58398H9.16675" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M17.4999 3.33398H15.8333" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+
+            <div 
+          v-if="showMembersList" 
+          class="fixed inset-0 z-50 bg-black/50"
+          @click="showMembersList = false"
+        >
+          <div 
+            class="absolute bg-white border-[0.5px] border-gray-100 rounded-xl lg:ml-72 mt-16 w-80"
+            :style="popoverStyle"
+            @click.stop
+          >
+            <div class="divide-y divide-gray-50">
+              <div class="space-y-4 max-h-96 divide-y divide-gray-100 overflow-y-auto py-4">
+                <div @click="handleSelectedMember(member)" v-for="member in membersList" :key="member.id" class="flex cursor-pointer px-4 items-center gap-4 pt-3 first:pt-0">
+                  <img src="@/assets/icons/users-avatar.svg" :alt="member.name" class="w-10 h-10 rounded-full object-cover" />
+                  <div>
+                    <h3 class="font-medium text-gray-900 text-sm">{{ `${member.firstName ?? "--"} ${member.lastName ?? "--"}` }}</h3>
+                    <p class="text-gray-500 text-sm lowercase">{{ member?.group }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+          </div>
+
+
+
+          <div class="flex-1 overflow-y-auto">
+            <ChatUserList :loading="loadingActiveChats" :users="activeChatsList" :filteredUsers="filteredUserList" @selectUser="selectUser" />
+          </div>
+
+
+          <section v-if="!loadingActiveChats && !activeChatsList.length" class="flex flex-col justify-center items-center space-y-2 mt-10 text-center">
+            <svg width="152" height="124" viewBox="0 0 152 124" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="76" cy="58" r="52" fill="#EAEAEA" />
+              <g filter="url(#filter0_b)">
+                <rect x="52" y="34" width="48" height="48" rx="24" fill="#9D9D9D" />
+                <path d="M85.9598 56.9707C86.0134 57.8009 86.0134 58.6607 85.9598 59.4909C85.6856 63.7332 82.3536 67.1125 78.1706 67.3905C76.7435 67.4854 75.2536 67.4852 73.8294 67.3905" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </g>
+            </svg>
+            <h2 class="text-gray-800">No conversations found</h2>
+            <p class="text-gray-500">You have not contacted anyone</p>
+          </section>
+        </div>
+
+
+        <div v-if="selectedUser && !openSideNav" class="flex-1 flex flex-col h-full border-l border-gray-200 bg-white">
+          <ChatHeader :selectedUser="selectedUser || roomChatsList" :isConnected="isConnected">
+            <template #backBtn>
+              <button type='button' @click="goBack">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+            </template>
+          </ChatHeader>
+
+
+          <div v-if="!loadingRoomChats" class="flex-1 overflow-y-auto p-3">
+            <ChatWindow :roomChats="roomChatsList" :messages="messages" :selectedUser="selectedUser" />
+          </div>
+
+
+          <section v-if="loadingRoomChats" class="flex-1 flex items-center justify-center">
+            <div class="animate-pulse w-3/4 bg-gray-300 rounded-lg h-96"></div>
+          </section>
+
+
+          <ChatMessageInput v-if="!openSideNav" v-model="newMessage" :isConnected="isConnected" :isSending="messageStatus === 'sending'" @sendMessage="sendMessageToUser" />
+        </div>
+      </div>
+    </div>
+  </MessagingView>
 </template>
+
+
 
 <script setup lang="ts">
   import { useGetMembers } from "@/composables/modules/member/fetch";
@@ -256,88 +312,18 @@ const {
   sendMessage
 } = useWebSocket();
 
+const openSideNav = ref(false)
+
+// Back button function (Returns to chat list on mobile)
+const goBack = () => {
+  selectedUser.value = null;
+  openSideNav.value = true; // Show chat list again on mobile
+  // router.push({ query: {} });
+};
+
 
 // Reactive variable for the search query
 const searchQuery = ref("");
-
-// Reactive variable for the search query
-// const searchQuery = ref("");
-
-// Computed property to filter users based on the search query
-// const filteredUserList = computed(() => {
-//   // Lowercase search query for case-insensitive comparison
-//   const query = searchQuery.value.trim().toLowerCase();
-
-//   if (!query) {
-//     // If search query is empty, return an empty array or all users, based on preference
-//     return [];
-//   }
-
-//   // Filter activeChatsList
-//   const filteredActiveChats = activeChatsList.value.filter((chat) => {
-//     const { firstName, lastName } = chat.participant;
-//     return (
-//       firstName.toLowerCase().includes(query) ||
-//       lastName.toLowerCase().includes(query)
-//     );
-//   });
-
-//   // Filter membersList
-//   const filteredMembers = membersList.value.filter((member) => {
-//     const { firstName, lastName } = member;
-//     return (
-//       firstName.toLowerCase().includes(query) ||
-//       lastName.toLowerCase().includes(query)
-//     );
-//   });
-
-//   // Combine both lists and return
-//   return [...filteredActiveChats, ...filteredMembers];
-// });
-
-// Computed property to filter users based on the search query
-// const filteredUserList = computed(() => {
-//   // Trim and lowercase search query for case-insensitive comparison
-//   const query = searchQuery.value.trim().toLowerCase();
-
-//   // If search query is empty, return all chats
-//   if (!query) {
-//     return [
-//       ...activeChatsList.value.map((chat) => ({
-//         ...chat,
-//         type: "activeChat",
-//       })),
-//       ...membersList.value.map((member) => ({
-//         ...member,
-//         type: "member",
-//       })),
-//     ];
-//   }
-
-//   // Filter activeChatsList
-//   const filteredActiveChats = activeChatsList.value.filter((chat) => {
-//     const { firstName, lastName } = chat.participant;
-//     return (
-//       firstName.toLowerCase().includes(query) ||
-//       lastName.toLowerCase().includes(query)
-//     );
-//   });
-
-//   // Filter membersList
-//   const filteredMembers = membersList.value.filter((member) => {
-//     const { firstName, lastName } = member;
-//     return (
-//       firstName.toLowerCase().includes(query) ||
-//       lastName.toLowerCase().includes(query)
-//     );
-//   });
-
-//   // Combine both lists and return
-//   return [
-//     ...filteredActiveChats.map((chat) => ({ ...chat, type: "activeChat" })),
-//     ...filteredMembers.map((member) => ({ ...member, type: "member" })),
-//   ];
-// });
 
 const filteredUserList = computed(() => {
   // Trim and lowercase search query for case-insensitive comparison
@@ -417,6 +403,7 @@ const messageStatus = ref('idle');
 const selectUser = (user: any) => {
   selectedUser.value = user;
   // Optionally update URL
+  openSideNav.value = false;
   router.push({ query: { userId: user?.participant?.id } });
 };
 
@@ -478,45 +465,6 @@ watch(activeChatsList, (newVal) => {
 
 }, { immediate: true });
 
-// Message handling
-// const sendMessageToUser = async (content: string) => {
-//   console.log(content, 'content here')
-//   // console.log(selectedUser.value, 'selected user here here')
-//   if (!selectedUser.value?.participant?.id || !selectedUser.value?.id || !isConnected.value) {
-//     console.error('Cannot send message: No recipient selected or not connected');
-//     return;
-//   }
-
-
-//   const userId =  selectedUser?.value?.participant?.id || route?.query?.userId || selectedUser?.value?.id
-
-//   if (!userId || !isConnected.value) {
-//     console.error('Cannot send message: No recipient selected or not connected');
-//     return;
-//   }
-
-//   messageStatus.value = 'sending';
-
-//   try {
-//     const socketPayload = {
-//       content,
-//       recipientId: userId,
-//       recipientType: selectedUser?.value?.participant?.role || selectedUser?.value?.role,
-//       messageType: 'private',
-//       room: userId // Include room ID if needed
-//     };
-
-//     console.log(socketPayload, 'socket payload')
-
-//     await sendMessage(socketPayload);
-//     messageStatus.value = 'sent';
-//     newMessage.value = ''; // Clear input after successful send
-//   } catch (error) {
-//     console.error('Failed to send message:', error);
-//     messageStatus.value = 'error';
-//     // Optionally show error notification to user
-//   }
-// };
 
 const sendMessageToUser = async (content: string) => {
   console.log(content, 'content here');
@@ -573,26 +521,6 @@ const scrollToBottom = () => {
 // Event handling
 const { $emitter } = useNuxtApp();
 
-// onMounted(() => {
-//   console.log(activeChatsList.value[0], 'active chats')
-//   // Handle URL parameters
-//   const userId = route.query.userId;
-//   if (userId && activeChatsList.value) {
-//     const user = activeChatsList.value.find(u => u.id === userId);
-//     if (user) {
-//       selectUser(user);
-//     }
-//   }
-
-//   // Set up event listeners
-//   $emitter.on('customEvent', async (payload: any) => {
-//     if (payload.data) {
-//       await getRoomChats(payload.data);
-//       scrollToBottom();
-//     }
-//   });
-// });
-
 onMounted(() => {
   console.log(activeChatsList.value, 'active chats (onMounted)');
   const userId = route.query.userId;
@@ -603,12 +531,7 @@ onMounted(() => {
       selectUser(user);
     }
   } 
-  // else {
-  //   const user = activeChatsList.value[0]
-  //   if (user) {
-  //     selectUser(user);
-  //   }
-  // }
+
 
   $emitter.on('customEvent', async (payload: any) => {
     if (payload.data) {

@@ -28,6 +28,7 @@ export const useEditProperty = () => {
     agentId: useStorage('property_agentId', null),
     rules: useStorage('property_rules', []),
     questions: useStorage('property_questions', []),
+    additionalCharges: useStorage('additional_charges', []),
     status: ref(null), // Add status field to payload for dynamic setting
   };
 
@@ -74,8 +75,8 @@ export const useEditProperty = () => {
     payload.rooms.value = data.rooms || [];
     payload.agentId.value = data.agent.id || "";
     payload.rules.value = data.rules || [];
-    payload.questions.value = data.preScreeningQuestions
-     || [];
+    payload.questions.value = data.preScreeningQuestions || [];
+    payload.additionalCharges.value = data.additionalCharges || [];
   };
 
   // Function to clean and filter rooms and payload data
@@ -127,6 +128,7 @@ export const useEditProperty = () => {
       agentId: payload.agentId.value,
       rules: payload.rules.value,
       questions: payload.questions.value,
+      additionalCharges: payload.additionalCharges.value,
       status, // Adding the status to the payload
     };
   };

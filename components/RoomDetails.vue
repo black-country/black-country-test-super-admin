@@ -2,31 +2,23 @@
   <main>
     <div class="container mx-auto p-4">
       <div class="flex space-x-2 mb-4 overflow-x-auto scrollbar-hide">
-        <button
-          v-for="room in rooms"
-          :key="room.id"
-          @click="setActiveRoom(room.name)"
+        <button v-for="room in rooms" :key="room.id" @click="setActiveRoom(room.name)"
           :class="{ 'bg-[#EBE5E0]': activeRoom === room.name, 'bg-white': activeRoom !== room.name }"
-          class="px-4 py-2 border-[0.5px] text-[#1D2739] text-sm rounded-lg flex-shrink-0"
-        >
+          class="px-4 py-2 border-[0.5px] text-[#1D2739] text-sm rounded-lg flex-shrink-0">
           {{ room.name }}
         </button>
       </div>
       <div class="mb-4 flex justify-between items-center">
         <h3 class="text-sm">Is the room furnished?</h3>
         <div class="flex space-x-2">
-          <button
-            @click="setFurnishedStatus(true)"
+          <button @click="setFurnishedStatus(true)"
             :class="{ 'bg-gray-700 text-white': isRoomFurnished, 'bg-white border-gray-300': !isRoomFurnished }"
-            class="px-6 py-2 text-sm rounded-md"
-          >
+            class="px-6 py-2 text-sm rounded-md">
             Yes
           </button>
-          <button
-            @click="setFurnishedStatus(false)"
+          <button @click="setFurnishedStatus(false)"
             :class="{ 'bg-gray-700 text-white': !isRoomFurnished, 'bg-white border-gray-300': isRoomFurnished }"
-            class="px-6 py-2 text-sm rounded-md"
-          >
+            class="px-6 py-2 text-sm rounded-md">
             No
           </button>
         </div>
@@ -34,23 +26,13 @@
       <div class="mb-4">
         <h3 class="mb-2">Interior area</h3>
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          <label
-            v-for="item in filteredRoomFeatures"
-            :key="item"
-            :for="item"
-            class="flex text-sm block cursor-pointer pl-3 py-3.5 items-start gap-4 rounded-lg border transition"
-            :class="{
+          <label v-for="item in filteredRoomFeatures" :key="item" :for="item"
+            class="flex text-sm block cursor-pointer pl-3 py-3.5 items-start gap-4 rounded-lg border transition" :class="{
               'bg-white border-2 border-[#5B8469]': isSelected(item, 'interior'),
               'border-gray-200': !isSelected(item, 'interior')
-            }"
-          >
-            <input
-              type="checkbox"
-              class="hidden rounded border-gray-300"
-              :id="item"
-              :checked="isSelected(item, 'interior')"
-              @change="toggleSelection(item, 'interior')"
-            />
+            }">
+            <input type="checkbox" class="hidden rounded border-gray-300" :id="item"
+              :checked="isSelected(item, 'interior')" @change="toggleSelection(item, 'interior')" />
             <div class="flex items-center gap-x-2">
               <img src="@/assets/img/roomBg.png" alt="Icon" class="w-6 h-6" />
               <span class="text-sm">{{ item }}</span>
@@ -59,30 +41,18 @@
         </div>
       </div>
       <div v-if="showManualInput" class="mt-4">
-        <input
-          v-model="manualInput"
-          @keyup.enter="addManualItem"
-          type="text"
-          placeholder="e.g Basement"
-          class="mt-1 block w-full bg-[#E4E7EC] text-sm px-3 py-3.5 border-[0.5px] outline-none border-gray-50 rounded-md"
-        />
-        <button
-          @click="addManualItem"
-          class="px-4 py-2 flex gap-x-2 items-center justify-center"
-        >
+        <input v-model="manualInput" @keyup.enter="addManualItem" type="text" placeholder="e.g Basement"
+          class="mt-1 block w-full bg-[#E4E7EC] text-sm px-3 py-3.5 border-[0.5px] outline-none border-gray-50 rounded-md" />
+        <button @click="addManualItem" class="px-4 py-2 flex gap-x-2 items-center justify-center">
           Add manually
         </button>
       </div>
       <div class="mb-4">
         <h3 class="text-sm">When is the room available?</h3>
         <div class="flex space-x-2 pt-3">
-          <button
-            v-for="option in availabilityOptions"
-            :key="option.value"
-            @click="setAvailability(option.value)"
+          <button v-for="option in availabilityOptions" :key="option.value" @click="setAvailability(option.value)"
             :class="{ 'border-[#5B8469] text-[#5B8469] border-2 bg-white': availability === option.value, 'border-gray-200 border': availability !== option.value }"
-            class="rounded-lg text-sm px-6 py-2 cursor-pointer"
-          >
+            class="rounded-lg text-sm px-6 py-2 cursor-pointer">
             {{ option.label }}
           </button>
         </div>
@@ -93,81 +63,44 @@
         <div class="w-full mt-4">
           <label for="rentAmount" class="block text-sm font-medium mb-2">Set prices</label>
           <div class="flex items-center bg-[#E4E7EC] border-[0.5px] border-gray-50 rounded-md px-3 py-2">
-            <select
-              v-model="rentFrequency"
-              class="bg-transparent py-1.5 text-sm outline-none border-none pr-2"
-            >
+            <select v-model="rentFrequency" class="bg-transparent py-1.5 text-sm outline-none border-none pr-2">
               <option value="monthly">Monthly</option>
               <option value="annual">Yearly</option>
               <option value="weekly">Weekly</option>
             </select>
-            <!-- <input
-              type="number"
-              v-model.number="rentAmount"
-              placeholder="e.g 1000"
-              class="bg-transparent text-sm outline-none flex-grow"
-            /> -->
-            <!-- <input
-            id="rentAmount"
-            type="text"
-            v-model="formattedRentAmount"
-            placeholder="e.g. 1,000"
-            class="bg-transparent text-sm outline-none flex-grow"
-            @input="onInput"
-            @keydown="filterInput"
-            @focus="clearFormatting"
-            @blur="applyFormatting"
-      
-          /> -->
-          <input
-  id="rentAmount"
-  type="text"
-  v-model="formattedRentAmount"
-  placeholder="e.g. 1,000"
-  class="bg-transparent text-sm outline-none flex-grow"
-  @input="onInput"
-/>
+            <input id="rentAmount" type="text" v-model="formattedRentAmount" placeholder="e.g. 1,000"
+              class="bg-transparent text-sm outline-none flex-grow" @input="onInput" />
           </div>
         </div>
-        <div class="space-y-4 mt-3">
-          <CoreToggleSwitch
-            id="applyAll"
-            label="Apply these responses above to all remaining rooms"
-            @change="applyResponsesToAllRooms"
-            v-model="applyToAllRooms"
+        <div class="pb-4">
+          <PropertyAdditionalCharges
+            v-model:agentFee="agentFee"
+            v-model:legalFee="legalFee"
+            v-model:cautionFee="cautionFee"
+            v-model:serviceCharge="serviceCharge"
+            v-model:cautionEnabled="isCautionEnabled"
+            v-model:serviceEnabled="isServiceEnabled"
           />
-          <!-- <CoreToggleSwitch
-            v-if="(!isAnyRoomMaster || setAsMasterBedroom)" 
-            id="masterBedroom"
-            label="Set as master's bedroom"
-            v-model="setAsMasterBedroom"
-          /> -->
-          <CoreToggleSwitch
-          id="masterBedroom"
-          label="Set as master's bedroom"
-          v-model="setAsMasterBedroom"
-        />
+  
+        </div>
+        <div class="space-y-4 mt-3">
+          <CoreToggleSwitch id="applyAll" label="Apply these responses above to all remaining rooms"
+            @change="applyResponsesToAllRooms" v-model="applyToAllRooms" />
+          <CoreToggleSwitch id="masterBedroom" label="Set as master's bedroom" v-model="setAsMasterBedroom" />
         </div>
       </div>
 
       <div v-else-if="availability === 'unavailable'" class="mt-4">
-     <div class="mt-4">
-      <label class="block text-sm font-medium">Enter occupant’s name</label>
-      <input
-        type="text"
-        v-model="occupantsName"
-        placeholder="e.g Rita"
-        class="mt-1 block w-full bg-[#E4E7EC] text-sm px-3 py-3.5 border-[0.5px] outline-none border-gray-50 rounded-md"
-      />
-     </div>
+        <div class="mt-4">
+          <label class="block text-sm font-medium">Enter occupant’s name</label>
+          <input type="text" v-model="occupantsName" placeholder="e.g Rita"
+            class="mt-1 block w-full bg-[#E4E7EC] text-sm px-3 py-3.5 border-[0.5px] outline-none border-gray-50 rounded-md" />
+        </div>
 
         <div class="w-full mt-4">
           <label class="block text-sm font-medium mb-2">Set price</label>
           <div class="flex items-center bg-[#E4E7EC] border-[0.5px] border-gray-50 rounded-md px-3 py-2">
-            <select
-              v-model="rentFrequency"
-              class="bg-transparent py-1.5 text-sm outline-none border-none pr-2"
-            >
+            <select v-model="rentFrequency" class="bg-transparent py-1.5 text-sm outline-none border-none pr-2">
               <option value="monthly">Monthly</option>
               <option value="annual">Yearly</option>
               <option value="weekly">Weekly</option>
@@ -185,103 +118,77 @@
             class="bg-transparent text-sm outline-none flex-grow"
             @input="onInput"
           /> -->
-          <input
-  id="rentAmount"
-  type="text"
-  v-model="formattedRentAmount"
-  placeholder="e.g. 1,000"
-  class="bg-transparent text-sm outline-none flex-grow"
-  @input="onInput"
-/>
+            <input id="rentAmount" type="text" v-model="formattedRentAmount" placeholder="e.g. 1,000"
+              class="bg-transparent text-sm outline-none flex-grow" @input="onInput" />
           </div>
         </div>
 
-        <div class="space-y-4 mt-3">
-          <CoreToggleSwitch
-            id="applyAll"
-            label="Apply these responses above to all remaining rooms"
-            @change="applyResponsesToAllRooms"
-            v-model="applyToAllRooms"
+        <div class="py-4">
+          <PropertyAdditionalCharges
+            v-model:agentFee="agentFee"
+            v-model:legalFee="legalFee"
+            v-model:cautionFee="cautionFee"
+            v-model:serviceCharge="serviceCharge"
+            v-model:cautionEnabled="isCautionEnabled"
+            v-model:serviceEnabled="isServiceEnabled"
           />
+  
+        </div>
+
+        <div class="space-y-4 mt-3">
+          <CoreToggleSwitch id="applyAll" label="Apply these responses above to all remaining rooms"
+            @change="applyResponsesToAllRooms" v-model="applyToAllRooms" />
           <!-- <CoreToggleSwitch
           v-if="(!isAnyRoomMaster || setAsMasterBedroom)" 
             id="masterBedroom"
             label="Set as master's bedroom"
             v-model="setAsMasterBedroom"
           /> -->
-          <CoreToggleSwitch
-            id="masterBedroom"
-            label="Set as master's bedroom"
-            v-model="setAsMasterBedroom"
-          />
+          <CoreToggleSwitch id="masterBedroom" label="Set as master's bedroom" v-model="setAsMasterBedroom" />
         </div>
       </div>
 
       <div v-else-if="availability === 'available_from_date'" class="mt-4">
         <label class="block text-sm font-medium">Enter availability date</label>
-        <input
-          v-model="availabilityDate"
-          :min="minDate"
-          type="date"
-          class="mt-1 block w-full bg-[#E4E7EC] text-sm px-3 py-3.5 border-[0.5px] outline-none border-gray-50 rounded-md"
-        />
+        <input v-model="availabilityDate" :min="minDate" type="date"
+          class="mt-1 block w-full bg-[#E4E7EC] text-sm px-3 py-3.5 border-[0.5px] outline-none border-gray-50 rounded-md" />
 
-     <div class="mt-4">
-      <label class="block text-sm font-medium">Enter occupant’s name</label>
-      <input
-        type="text"
-        v-model="occupantsName"
-        placeholder="e.g Rita"
-        class="mt-1 block w-full bg-[#E4E7EC] text-sm px-3 py-3.5 border-[0.5px] outline-none border-gray-50 rounded-md"
-      />
-     </div>
+        <div class="mt-4">
+          <label class="block text-sm font-medium">Enter occupant’s name</label>
+          <input type="text" v-model="occupantsName" placeholder="e.g Rita"
+            class="mt-1 block w-full bg-[#E4E7EC] text-sm px-3 py-3.5 border-[0.5px] outline-none border-gray-50 rounded-md" />
+        </div>
 
         <div class="w-full mt-4">
-          <label class="block text-sm font-medium mb-2">Set price</label>
+          <label class="block text-sm font-medium mb-2">Rent Fee</label>
           <div class="flex items-center bg-[#E4E7EC] border-[0.5px] border-gray-50 rounded-md px-3 py-2">
-            <select
-              v-model="rentFrequency"
-              class="bg-transparent py-1.5 text-sm outline-none border-none pr-2"
-            >
+            <select v-model="rentFrequency" class="bg-transparent py-1.5 text-sm outline-none border-none pr-2">
               <option value="monthly">Monthly</option>
               <option value="annual">Yearly</option>
               <option value="weekly">Weekly</option>
             </select>
-            <!-- <input
-              type="number"
-              v-model.number="rentAmount"
-              placeholder="e.g 1000"
-              class="bg-transparent text-sm outline-none flex-grow"
-            /> -->
-            <!-- <input
-            type="text"
-            v-model="formattedRentAmount"
-            placeholder="e.g 1,000"
-            class="bg-transparent text-sm outline-none flex-grow"
-            @input="onInput"
-          /> -->
-          <input
-  id="rentAmount"
-  type="text"
-  v-model="formattedRentAmount"
-  placeholder="e.g. 1,000"
-  class="bg-transparent text-sm outline-none flex-grow"
-  @input="onInput"
-/>
+            <input id="rentAmount" type="text" v-model="formattedRentAmount" placeholder="e.g. 1,000"
+              class="bg-transparent text-sm outline-none flex-grow" @input="onInput" />
           </div>
         </div>
+
+        <div class="py-4">
+          <PropertyAdditionalCharges
+            v-model:agentFee="agentFee"
+            v-model:legalFee="legalFee"
+            v-model:cautionFee="cautionFee"
+            v-model:serviceCharge="serviceCharge"
+            v-model:cautionEnabled="isCautionEnabled"
+            v-model:serviceEnabled="isServiceEnabled"
+          />
+  
+        </div>
+
+        <!-- <PropertyAdditionalCharges /> -->
         <div class="space-y-4 mt-3">
-          <CoreToggleSwitch
-            id="applyAll"
-            label="Apply these responses above to all remaining rooms"
-            @change="applyResponsesToAllRooms"
-            v-model="applyToAllRooms"
-          />
-          <CoreToggleSwitch
-            id="masterBedroom"
-            label="Set as master's bedroom"
-            v-model="setAsMasterBedroom"
-          />
+          <CoreToggleSwitch id="applyAll" label="Apply these responses above to all remaining rooms"
+            @change="applyResponsesToAllRooms" v-model="applyToAllRooms" />
+          <CoreToggleSwitch id="masterBedroom" label="Set as master's bedroom" v-model="setAsMasterBedroom" />
         </div>
       </div>
       <slot name="action-buttons"></slot>
@@ -336,6 +243,14 @@ const minDate = computed(() => {
   return today.toISOString().split('T')[0];
 });
 
+const agentFee = ref('80000');
+const legalFee = ref('80000');
+const cautionFee = ref('80000');
+const serviceCharge = ref('80000');
+const isCautionEnabled = ref(false);
+const isServiceEnabled = ref(false);
+const serviceFrequency = ref('Monthly');
+
 // Reactive state
 const activeRoom = ref('Room 1');
 const rooms = ref([]);
@@ -367,17 +282,17 @@ const initializeRoomData = () => {
   roomData.value = props.payload.rooms.value.length
     ? [...props.payload.rooms.value]
     : Array.from({ length: props.payload.bedroomCount.value }, (_, i) => ({
-        name: `Room ${i + 1}`,
-        availability: 'available_now',
-        availableFrom: null,
-        occupantName: '',
-        isMaster: false,
-        rentAmount: '',
-        rentFrequency: 'monthly',
-        isFurnished: true,
-        features: [],
-        images: []
-      }));
+      name: `Room ${i + 1}`,
+      availability: 'available_now',
+      availableFrom: null,
+      occupantName: '',
+      isMaster: false,
+      rentAmount: '',
+      rentFrequency: 'monthly',
+      isFurnished: true,
+      features: [],
+      images: []
+    }));
   rooms.value = roomData.value;
 };
 
@@ -447,7 +362,7 @@ const formattedRentAmount = computed({
   set(value) {
     rentAmount.value = unformatCurrency(value);
   }
-}); 
+});
 
 // Manually add an item to the room features list
 const addManualItem = () => {
@@ -587,6 +502,7 @@ onMounted(() => {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }

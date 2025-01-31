@@ -84,4 +84,8 @@ export const property_api = {
     }      
     return GATEWAY_ENDPOINT.get(url);
   },
+  $_fetch_additional_charges: (category: string) => {
+    const url = `/additional-charges?category=${category}`;
+    return GATEWAY_ENDPOINT.get(url);
+  },
 };

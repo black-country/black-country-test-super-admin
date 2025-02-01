@@ -17,9 +17,7 @@
       <div class="rounded-lg space-y-4">
         <CardsUserStats v-if="!loading && Object.keys(engagementMetricsObj)?.length" :metricsObj="engagementMetricsObj"
           :loading="loading" />
-        <section v-else-if="loading">
-          <div class="animate-pulse h-72 w-full bg-gray-50 rounded flex space-x-4"></div>
-        </section>
+    c
         <CardsDownloadStats v-if="!loading && Object.keys(engagementMetricsObj)?.length" :metricsObj="engagementMetricsObj"
         :loading="loading"  />
         <section v-else-if="loading">

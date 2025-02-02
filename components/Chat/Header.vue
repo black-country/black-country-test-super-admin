@@ -34,7 +34,7 @@
         </h2> -->
       </div>
       <div class="ml-auto flex items-center space-x-4">
-        <button
+        <button @click="copyToClipboard(selectedUser.participant?.phoneNumber)"
           class="p-2 rounded-full transition-colors"
         >
         <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -67,6 +67,8 @@
   </template>
   
   <script setup lang="ts">
+  import { useClipboard } from '@/composables/core/useCopyToClipboard'
+  const { copied, copyToClipboard } = useClipboard();
   const props = defineProps({
     selectedUser: {
       type: Object

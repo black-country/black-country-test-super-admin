@@ -8,6 +8,7 @@
         </div>
 
        <section>
+        <!-- {{ tenantsList[0] }} -->
         <div v-if="!loadingTenants" class="space-y-1">
           <CoreGeneralSelector
             v-model="selectedItem"

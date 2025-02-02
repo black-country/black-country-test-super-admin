@@ -46,9 +46,9 @@ export const useGetTenantsWithActiveRentals = () => {
         loadingTenants.value = true;
         try {
             const res = await $_fetch_tenant_with_active_rental_application(houseId.value, metadata.value, filters.value) as any;
-
+           console.log(res, 'tres here')
             if (res.type !== 'ERROR') {
-                tenantsList.value = res?.data?.result ?? [];
+                tenantsList.value = res?.data?.result;
                 metadata.value = res?.data?.metadata;
             }
         } catch (error) {

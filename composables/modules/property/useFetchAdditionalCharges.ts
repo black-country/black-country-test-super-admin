@@ -1,6 +1,6 @@
 import { property_api } from '@/api_factory/modules/property'
 
-const category = ref('rental') as any
+const category = ref('rentals') as any
 
 export const useGetAdditionalCharges = () => {
     const loading = ref(false)
@@ -12,7 +12,7 @@ export const useGetAdditionalCharges = () => {
     const getAdditionalCharges = async () => {
         loading.value = true
 
-        const res = await $_fetch_additional_charges(category) as any
+        const res = await $_fetch_additional_charges(category.value) as any
 
         if (res.type !== 'ERROR') {
             additionalChargesList.value = res.data ?? []

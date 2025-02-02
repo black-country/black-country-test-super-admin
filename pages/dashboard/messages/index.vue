@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
    <MessagingView>
   <div>
     <div class="w-full h-32" style="background-color: white"></div>
@@ -41,9 +41,10 @@
             @click.stop
           >
             <div class="divide-y divide-gray-50">
-              <div class="space-y-4 max-h-96 divide-y divide-gray-100 overflow-y-auto py-4">
+              <div class="space-y-4 max-h-96 divide-y divide-gray-100 overflow-y-auto scrollbar-visible py-4">
                 <div @click="handleSelectedMember(member)" v-for="member in membersList" :key="member.id" class="flex cursor-pointer px-4 items-center gap-4 pt-3 first:pt-0">
-                  <img src="@/assets/icons/avatar-placeholder.svg" :alt="member.name" class="w-10 h-10 rounded-full object-cover" />
+                  <img src="@/assets/icons/users-avatar.svg" :alt="member.name" class="w-10 h-10 rounded-full object-cover" />
+                  <!-- <img src="@/assets/icons/avatar-placeholder.svg" :alt="member.name" class="w-10 h-10 rounded-full object-cover" /> -->
                   <div>
                     <h3 class="font-medium text-gray-900 text-sm">{{ `${member.firstName ?? "--"} ${member.lastName ?? "--"}` }}</h3>
                     <p class="text-gray-500 text-sm lowercase">{{ member?.group }}</p>
@@ -151,13 +152,14 @@
   
 
 
-            <div v-if="!loadingRoomChats" class="flex-1 overflow-auto" style="background-color: white">
+            <div v-if="!loadingRoomChats && roomChatsList.length" class="flex-1 overflow-auto" style="background-color: white">
               <div class="py-2 px-3">
+                {{ roomChatsList }}
                 <ChatWindow class="z-10" :roomChats="roomChatsList" :messages="messages" :selectedUser="selectedUser" />
               </div>
             </div>
 
-            <section class="flex-1 overflow-auto" v-if="loadingRoomChats">
+            <section class="flex-1 overflow-auto" v-else-if="loadingRoomChats && !roomChatsList.length">
               <div class="rounded-md p-4 w-full mx-auto">
                 <div class="animate-pulse flex space-x-4">
                   <div class="flex-1 space-y-6 py-1">
@@ -167,6 +169,81 @@
               </div>
             </section>
 
+            <div
+            v-else
+            class="flex-1 flex py-20 items-center justify-center"
+          >
+            <div
+              class="flex justify-center items-center flex-col w-full gap-y-4"
+            >
+              <svg
+                width="152"
+                height="124"
+                viewBox="0 0 152 124"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="76" cy="58" r="52" fill="#EAEAEA" />
+                <circle cx="21" cy="25" r="5" fill="#BDBDBD" />
+                <circle cx="18" cy="109" r="7" fill="#BDBDBD" />
+                <circle cx="145" cy="41" r="7" fill="#BDBDBD" />
+                <circle cx="134" cy="14" r="4" fill="#BDBDBD" />
+                <g filter="url(#filter0_b_6853_116899)">
+                  <rect
+                    x="52"
+                    y="34"
+                    width="48"
+                    height="48"
+                    rx="24"
+                    fill="#9D9D9D"
+                  />
+                  <path
+                    d="M66.5299 60.7696C66.3173 62.1636 67.268 63.1312 68.4321 63.6134C72.8948 65.4622 79.1052 65.4622 83.5679 63.6134C84.732 63.1312 85.6827 62.1636 85.4701 60.7696C85.3394 59.9129 84.6932 59.1995 84.2144 58.5029C83.5873 57.5793 83.525 56.5718 83.5249 55.5C83.5249 51.3579 80.1559 48 76 48C71.8441 48 68.4751 51.3579 68.4751 55.5C68.475 56.5718 68.4127 57.5793 67.7856 58.5029C67.3068 59.1995 66.6606 59.9129 66.5299 60.7696Z"
+                    stroke="white"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M72 65C72.4585 66.7252 74.0755 68 76 68C77.9245 68 79.5415 66.7252 80 65"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </g>
+                <defs>
+                  <filter
+                    id="filter0_b_6853_116899"
+                    x="44"
+                    y="26"
+                    width="64"
+                    height="64"
+                    filterUnits="userSpaceOnUse"
+                    color-interpolation-filters="sRGB"
+                  >
+                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                    <feGaussianBlur in="BackgroundImageFix" stdDeviation="4" />
+                    <feComposite
+                      in2="SourceAlpha"
+                      operator="in"
+                      result="effect1_backgroundBlur_6853_116899"
+                    />
+                    <feBlend
+                      mode="normal"
+                      in="SourceGraphic"
+                      in2="effect1_backgroundBlur_6853_116899"
+                      result="shape"
+                    />
+                  </filter>
+                </defs>
+              </svg>
+              <p class="text-[#1D2739] font-medium">
+                Start a conversation
+              </p>
+            </div>
+            </div>
+
             <ChatMessageInput v-model="newMessage" :isConnected="isConnected" :isSending="messageStatus === 'sending'"
               @sendMessage="sendMessageToUser" />
           </div>
@@ -175,9 +252,9 @@
     </div>
   </div>
 </MessagingView>
-</template> -->
+</template>
 
-<template>
+<!-- <template>
   <MessagingView>
     <div class="w-full min-h-screen flex flex-col bg-white">
 
@@ -196,39 +273,38 @@
             </div>
 
 
-            <button @click="toggleMembers" class="p-3 rounded-lg bg-white shadow">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10.8333 3.33398H2.5" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                <path d="M9.16667 15.834H2.5" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                <path d="M17.5001 15.834H14.1667" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                <path d="M17.5001 9.58398H9.16675" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                <path d="M17.4999 3.33398H15.8333" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <button @click="toggleMembers" class="rounded-lg bg-white shadow">
+              <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="44" height="44" rx="8" fill="#EAEAEA"/>
+              <path d="M22 15.332V28.6654" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M15.332 22H28.6654" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </button>
 
             <div 
-          v-if="showMembersList" 
-          class="fixed inset-0 z-50 bg-black/50"
-          @click="showMembersList = false"
-        >
-          <div 
-            class="absolute bg-white border-[0.5px] border-gray-100 rounded-xl lg:ml-72 mt-16 w-80"
-            :style="popoverStyle"
-            @click.stop
-          >
-            <div class="divide-y divide-gray-50">
-              <div class="space-y-4 max-h-96 divide-y divide-gray-100 overflow-y-auto py-4">
-                <div @click="handleSelectedMember(member)" v-for="member in membersList" :key="member.id" class="flex cursor-pointer px-4 items-center gap-4 pt-3 first:pt-0">
-                  <img src="@/assets/icons/users-avatar.svg" :alt="member.name" class="w-10 h-10 rounded-full object-cover" />
-                  <div>
-                    <h3 class="font-medium text-gray-900 text-sm">{{ `${member.firstName ?? "--"} ${member.lastName ?? "--"}` }}</h3>
-                    <p class="text-gray-500 text-sm lowercase">{{ member?.group }}</p>
-                  </div>
-                </div>
-              </div>
+    v-if="showMembersList" 
+    class="fixed inset-0 z-50 bg-black/50"
+    @click="showMembersList = false"
+  >
+    <div 
+      class="absolute bg-white border-[0.5px] border-gray-100 rounded-xl lg:ml-72 mt-16 w-80"
+      :style="popoverStyle"
+      @click.stop
+    >
+      <div class="divide-y divide-gray-50">
+        <div class="space-y-4 max-h-96 divide-y divide-gray-100 overflow-y-scroll scrollbar-visible py-4">
+          <div @click="handleSelectedMember(member)" v-for="member in membersList" :key="member.id" class="flex cursor-pointer px-4 items-center gap-4 pt-3 first:pt-0">
+            <img src="@/assets/icons/users-avatar.svg" :alt="member.name" class="w-10 h-10 rounded-full object-cover" />
+            <div>
+              <h3 class="font-medium text-gray-900 text-sm">{{ `${member.firstName ?? "--"} ${member.lastName ?? "--"}` }}</h3>
+              <p class="text-gray-500 text-sm lowercase">{{ member?.group }}</p>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
           </div>
 
 
@@ -279,7 +355,7 @@
   </MessagingView>
 </template>
 
-
+-->
 
 <script setup lang="ts">
   import { useGetMembers } from "@/composables/modules/member/fetch";
@@ -584,4 +660,25 @@ watch(() => route.query.userId, (oldVal, newVal) => {
 .backdrop-blur {
   backdrop-filter: blur(4px);
 }
-</style>
+
+.scrollbar-visible::-webkit-scrollbar {
+  width: 8px;
+  background-color: #f5f5f5;
+}
+
+.scrollbar-visible::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+.scrollbar-visible::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.scrollbar-visible {
+  /* For Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #5B8469 #f5f5f5;
+}
+</style> 

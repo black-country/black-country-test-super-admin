@@ -35,7 +35,7 @@ const persistedPayload = {
   agentId: useStorage('property_agentId', ""),
   rules: useStorage('property_rules', []),
   questions: useStorage('property_questions', []),
-  additionalCharges: useStorage('additional_charges', []),
+  // additionalCharges: useStorage('additional_charges', []),
 };
 
 const runtimePayload = {
@@ -60,7 +60,7 @@ const runtimePayload = {
   agentId: ref(""),
   rules: ref([]),
   questions: ref([]),
-  additionalCharges: ([])
+  // additionalCharges: ([])
 };
 
 // Watch for changes to runtimePayload and update persistedPayload accordingly

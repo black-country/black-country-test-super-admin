@@ -1,12 +1,10 @@
 <!-- <script setup lang="ts">
 import { useGetAdditionalCharges } from '@/composables/modules/property/useFetchAdditionalCharges'
-  import { use_create_property } from '@/composables/modules/property/create'
 import { ref, watch, defineProps, computed, onMounted } from 'vue';
-const { payload, resetPayload, create_property, saving,  save_property, persistedPayload } = use_create_property()
 
 const { loading, additionalChargesList } = useGetAdditionalCharges();
 const props = defineProps({
-    payload: Object,
+    runtimePayload: Object,
 });
 
 const isCautionEnabled = ref(false);
@@ -39,14 +37,15 @@ const mappedAdditionalCharges = computed(() => {
         });
 });
 
-const storedAdditionalCharges = JSON.parse(localStorage.getItem("additional_charges")) || [];
+const storedAdditionalCharges = JSON.parse(localStorage.getItem("additional_charges") || "[]");
 
-const localAdditionalCharges = (Array.isArray(payload?.additionalCharges?.value) && payload.additionalCharges.value.length > 0)
-  ? payload.additionalCharges.value
+const localAdditionalCharges = (Array.isArray(props.runtimePayload?.additionalCharges?.value) && props.runtimePayload.additionalCharges.value.length > 0)
+  ? props.runtimePayload.additionalCharges.value
   : storedAdditionalCharges;
 
 watch(mappedAdditionalCharges, (newValue) => {
-    props.payload.additionalCharges.value = newValue;
+    props.runtimePayload.additionalCharges.value = newValue;
+    localStorage.setItem("additional_charges", JSON.stringify(newValue));
 }, { deep: true });
 </script>
 
@@ -110,12 +109,10 @@ watch(mappedAdditionalCharges, (newValue) => {
 
 <script setup lang="ts">
 import { useGetAdditionalCharges } from '@/composables/modules/property/useFetchAdditionalCharges'
-import { ref, watch, defineProps, computed, onMounted } from 'vue';
+import { ref, watch, defineEmits, computed } from 'vue';
 
 const { loading, additionalChargesList } = useGetAdditionalCharges();
-const props = defineProps({
-    runtimePayload: Object,
-});
+const emit = defineEmits(["update:additionalCharges"]);
 
 const isCautionEnabled = ref(false);
 const isServiceEnabled = ref(false);
@@ -147,15 +144,8 @@ const mappedAdditionalCharges = computed(() => {
         });
 });
 
-const storedAdditionalCharges = JSON.parse(localStorage.getItem("additional_charges") || "[]");
-
-const localAdditionalCharges = (Array.isArray(props.runtimePayload?.additionalCharges?.value) && props.runtimePayload.additionalCharges.value.length > 0)
-  ? props.runtimePayload.additionalCharges.value
-  : storedAdditionalCharges;
-
 watch(mappedAdditionalCharges, (newValue) => {
-    props.runtimePayload.additionalCharges.value = newValue;
-    localStorage.setItem("additional_charges", JSON.stringify(newValue));
+    emit("update:additionalCharges", newValue);
 }, { deep: true });
 </script>
 

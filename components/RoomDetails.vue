@@ -58,7 +58,6 @@
         </div>
       </div>
 
-      <!-- Conditional Fields Based on Availability -->
       <div v-if="availability === 'available_now'" class="mt-4 space-y-4">
         <div class="w-full mt-4">
           <label for="rentAmount" class="block text-sm font-medium mb-2">Set prices</label>
@@ -74,7 +73,7 @@
         </div>
         <div class="pb-4">
           <PropertyAdditionalCharges
-            :runtimePayload="payload"
+            @update:additionalCharges="handleAdditionalChargesUpdateForAvailableRoom"
           />
   
         </div>
@@ -100,19 +99,6 @@
               <option value="annual">Yearly</option>
               <option value="weekly">Weekly</option>
             </select>
-            <!-- <input
-              type="number"
-              v-model.number="rentAmount"
-              placeholder="e.g 1000"
-              class="bg-transparent text-sm outline-none flex-grow"
-            /> -->
-            <!-- <input
-            type="text"
-            v-model="formattedRentAmount"
-            placeholder="e.g 1,000"
-            class="bg-transparent text-sm outline-none flex-grow"
-            @input="onInput"
-          /> -->
             <input id="rentAmount" type="text" v-model="formattedRentAmount" placeholder="e.g. 1,000"
               class="bg-transparent text-sm outline-none flex-grow" @input="onInput" />
           </div>
@@ -120,7 +106,7 @@
 
         <div class="py-4">
           <PropertyAdditionalCharges
-            :runtimePayload="payload"
+            @update:additionalCharges="handleAdditionalChargesUpdateForUnavailableRoom"
           />
   
         </div>
@@ -128,12 +114,6 @@
         <div class="space-y-4 mt-3">
           <CoreToggleSwitch id="applyAll" label="Apply these responses above to all remaining rooms"
             @change="applyResponsesToAllRooms" v-model="applyToAllRooms" />
-          <!-- <CoreToggleSwitch
-          v-if="(!isAnyRoomMaster || setAsMasterBedroom)" 
-            id="masterBedroom"
-            label="Set as master's bedroom"
-            v-model="setAsMasterBedroom"
-          /> -->
           <CoreToggleSwitch id="masterBedroom" label="Set as master's bedroom" v-model="setAsMasterBedroom" />
         </div>
       </div>
@@ -164,12 +144,11 @@
 
         <div class="py-4">
           <PropertyAdditionalCharges
-            :runtimePayload="payload"
+            @update:additionalCharges="handleAdditionalChargesUpdateForScheduledRoom"
           />
   
         </div>
 
-        <!-- <PropertyAdditionalCharges /> -->
         <div class="space-y-4 mt-3">
           <CoreToggleSwitch id="applyAll" label="Apply these responses above to all remaining rooms"
             @change="applyResponsesToAllRooms" v-model="applyToAllRooms" />
@@ -185,7 +164,6 @@
 import { ref, onMounted, watch, defineProps, defineEmits, computed } from 'vue';
 import { useGetRoomFeatures } from '@/composables/modules/property/fetchRoomFeatures';
 
-// Get the room features list
 const { loading: loadingRoomFeatures, roomFeaturesList } = useGetRoomFeatures();
 
 const props = defineProps({
@@ -201,7 +179,6 @@ const props = defineProps({
 });
 const emit = defineEmits(['emitRoomData']);
 
-// Define required features based on room furnishing status
 const furnishedFeatures = [
   'Bedframe',
   'Mattress',
@@ -221,10 +198,9 @@ const unfurnishedFeatures = [
   'Air conditioning space'
 ];
 
-// Computed property to dynamically set the min date
+
 const minDate = computed(() => {
   const today = new Date();
-  // Format the date as YYYY-MM-DD
   return today.toISOString().split('T')[0];
 });
 
@@ -382,15 +358,10 @@ watch(roomData, (newData) => {
   props.payload.rooms.value = newData;
 }, { deep: true });
 
-// Set furnished status
 const setFurnishedStatus = (status: boolean) => {
-  // isRoomFurnished.value = status;
-  // filterFeatures(); // Filter features based on the new status
-  // saveRoomData(activeRoom.value);
   isRoomFurnished.value = status;
   filterFeatures(); // Filter features based on the new status
 
-  // Clear features that are not relevant to the selected furnishing status
   const requiredFeatures = isRoomFurnished.value ? furnishedFeatures : unfurnishedFeatures;
   roomFeatures.value = roomFeatures.value.filter(feature => requiredFeatures.includes(feature.name));
 
@@ -411,22 +382,6 @@ const setAvailability = (value: string) => {
   saveRoomData(activeRoom.value);
 };
 
-// Apply responses to all remaining rooms
-// const applyResponsesToAllRooms = () => {
-//   roomData.value.forEach(room => {
-//     if (room.name !== activeRoom.value) {
-//       Object.assign(room, {
-//         availability: availability.value,
-//         availableFrom: availabilityDate.value,
-//         occupantName: occupantsName.value,
-//         rentAmount: Number(rentAmount.value),
-//         rentFrequency: rentFrequency.value,
-//         isFurnished: isRoomFurnished.value,
-//         features: [...roomFeatures.value],
-//       });
-//     }
-//   });
-// };
 
 const applyResponsesToAllRooms = () => {
   roomData.value.forEach(room => {
@@ -453,14 +408,6 @@ const filteredRoomFeatures = computed(() => {
   return isRoomFurnished.value ? furnishedFeatures : unfurnishedFeatures;
 });
 
-// const formattedRentAmount = computed({
-//   get() {
-//     return rentAmount.value ? formatCurrency(rentAmount.value) : '';
-//   },
-//   set(value) {
-//     rentAmount.value = unformatCurrency(value);
-//   }
-// });
 
 // Helper function to format currency
 function formatCurrency(value: number | string): string {
@@ -484,6 +431,27 @@ onMounted(() => {
     loadRoomData(activeRoom.value); // Load data for the active room
   }
 });
+
+const additionalChargesForAvailableRoom = ref([]);
+
+const handleAdditionalChargesUpdateForAvailableRoom = (charges: any) => {
+  additionalChargesForAvailableRoom.value = charges;
+    console.log("Updated Additional Charges:", additionalChargesForAvailableRoom.value);
+};
+
+const additionalChargesForUnavailableRoom = ref([]);
+
+const handleAdditionalChargesUpdateForUnavailableRoom = (charges: any) => {
+    additionalChargesForUnavailableRoom.value = charges;
+    console.log("Updated Additional Charges:", additionalChargesForUnavailableRoom.value);
+};
+
+const additionalChargesForScheduledRoom = ref([]);
+
+const handleAdditionalChargesUpdateForScheduledRoom = (charges: any) => {
+    additionalChargesForScheduledRoom.value = charges;
+    console.log("Updated Additional Charges:", additionalChargesForScheduledRoom.value);
+};
 </script>
 
 

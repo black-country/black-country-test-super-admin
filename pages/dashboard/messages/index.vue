@@ -648,7 +648,7 @@
                   >
                     <div
                       @click="handleSelectedMember(member)"
-                      v-for="member in membersList"
+                      v-for="member in computedMembersList"
                       :key="member.id"
                       class="flex cursor-pointer px-4 items-center gap-4 pt-3 first:pt-0"
                     >
@@ -703,11 +703,12 @@
 
 <script setup lang="ts">
 import { useGetMembers } from "@/composables/modules/member/fetch";
+import { useGetTenants } from '@/composables/modules/tenants/fetch'
 // import { useGetTenentDetails } from '@/composables/modules/tenants/useFetchTenantDetails'
 import { ref, watch, onMounted, onUnmounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-// import MessagingView from "@/layouts/messagingView.vue";
-import MessagingView from "../../../layouts/MessagingView.vue";
+import MessagingView from "@/layouts/MessagingView.vue";
+// import MessagingView from "../../../layouts/MessagingView.vue";
 import { useGetActiveChats } from "@/composables/modules/messages/fetchActiveChats";
 import { useGetRoomChats } from "@/composables/modules/messages/fetchRoomMessages";
 import { useWebSocket } from "@/composables/modules/messages/sockets";
@@ -716,6 +717,10 @@ import { useWebSocket } from "@/composables/modules/messages/sockets";
 // Composables
 const { loadingActiveChats, activeChatsList } = useGetActiveChats();
 const { getRoomChats, loadingRoomChats, roomChatsList } = useGetRoomChats();
+const {
+        loadingTenants,
+        tenantsList,
+} = useGetTenants();
 const {
   loadingMembers,
   membersList,
@@ -728,26 +733,6 @@ const {
 const { messages, newMessage, isConnected, sendMessage } = useWebSocket();
 
 const openSideNav = ref(false);
-
-// const isDesktop = computed(() => window.innerWidth >= 1024);
-
-// const updateViewMode = () => {
-//   isDesktop.value = window.innerWidth >= 1024;
-//   openSideNav.value = isDesktop.value;
-// };
-
-// onMounted(() => {
-//   window.addEventListener('resize', updateViewMode);
-//   updateViewMode();
-// });
-
-// watch(isDesktop, (newVal) => {
-//   if (newVal) {
-//     openSideNav.value = true;
-//   } else {
-//     openSideNav.value = false;
-//   }
-// });
 
 const isDesktop = ref(window.innerWidth >= 1024);
 
@@ -855,14 +840,6 @@ const route = useRoute();
 const selectedUser = ref(null);
 const messageStatus = ref("idle");
 
-// User selection
-// const selectUser = (user: any) => {
-//   selectedUser.value = user;
-//   // Optionally update URL
-//   if (!isDesktop.value) openSideNav.value = false;
-//   // openSideNav.value = false;
-//   router.push({ query: { userId: user?.participant?.id } });
-// };
 const selectUser = (user: any) => {
   selectedUser.value = user;
   openSideNav.value = false;
@@ -1044,6 +1021,12 @@ watch(
     console.log("id updated");
   }
 );
+
+const computedMembersList = computed(() => [
+  ...(membersList.value || []),
+  ...(tenantsList.value?.map((tenant: any) => ({ ...tenant, group: "TENANT" })) || [])
+]);
+
 </script>
 
 <style scoped>

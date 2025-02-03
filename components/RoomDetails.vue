@@ -74,12 +74,7 @@
         </div>
         <div class="pb-4">
           <PropertyAdditionalCharges
-            v-model:agentFee="agentFee"
-            v-model:legalFee="legalFee"
-            v-model:cautionFee="cautionFee"
-            v-model:serviceCharge="serviceCharge"
-            v-model:cautionEnabled="isCautionEnabled"
-            v-model:serviceEnabled="isServiceEnabled"
+            :runtimePayload="payload"
           />
   
         </div>
@@ -125,12 +120,7 @@
 
         <div class="py-4">
           <PropertyAdditionalCharges
-            v-model:agentFee="agentFee"
-            v-model:legalFee="legalFee"
-            v-model:cautionFee="cautionFee"
-            v-model:serviceCharge="serviceCharge"
-            v-model:cautionEnabled="isCautionEnabled"
-            v-model:serviceEnabled="isServiceEnabled"
+            :runtimePayload="payload"
           />
   
         </div>
@@ -174,12 +164,7 @@
 
         <div class="py-4">
           <PropertyAdditionalCharges
-            v-model:agentFee="agentFee"
-            v-model:legalFee="legalFee"
-            v-model:cautionFee="cautionFee"
-            v-model:serviceCharge="serviceCharge"
-            v-model:cautionEnabled="isCautionEnabled"
-            v-model:serviceEnabled="isServiceEnabled"
+            :runtimePayload="payload"
           />
   
         </div>
@@ -271,6 +256,13 @@ const availabilityOptions = [
   { label: 'Not available', value: 'unavailable' },
   { label: 'Available from (specify date)', value: 'available_from_date' }
 ];
+
+const additionalCharges = ref([]);
+
+const handleAdditionalChargesUpdate = (charge: any) => {
+    additionalCharges.value = charges;
+    console.log("Received Additional Charges:", additionalCharges.value);
+};
 
 // Computed property to check if any room is marked as the master bedroom
 const isAnyRoomMaster = computed(() => {

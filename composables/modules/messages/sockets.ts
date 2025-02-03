@@ -30,12 +30,12 @@ export const useWebSocket = () => {
     // Connection events
     socket.value.on("connect", () => {
       // console.log("Connected to WebSocket server");
-      // showToast({
-      //   title: "Success",
-      //   message: "Connection was successful",
-      //   toastType: "success",
-      //   duration: 3000
-      // });
+      showToast({
+        title: "Success",
+        message: "Connection was successful",
+        toastType: "success",
+        duration: 3000
+      });
       isConnected.value = true;
       fetchInitialMessages();
     });

@@ -321,11 +321,11 @@
                 </div>
                 <div>
                   <h4 class="font-normal text-[#667185] text-sm">Is the common area furnished?</h4>
-                  <p>{{ payload.isFurnishedCommonArea.value ? 'Yes' : 'No' }}</p>
+                  <p>{{ payload?.isFurnishedCommonArea?.value ? 'Yes' : 'No' }}</p>
                 </div>
                 <div class="mt-4">
                   <h4 class="font-normal text-[#667185] text-sm">Interior amenities</h4>
-                  {{ payload }}
+                  <!-- {{ payload }} -->
                   <div class="flex flex-wrap gap-2 mt-2">
                     <span v-for="item in interiorAmenities" :key="item" class="bg-white border-[0.5px] border-[#E4E7EC] font-normal text-sm flex items-center gap-x-2 p-2 px-3 rounded-md">
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -346,7 +346,7 @@
                           </clipPath>
                           </defs>
                           </svg>                
-                      {{ item.name }}</span>
+                      {{ item?.name }}</span>
                   </div>
                 </div>
                 <div class="mt-4">
@@ -689,6 +689,18 @@
 
                 </form>
               </div>
+
+
+              <div>
+                <p>Additional Charges</p>
+
+                <ul  v-for="(charge, index) in (Array.isArray(payload?.additionalCharges?.value) && payload.additionalCharges.value.length > 0 ? payload.additionalCharges.value : localAdditionalCharges)">
+                     <li>
+                      <p>{{ charge.additionalChargeId }}</p>
+                       <p>{{ charge.amount ?? 'Nil' }}</p>
+                    </li>
+                </ul>
+              </div>
             </div>
           </main>
         </LayoutWithoutSidebar>
@@ -800,12 +812,16 @@ const localStorageRooms = (Array.isArray(payload?.rooms?.value) && payload.rooms
   ? payload.rooms.value
   : storedRooms;
 
-const localQuestions = (Array.isArray(payload?.questions?.value) && payload.questions.value.length > 0)
+const localQuestions = (Array.isArray(payload?.questions?.value) && payload?.questions?.value?.length > 0)
   ? payload.questions.value
   : storedQuestions;
 
-const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.length > 0)
+const localRules = (Array.isArray(payload?.rules?.value) && payload?.rules?.value?.length > 0)
   ? payload.rules.value
+  : storedRules;
+
+  const localAdditonalCharges = (Array.isArray(payload?.additionalCharges?.value) && payload?.additionalCharges?.value?.length > 0)
+  ? payload.additionalCharges.value
   : storedRules;
 
 
@@ -816,19 +832,19 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
   //Preview section code
   
   const floorObj = computed(() => {
-      return flooringsList.value.find((item) => item.id === payload.flooringTypeId.value)
+      return flooringsList?.value.find((item) => item.id === payload?.flooringTypeId.value)
     })
   
     const propertyObj = computed(() => {
-      return propertyTypesList.value.find((item) => item.id ===  payload.houseTypeId.value)
+      return propertyTypesList?.value.find((item) => item.id ===  payload?.houseTypeId.value)
     })
   
     const interiorAmenities = computed(() => {
-      return payload.value.commonAreas.filter((item: any) => item.type === 'interior')
+      return payload?.value?.commonAreas.filter((item: any) => item?.type === 'interior')
     })
   
     const exteriorAmenities = computed(() => {
-      return payload.value.commonAreas.filter((item: any) => item.type === 'exterior')
+      return payload?.value?.commonAreas.filter((item: any) => item?.type === 'exterior')
     })
   
     // Current selected room

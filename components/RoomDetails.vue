@@ -73,7 +73,8 @@
         </div>
         <div class="pb-4">
           <PropertyAdditionalCharges
-            @update:additionalCharges="handleAdditionalChargesUpdateForAvailableRoom"
+           :value="currentRoomAdditionalCharges"
+             @update:additionalCharges="updateAdditionalCharges"
           />
   
         </div>
@@ -106,7 +107,8 @@
 
         <div class="py-4">
           <PropertyAdditionalCharges
-            @update:additionalCharges="handleAdditionalChargesUpdateForUnavailableRoom"
+             :value="currentRoomAdditionalCharges"
+             @update:additionalCharges="updateAdditionalCharges"
           />
   
         </div>
@@ -144,7 +146,8 @@
 
         <div class="py-4">
           <PropertyAdditionalCharges
-            @update:additionalCharges="handleAdditionalChargesUpdateForScheduledRoom"
+             :value="currentRoomAdditionalCharges"
+             @update:additionalCharges="updateAdditionalCharges"
           />
   
         </div>
@@ -166,6 +169,26 @@ import { useGetRoomFeatures } from '@/composables/modules/property/fetchRoomFeat
 
 const { loading: loadingRoomFeatures, roomFeaturesList } = useGetRoomFeatures();
 
+interface AdditionalCharge {
+  additionalChargeId: string;
+  amount: number;
+}
+
+interface RoomData {
+  name: string;
+  availability: string;
+  availableFrom: string | null;
+  occupantName: string;
+  isMaster: boolean;
+  rentAmount: string | number;
+  rentFrequency: string;
+  isFurnished: boolean;
+  features: Array<any>;
+  images: Array<any>;
+  additionalCharges: AdditionalCharge[];
+}
+
+
 const props = defineProps({
   payload: {
     type: Object,
@@ -177,6 +200,7 @@ const props = defineProps({
     default: () => []
   }
 });
+
 const emit = defineEmits(['emitRoomData']);
 
 const furnishedFeatures = [
@@ -211,6 +235,7 @@ const serviceCharge = ref('80000');
 const isCautionEnabled = ref(false);
 const isServiceEnabled = ref(false);
 const serviceFrequency = ref('Monthly');
+const additionalCharges = ref<AdditionalCharge[]>([]);
 
 // Reactive state
 const activeRoom = ref('Room 1');
@@ -233,12 +258,53 @@ const availabilityOptions = [
   { label: 'Available from (specify date)', value: 'available_from_date' }
 ];
 
-const additionalCharges = ref([]);
+// Computed property to get current room's additional charges
+const currentRoomAdditionalCharges = computed(() => {
+  const currentRoom = roomData.value.find(room => room.name === activeRoom.value);
+  return currentRoom?.additionalCharges || [];
+});
 
-const handleAdditionalChargesUpdate = (charge: any) => {
-    additionalCharges.value = charges;
-    console.log("Received Additional Charges:", additionalCharges.value);
+const incomingAdditionalCharges = ref([]) as any
+
+
+// Update the updateAdditionalCharges function
+const updateAdditionalCharges = (charges: AdditionalCharge[]) => {
+  incomingAdditionalCharges.value = charges
+  const roomIndex = roomData.value.findIndex(room => room.name === activeRoom.value);
+  if (roomIndex !== -1) {
+    const updatedRoom = {
+          ...roomData.value[roomIndex],
+          additionalCharges: [...charges]
+        };
+
+        roomData.value[roomIndex] = updatedRoom;
+
+// Emit the updated room data
+emit('emitRoomData', roomData.value);
+
+// Optionally, update local storage
+localStorage.setItem('property_rooms', JSON.stringify(roomData.value));
+
+    // roomData.value[roomIndex] = {
+    //   ...roomData.value[roomIndex],
+    //   additionalCharges: charges
+    // };
+    // emit('emitRoomData', roomData.value); // Emit updated data immediately
+  }
 };
+
+
+// Modified to properly handle additional charges
+const handleAdditionalChargesUpdate = (charges: AdditionalCharge[]) => {
+    const roomIndex = roomData.value.findIndex(room => room.name === activeRoom.value);
+    if (roomIndex !== -1) {
+        roomData.value[roomIndex].additionalCharges = [...charges];
+        additionalCharges.value = [...charges];
+        emit('emitRoomData', roomData.value);
+    }
+};
+
+
 
 // Computed property to check if any room is marked as the master bedroom
 const isAnyRoomMaster = computed(() => {
@@ -259,48 +325,103 @@ const initializeRoomData = () => {
       rentFrequency: 'monthly',
       isFurnished: true,
       features: [],
-      images: []
+      images: [],
+      additionalCharges: [] // Initialize with empty additional charges array
     }));
   rooms.value = roomData.value;
 };
 
-const saveRoomData = (roomName) => {
-  const roomIndex = roomData.value.findIndex((room) => room?.name === roomName);
-  if (roomIndex !== -1) {
-    if (setAsMasterBedroom.value) {
-      roomData.value = roomData.value.map((room, index) => ({
-        ...room,
-        isMaster: index === roomIndex,
-      }));
-    }
-    roomData.value[roomIndex] = {
-      ...roomData.value[roomIndex],
-      availability: availability.value,
-      availableFrom: availabilityDate.value,
-      occupantName: occupantsName.value,
-      rentAmount: parseInt(rentAmount.value, 10) || 0,
-      rentFrequency: rentFrequency.value,
-      isFurnished: isRoomFurnished.value,
-      isMaster: setAsMasterBedroom.value,
-      features: roomFeatures.value,
-    };
-  }
-  emit('emitRoomData', roomData.value);
-};
 
-const loadRoomData = (roomName) => {
-  const room = roomData.value.find((r) => r.name === roomName);
-  if (room) {
-    availability.value = room.availability;
-    availabilityDate.value = room.availableFrom;
-    occupantsName.value = room.occupantName;
-    rentAmount.value = room.rentAmount;
-    rentFrequency.value = room.rentFrequency;
-    isRoomFurnished.value = room.isFurnished;
-    setAsMasterBedroom.value = room.isMaster;
-    roomFeatures.value = room.features || [];
-  }
-};
+    // Improved save room data method
+    const saveRoomData = (roomName: string) => {
+      const roomIndex = roomData.value.findIndex((room) => room?.name === roomName);
+      if (roomIndex !== -1) {
+        // Create a comprehensive room update
+        roomData.value[roomIndex] = {
+          ...roomData.value[roomIndex],
+          availability: availability.value,
+          availableFrom: availabilityDate.value,
+          occupantName: occupantsName.value,
+          rentAmount: parseInt(rentAmount.value?.toString() || '0', 10) || 0,
+          rentFrequency: rentFrequency.value,
+          isFurnished: isRoomFurnished.value,
+          isMaster: setAsMasterBedroom.value,
+          features: roomFeatures.value,
+          // Preserve existing additional charges or use current state
+          additionalCharges: additionalCharges.value.length 
+            ? additionalCharges.value 
+            : roomData.value[roomIndex].additionalCharges || []
+        };
+
+        // Emit updated room data
+        emit('emitRoomData', roomData.value);
+
+        // Update local storage
+        localStorage.setItem('property_rooms', JSON.stringify(roomData.value));
+      }
+    };
+
+// const saveRoomData = (roomName: string) => {
+//   const roomIndex = roomData.value.findIndex((room) => room?.name === roomName);
+//   if (roomIndex !== -1) {
+//     // Ensure additional charges are saved for the room
+//     roomData.value[roomIndex] = {
+//       ...roomData.value[roomIndex],
+//       availability: availability.value,
+//       availableFrom: availabilityDate.value,
+//       occupantName: occupantsName.value,
+//       rentAmount: parseInt(rentAmount.value?.toString() || '0', 10) || 0,
+//       rentFrequency: rentFrequency.value,
+//       isFurnished: isRoomFurnished.value,
+//       isMaster: setAsMasterBedroom.value,
+//       features: roomFeatures.value,
+//       additionalCharges: [...additionalCharges.value] // Ensure charges are copied
+//     };
+//   }
+//   emit('emitRoomData', roomData.value);
+// };
+
+    // Enhanced room data loading
+    const loadRoomData = (roomName: string) => {
+      const currentRoomData = roomData.value.find((room: RoomData) => room.name === roomName);
+
+      if (currentRoomData) {
+        // Load room-specific data
+        availability.value = currentRoomData.availability;
+        availabilityDate.value = currentRoomData.availableFrom || '';
+        occupantsName.value = currentRoomData.occupantName || '';
+        rentAmount.value = currentRoomData.rentAmount || '';
+        rentFrequency.value = currentRoomData.rentFrequency || 'monthly';
+        isRoomFurnished.value = currentRoomData.isFurnished;
+        setAsMasterBedroom.value = currentRoomData.isMaster;
+        roomFeatures.value = currentRoomData.features || [];
+        
+        // Ensure additional charges are loaded correctly
+        additionalCharges.value = currentRoomData.additionalCharges || [];
+      }
+    };
+
+
+// const loadRoomData = (roomName: string) => {
+//   // Retrieve the room data from localStorage
+//   const currentRoomData = JSON.parse(localStorage.getItem('property_rooms') || '[]');
+  
+//   const room = currentRoomData.find((room: any) => room.name === roomName);
+
+//   if (room) {
+//     // Load the room data into the component's reactive state
+//     availability.value = room.availability;
+//     availabilityDate.value = room.availableFrom || '';
+//     occupantsName.value = room.occupantName || '';
+//     rentAmount.value = room.rentAmount || '';
+//     rentFrequency.value = room.rentFrequency || 'monthly';
+//     isRoomFurnished.value = room.isFurnished;
+//     setAsMasterBedroom.value = room.isMaster;
+//     roomFeatures.value = room.features || [];
+//     additionalCharges.value = room.additionalCharges || []; // Load additional charges from the saved room data
+//   }
+// };
+
 
 // Filter features based on the furnished status
 const filterFeatures = () => {
@@ -355,6 +476,7 @@ const isSelected = (item: string) => roomFeatures.value.some((feature) => featur
 
 // Watch changes to roomData and update the payload
 watch(roomData, (newData) => {
+  console.log(newData, 'room data has been updatd')
   props.payload.rooms.value = newData;
 }, { deep: true });
 
@@ -382,8 +504,10 @@ const setAvailability = (value: string) => {
   saveRoomData(activeRoom.value);
 };
 
-
 const applyResponsesToAllRooms = () => {
+  const currentRoom = roomData.value.find(room => room.name === activeRoom.value);
+  if (!currentRoom) return;
+
   roomData.value.forEach(room => {
     if (room.name !== activeRoom.value) {
       Object.assign(room, {
@@ -393,16 +517,17 @@ const applyResponsesToAllRooms = () => {
         rentAmount: Number(rentAmount.value),
         rentFrequency: rentFrequency.value,
         isFurnished: isRoomFurnished.value,
-        // Clone the features array but set images to an empty array for each feature
         features: roomFeatures.value.map(feature => ({
           ...feature,
           images: [] // Set images to an empty array for each room
         })),
+        additionalCharges: [...currentRoom.additionalCharges]
       });
     }
   });
+  emit('emitRoomData', roomData.value);
+  localStorage.setItem('property_rooms', JSON.stringify(roomData.value));
 };
-
 
 const filteredRoomFeatures = computed(() => {
   return isRoomFurnished.value ? furnishedFeatures : unfurnishedFeatures;
@@ -431,27 +556,6 @@ onMounted(() => {
     loadRoomData(activeRoom.value); // Load data for the active room
   }
 });
-
-const additionalChargesForAvailableRoom = ref([]);
-
-const handleAdditionalChargesUpdateForAvailableRoom = (charges: any) => {
-  additionalChargesForAvailableRoom.value = charges;
-    console.log("Updated Additional Charges:", additionalChargesForAvailableRoom.value);
-};
-
-const additionalChargesForUnavailableRoom = ref([]);
-
-const handleAdditionalChargesUpdateForUnavailableRoom = (charges: any) => {
-    additionalChargesForUnavailableRoom.value = charges;
-    console.log("Updated Additional Charges:", additionalChargesForUnavailableRoom.value);
-};
-
-const additionalChargesForScheduledRoom = ref([]);
-
-const handleAdditionalChargesUpdateForScheduledRoom = (charges: any) => {
-    additionalChargesForScheduledRoom.value = charges;
-    console.log("Updated Additional Charges:", additionalChargesForScheduledRoom.value);
-};
 </script>
 
 

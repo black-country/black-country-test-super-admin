@@ -12,14 +12,14 @@
                 
         </div>
         <h2 class="text-lg text-[#1D2739] font-medium mb-2">Application approved successfully</h2>
-        <p class="text-gray-500 mb-6 text-sm">You’ve successfully approved {Tenant’s name} application</p>
+        <p class="text-gray-500 mb-6 text-sm">You’ve successfully approved this rental application</p>
       <div class="w-full space-y-4">
         <button @click="generateLeaseDocument = true"
         class="bg-[#292929] w-full text-white py-3.5 text-sm px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
       >
       Send lease agreement now
       </button>
-        <button @click="router.push('/dashboard/property/lease-documents')"
+        <button @click="router.back()"
           class="bg-[#EBE5E0] w-full text-[#292929] py-3.5 text-sm px-4 rounded-md"
         >
         I’ll do it later

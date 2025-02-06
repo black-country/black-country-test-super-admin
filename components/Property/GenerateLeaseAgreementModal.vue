@@ -76,6 +76,21 @@ const router = useRouter()
 const localStorageData = JSON.parse(localStorage.getItem('lease-template-payload'))
 
 // Check if the form is empty
+// const isFormEmpty = computed(() => {
+//   const startDate = new Date(payload.value.startDate)
+//   const endDate = new Date(payload.value.endDate)
+//   const diffInDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24))
+
+//   return (
+//     !payload.value.endDate || 
+//     !payload.value.startDate || 
+//     !payload.value.documentName || 
+//     !selectedItem.value.id || 
+//     !selectedProperty.value || 
+//     diffInDays < 365
+//   )
+// })
+
 const isFormEmpty = computed(() => {
   const startDate = new Date(payload.value.startDate)
   const endDate = new Date(payload.value.endDate)
@@ -87,7 +102,7 @@ const isFormEmpty = computed(() => {
     !payload.value.documentName || 
     !selectedItem.value.id || 
     !selectedProperty.value || 
-    diffInDays < 365
+    diffInDays < 365  // Ensure exactly 365 days minimum
   )
 })
 

@@ -65,11 +65,11 @@
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
         >
           <div
-            class="bg-white rounded-lg shadow p-4"
+            class="bg-white rounded-lg shadow p-4  h-[400px]"
             v-for="lease in filteredLeaseAgreements"
             :key="lease.id"
           >
-            <div class="flex justify-between items-start">
+            <div class="flex justify-between items-start h-full">
               <div class="space-y-2 w-full">
                 <div
                   v-if="isLeaseAgreementContentEmpty(lease.leaseAgreementContent)"
@@ -99,7 +99,7 @@
               </section>
                 <div class="flex justify-between items-center">
                   <h6 class="text-base font-semibold text-gray-800 truncate">
-                    {{ lease.signeeName ?? "Nil" }}
+                    {{ lease?.agreementName ?? "Nil" }}
                   </h6>
                   <div
                     class="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
@@ -297,13 +297,15 @@
                     </div>
                   </div>
                 </div>
-                <p class="text-xs text-gray-600">
+                <!-- {{ lease }} -->
+                  <!-- {{ lease }} -->
+                <p class="text-sm text-gray-600">
                   Tenant:
                   <span class="font-medium text-[#1D2739]"
-                    >{{ user.firstName }} {{ user.lastName }}</span
+                    >{{ `${lease?.tenant?.firstName} ${lease?.tenant?.lastName}` }}</span
                   >
                 </p>
-                <p class="text-xs text-gray-600">
+                <p class="text-sm text-gray-600">
                   Last updated:
                   <span class="font-medium text-[#1D2739]">{{
                     moment(lease.createdAt).format("DD MMM, YYYY")

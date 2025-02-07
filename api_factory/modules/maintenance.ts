@@ -34,5 +34,9 @@ export const maintenance_api = {
             }
 
         return GATEWAY_ENDPOINT.get(url)
-      }
+      },
+      $_fetch_all_invoices: (page = 1, perPage = 100000, status = '') => {
+        let url = `/invoices?page=${page}&perPage=${perPage}`
+   return GATEWAY_ENDPOINT.get(url)
+ }
 }

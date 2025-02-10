@@ -44,14 +44,16 @@ const router = useRouter();
 const selectedProperty = ref({}) as any;
 
 export const useDuplicateProperty = () => {
+    const router = useRouter();
     const duplicateProperty = async (id: string | number, selectedObj: any) => {
 		console.log(selectedObj.value, 'delee')
+        const router = useRouter();
         loading.value = true;
         selectedProperty.value = selectedObj;
 
         try {
             const res = await property_api.$_duplicate_property(id) as any;
-
+            console.log(res, 'res here')
             if (res.type !== 'ERROR') {
                 showToast({
                     title: "Success",
@@ -59,7 +61,8 @@ export const useDuplicateProperty = () => {
                     toastType: "success",
                     duration: 3000
                 });
-                window.location.href=`/dashboard/property/${selectedObj.value.id}/duplicate-success`
+                router.push(`/dashboard/property/${res.data.id}/duplicate-success`)
+                // window.location.href=`/dashboard/property/${selectedObj.value.id}/duplicate-success`
                 return res;
             } else {
                 showToast({

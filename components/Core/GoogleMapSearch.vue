@@ -59,7 +59,7 @@
         <label class="text-xs mb-2 text-[#1D2739]">Street *</label>
         <input :value="payload.address.value" class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100" />
       </section>
-
+<!-- {{ states[0] }} -->
        <section>
         <label class="text-xs mb-2 text-[#1D2739]">State *</label>
         <select class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100" v-model="selectedState" @change="handleStateChange(selectedState)">
@@ -68,7 +68,7 @@
           </option>
         </select>
        </section>
-
+<!-- {{ cities[0] }} -->
        <section  v-if="!loadingCities">
         <label class="text-xs mb-2 text-[#1D2739]">City/Town *</label>
         <select v-model="selectedCity" class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100">
@@ -77,6 +77,7 @@
           </option>
         </select>
        </section>
+       <!-- {{ selectedCity }} -->
        <div v-if="loadingCities" class="h-10 animate-pulse w-full bg-slate-200 rounded"></div>
         <section>
           <label class="text-xs mb-2">Postcode (Optional)</label>

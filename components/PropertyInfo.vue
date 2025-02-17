@@ -83,6 +83,9 @@
           <p class="text-[#1D2739] text-sm font-medium">Available <span class="text-[#326543]">{{selectedRoomObj?.availability === 'available_now' ? 'Now' : selectedRoomObj?.availability === 'unavailable' ? 'Unavailable' : selectedRoomObj?.availability === 'available_from_date' ? 'Not Available For Now' : ''}}</span></p>
           <p class="text-gray-900 font-medium text-lg">{{ formatCurrency(selectedRoomObj?.rentAmount)}} <span class="text-[#667185] text-sm font-normal">{{selectedRoomObj?.rentFrequency}}</span></p>
         </div>
+
+<!-- {{ selectedRoomObj.additionalCharges }} -->
+        <CoreHousingFees v-if="selectedRoomObj?.additionalCharges?.length" :additionalChargesList="selectedRoomObj?.additionalCharges" class="mb-8" />
     
         <!-- Interior Features Section -->
         <div class="mb-6 space-y-3">

@@ -27,8 +27,16 @@
             </div>
           </div>
           <div class="space-y-1 relative">
-            <label class="block text-sm font-medium text-[#1D2739]">Property name</label>
-            <input type="text" readonly placeholder="Single agent/property manager" v-model="selectedPropertyName"
+            <!-- <label class="block text-sm font-medium text-[#1D2739]">Property name</label> -->
+            <!-- <CoreSelect /> -->
+            <CoreSelectProperty
+            v-model="selectedPropertyName"
+                  :options="propertiesList"
+                  label="Property"
+                  placeholder="Select a property..."
+                  @select="handlePropertySelect"
+              />
+            <!-- <input type="text" readonly placeholder="Single agent/property manager" v-model="selectedPropertyName"
             @click="togglePropertyDropdown"
             class="w-full bg-[#F0F2F5] text-sm py-3 px-4 border-[0.5px] outline-none border-gray-100 rounded-md cursor-pointer" />
             <div v-if="showPropertyDropdown" ref="dropdown"
@@ -39,11 +47,18 @@
                           {{ property.name}}
                       </li>
                   </ul>
-              </div>
+              </div> -->
           </div>
           <div class="space-y-1">
-            <label class="block text-sm font-medium text-[#1D2739]">Agent/Property manager assigned</label>
-            <div class="mt-1 relative">
+            <!-- <label class="block text-sm font-medium text-[#1D2739]">Agent/Property manager assigned</label> -->
+            <CoreSelectTenant
+                v-model="selectedUserText"
+                 :options="agentsList"
+                label="Single agent/property manager"
+                placeholder="Search and select an agent..."
+                @select="handleAgentSelect"
+              />
+            <!-- <div class="mt-1 relative">
               <input type="text" readonly placeholder="Single agent/property manager" v-model="selectedUserText"
                   @click="toggleDropdown"
                   class="w-full bg-[#F0F2F5] text-sm py-3 px-4 border-[0.5px] outline-none border-gray-100 rounded-md cursor-pointer" />
@@ -56,7 +71,7 @@
                       </li>
                   </ul>
               </div>
-          </div>
+          </div> -->
           </div>
           <div class="space-y-1">
             <label class="block text-sm font-medium text-[#1D2739]">Property Status</label>
@@ -107,6 +122,7 @@ const fromDate = ref<string>('');
 const toDate = ref<string>('');
 const propertyName = ref<string>('');
 const agentId = ref<string>('');
+const propertyId = ref<string>('');
 
 const resetFilters = () => {
   fromDate.value = '';
@@ -137,12 +153,29 @@ const propertyStatusList = ref([
   }
 ])
 
+// Reactive variable to store the selected agent
+const selectedAgent = ref(null);
+
+const handlePropertySelect = (property: any) => {
+      // console.log('Selected Property:', property)
+      propertyName.value = property.name
+      propertyId.value = property.id
+    }
+
+    // Handles agent selection
+const handleAgentSelect = (agent: any) => {
+  console.log("Selected Agent:", agent);
+  selectedAgent.value = agent;
+  agentId.value = agent.id
+};
+
 const applyFilters = () => {
   // Emit the filters to the parent component
   emit('applyFilters', {
     fromDate: fromDate.value,
     toDate: toDate.value,
     searchQuery: propertyName.value,
+    propertyId: propertyId.value,
     agentId: agentId.value,
     status: selectedStatusText.value || null
     // status: selectedStatusText.value === 'Published' ? true : selectedStatusText.value === 'Draft' ? false : null

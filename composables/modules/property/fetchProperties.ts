@@ -69,6 +69,7 @@ export const useGetProperties = () => {
         if (metadata.value.page !== 1) {
             setPaginationObj(1); // Reset to the first page when search query changes
         }
+        console.log(filters, 'filters updated')
         loadingProperties.value = true;
         getProperties()
     }, { deep: true });

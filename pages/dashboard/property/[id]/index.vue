@@ -8,14 +8,14 @@
               <path d="M12.5 5C12.5 5 7.50001 8.68242 7.5 10C7.49999 11.3177 12.5 15 12.5 15" stroke="#292929" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             Back</button>
-          <button @click="activeTab === 'listings'" :class="[activeTab === 'listings' ? 'bg-[#5B8469] text-white' : '']"
-            class="bg-[#5B8469] font-medium px-4 py-2 text-sm rounded-md text-white">Property details</button>
-          <button @click="activeTab === 'rental-applications'"
-            :class="[activeTab === 'rental-applications' ? 'bg-[#5B8469] text-white' : ' ']"
-            class="text-[#292929] font-medium text-sm bg-[#F0F2F5] px-4 py-2 rounded-md">Tenants</button>
-          <button @click="activeTab === 'lease-documents'"
-            :class="[activeTab === 'lease-documents' ? 'bg-[#5B8469] text-white' : 'bg-[#F0F2F5] text-[#292929]']"
-            class="text-[#292929] font-medium text-sm bg-[#F0F2F5] px-4 py-2 rounded-md">Payment history</button>
+          <button @click="activeTab = 'listings'" :class="[activeTab === 'listings' ? 'bg-[#5B8469] text-white' : 'bg-[#F0F2F5] text-[#292929]']"
+            class="font-medium px-4 py-2 text-sm rounded-md">Property details</button>
+          <button @click="activeTab = 'tenants'"
+            :class="[activeTab === 'tenants' ? 'bg-[#5B8469] text-white' : 'bg-[#F0F2F5] text-[#292929]']"
+            class="font-medium text-sm px-4 py-2 rounded-md">Tenants</button>
+          <button @click="activeTab = 'payment-history'"
+            :class="[activeTab === 'payment-history' ? 'bg-[#5B8469] text-white' : 'bg-[#F0F2F5] text-[#292929]']"
+            class="font-medium text-sm px-4 py-2 rounded-md">Payment history</button>
         </div>
         <div class="flex items-center gap-x-4 lg:gap-x-6">
           <NuxtLink to="/dashboard/notification" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
@@ -61,7 +61,7 @@
         </div>
       </div>
     </template>
-  <main>
+  <main v-if="activeTab === 'listings'">
   <PropertyDetailsHeader v-if="!loading" :propertyObj="propertyObj" />
   <!-- <PropertyImageGallery v-if="propertyObj?.images" :loading="loading" :propertyObj="propertyObj" :images="allImages" class="mt-6" /> -->
    <ImageGallery  v-if="propertyObj?.images" :loading="loading" :propertyObj="propertyObj" :images="allImages" class="mt-6" />
@@ -324,6 +324,8 @@
       </div>
     </CoreModal>
   </main>
+  <PropertyTenants v-if="activeTab === 'tenants'" />
+  <PropertyPaymentHistory v-if="activeTab === 'payment-history'" />
 </Layout>
 </template>
 
@@ -348,6 +350,7 @@ import { useImageExtractor } from '@/composables/core/useExtractImages';
 const { extractImages } = useImageExtractor();
 const allImages = computed(() => extractImages(propertyObj.value));
 
+const activeTab = ref('listings')
 
 definePageMeta({
      middleware: 'auth'

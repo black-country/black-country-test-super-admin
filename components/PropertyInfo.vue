@@ -64,7 +64,8 @@
       <div v-if="activeTab !== 'property-overview' && activeTab !== 'common-areas'" class=" max-w-3xl mx-auto">
         <button :disabled="!selectedRoomObj?.images?.length" @click="previewRoomImages(activeTab)" class="flex justify-between disabled:cursor-not-allowed disabled:opacity-25 w-full cursor-pointer mb-3 items-center border-[0.5px] border-gray-50 space-x-4 bg-white p-4 rounded-lg">
           <div class="flex">
-            <img :src="dynamicImage('placeholder.png')" alt="Gallery" class="w-12 h-12 rounded-full">
+            <img v-if="!selectedRoomObj?.images?.length" :src="dynamicImage('placeholder.png')" alt="Gallery" class="w-12 h-12 rounded-full">
+            <img v-else :src="selectedRoomObj?.images[0]" class="w-12 h-12 rounded-full" />
             <div class="pl-2">
               <h3 class="text-lg font-medium text-start">Gallery</h3>
               <p class="text-gray-500 text-sm text-start">Click to view photos of {{selectedRoomObj.name}}</p>

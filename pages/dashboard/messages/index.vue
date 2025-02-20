@@ -790,7 +790,7 @@ const filteredUserList = computed(() => {
         .filter(
           (member) =>
             !activeChatsNames.has(
-              `${member.firstName.toLowerCase()} ${member.lastName.toLowerCase()}`
+              `${member?.firstName?.toLowerCase()} ${member?.lastName?.toLowerCase()}`
             )
         )
         .map((member) => ({ ...member, type: "member" })),

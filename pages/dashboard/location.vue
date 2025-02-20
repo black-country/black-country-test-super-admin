@@ -1,6 +1,44 @@
 <template>
-  <main>
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto p-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Left Panel -->
+        <div class="md:col-span-1 space-y-4">
+          <h1 class="text-2xl font-bold mb-6">Find Nearby Places</h1>
+          <div v-if="currentLocation" class="bg-white p-4 rounded-lg shadow">
+            <h2 class="text-lg font-semibold mb-2">Current Location:</h2>
+            <p class="text-gray-700">{{ currentLocation.formatted_address }}</p>
+          </div>
+          <div v-if="amenities.length > 0" class="bg-white p-4 rounded-lg shadow">
+            <h2 class="text-lg font-semibold mb-2">Nearby Amenities:</h2>
+            <ul class="space-y-2">
+              <li 
+                v-for="amenity in amenities" 
+                :key="amenity.place_id"
+                class="text-gray-700"
+              >
+                {{ amenity.name }} - {{ amenity.types[0] }}
+              </li>
+            </ul>
+          </div>
+          <div>
+            <select 
+              v-model="selectedType"
+              @change="searchNearbyPlaces"
+              class="w-full p-3 border rounded-lg shadow-sm"
+            >
+              <option value="">All Places</option>
+              <option value="school">Schools</option>
+              <option value="church">Churches</option>
+              <option value="house">Houses</option>
+              <option value="hotel">Hotels</option>
+              <option value="restaurant">Restaurants</option>
+              <option value="hospital">Hospitals</option>
+              <option value="shopping_mall">Shopping Malls</option>
+            </select>
+          </div>
+        </div>
+  
+        <!-- Map and Results Panel -->
         <div class="md:col-span-2 space-y-1">
             <div class="relative">
             <input
@@ -13,115 +51,39 @@
   
           <!-- Map Container -->
           <div ref="mapContainer" class="w-full h-[400px] rounded-lg shadow-lg"></div>
-        </div>
-    </div>
   
-    <CoreModal :isOpen="isLocationModalOpen" @close="isLocationModalOpen = false" title="Confirm property's address">
-        <p class="text-xs text-[#667185]">Please review the address and ensure that all fields marked with '*' are completed</p>
-        <div class="space-y-4">
-          <!-- <div>
-            <p class="text-xs text-[#667185]">Please review the address and ensure that all fields marked with '*' are completed</p>
-          </div> -->
-         <section>
-          <!-- <label class="text-xs mb-2 text-[#1D2739]">Country *</label>
-          <select class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100">
-            <option value="NG">
-              Nigeria
-            </option>
-          </select> -->
-          <label class="text-xs mb-2 text-[#1D2739]">Country *</label>
-          <select v-model="selectedCountry" class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100">
-            <option value="NG">Nigeria</option>
-            <option value="US">United States</option>
-            <option value="CA">Canada</option>
-            <!-- Add more options or dynamically load them -->
-          </select>
-         </section>
+
+          <div v-if="places.length > 0" class="space-y-4">
+            <h2 class="text-xl font-semibold">Nearby Places</h2>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div 
+                v-for="place in places" 
+                :key="place.place_id"
+                class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+                @click="highlightMarker(place)"
+              >
+                <h3 class="font-semibold text-lg mb-2">{{ place.name }}</h3>
+                <p class="text-gray-600 mb-2">{{ place.vicinity }}</p>
+                <div class="flex items-center mb-2" v-if="place.rating">
+                  <span class="text-yellow-500 mr-1">★</span>
+                  <span>{{ place.rating }} ({{ place.user_ratings_total }} reviews)</span>
+                </div>
+                <p v-if="place.open_now" class="text-green-600">Open Now</p>
+                <p v-else-if="place.open_now === false" class="text-red-600">Closed</p>
+              </div>
+            </div>
+          </div>
   
-        <section>
-          <label class="text-xs mb-2 text-[#1D2739]">Street *</label>
-          <input :value="payload.address.value" class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100" />
-        </section>
-  <!-- {{ states[0] }} -->
-         <section>
-          <label class="text-xs mb-2 text-[#1D2739]">State *</label>
-          <select class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100" v-model="selectedState" @change="handleStateChange(selectedState)">
-            <option v-for="state in states" :key="state.stateCode" :value="state.stateCode">
-              {{ state.name }}
-            </option>
-          </select>
-         </section>
-  <!-- {{ cities[0] }} -->
-         <section  v-if="!loadingCities">
-          <label class="text-xs mb-2 text-[#1D2739]">City/Town *</label>
-          <select v-model="selectedCity" class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100">
-            <option v-for="city in cities" :key="city.id" :value="city.id">
-              {{ city.name }}
-            </option>
-          </select>
-         </section>
-         <!-- {{ selectedCity }} -->
-         <div v-if="loadingCities" class="h-10 animate-pulse w-full bg-slate-200 rounded"></div>
-          <section>
-            <label class="text-xs mb-2">Postcode (Optional)</label>
-          <input type="tel" class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100" />
-          </section>
-  
-          <div class="w-full pt-6 flex justify-between items-center gap-x-6">
-            <button type="button" @click="isLocationModalOpen = false" class="bg-[#EBE5E0] text-[#292929] w-full  text-sm rounded-md py-3">Cancel</button>
-            <button type="button" @click="isLocationModalOpen = false" class="bg-[#292929] text-white w-full  text-sm rounded-md py-3">Save & Continue</button>
+          <div v-else-if="searchPerformed" class="text-center py-8 text-gray-600">
+            No places found nearby
           </div>
         </div>
-      </CoreModal>
-  </main>
+      </div>
+    </div>
   </template>
   
   <script setup lang="ts">
-  import { useGetLocation } from "@/composables/core/useGetLocation";
   import { ref, onMounted } from 'vue'
-  
-  const {
-        states,
-        cities,
-        loadingStates,
-        loadingCities,
-        selectedState,
-        selectedCity,
-        handleStateChange,
-      } = useGetLocation();
-  
-  
-  const props = defineProps({
-    payload: {
-      type: Object,
-      required: true,
-      default: () => ({})
-    }
-  });
-  
-  const isLocationModalOpen = ref(false)
-  
-  interface Amenity {
-    name: string
-    address: string
-    description: string
-    latitude: number
-    longitude: number
-    type: string
-  }
-  
-  interface Coordinates {
-    lat: number
-    lng: number
-  }
-  
-  const emit = defineEmits<{
-    (e: 'update:amenities', amenities: any): void
-    (e: 'update:payload', amenities: any): void
-    (e: 'update:location', location: Coordinates): void
-  }>()
-  
-  const  selectedCountry = ref('Nigeria')
   
   // Replace with your actual API key
   const GOOGLE_MAPS_API_KEY = 'AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg'
@@ -159,69 +121,6 @@
     }
   })
   
-  const typeMapping = {
-    school: "Schools",
-    university: "Universities",
-    hospital: "Hospitals",
-    clinic: "Clinics",
-    pharmacy: "Pharmacies",
-    dentist: "Dentists",
-    doctor: "Doctors",
-    restaurant: "Restaurants",
-    cafe: "Cafes",
-    bakery: "Bakeries",
-    bar: "Bars",
-    park: "Parks",
-    gym: "Gyms",
-    spa: "Spas",
-    church: "Churches",
-    mosque: "Mosques",
-    hindu_temple: "Hindu Temples",
-    synagogue: "Synagogues",
-    lodging: "Hotels",
-    night_club: "Night Clubs",
-    museum: "Museums",
-    art_gallery: "Art Galleries",
-    library: "Libraries",
-    movie_theater: "Movie Theaters",
-    shopping_mall: "Shopping Malls",
-    clothing_store: "Clothing Stores",
-    supermarket: "Supermarkets",
-    convenience_store: "Convenience Stores",
-    gas_station: "Gas Stations",
-    bus_station: "Bus Stations",
-    train_station: "Train Stations",
-    subway_station: "Subway Stations",
-    taxi_stand: "Taxi Stands",
-    airport: "Airports",
-    atm: "ATMs",
-    bank: "Banks",
-    courthouse: "Courthouses",
-    embassy: "Embassies",
-    post_office: "Post Offices",
-    police: "Police Stations",
-    fire_station: "Fire Stations",
-    car_rental: "Car Rental Services",
-    car_repair: "Car Repair Shops",
-    car_wash: "Car Wash Stations",
-    parking: "Parking Lots",
-    stadium: "Stadiums",
-    zoo: "Zoos",
-    amusement_park: "Amusement Parks",
-    aquarium: "Aquariums",
-    cemetery: "Cemeteries",
-    funeral_home: "Funeral Homes",
-  };
-  
-  watch(places, (newAmenities) => {
-      emit("update:payload", {
-       ...props.payload,
-        neighbouringLandmarks: { value: newAmenities },
-   });
-    // emit('update:amenities', newAmenities)
-  })
-  
-  
   function initializeGoogleServices() {
     try {
       // Initialize the map
@@ -254,10 +153,7 @@
           autocomplete.addListener('place_changed', () => {
             const place = autocomplete.getPlace()
             if (place.geometry) {
-              console.log(place, 'places here')
               currentLocation.value = place
-              props.payload.latitude = place.geometry.location.lat()
-              props.payload.longitude = place.geometry.location.lng()
               currentCoordinates.value = {
                 lat: place.geometry.location.lat(),
                 lng: place.geometry.location.lng()
@@ -282,10 +178,6 @@
             lng: position.coords.longitude,
           }
           currentCoordinates.value = pos
-          props.payload.latitude = pos.lat
-          props.payload.longitude = pos.lng
-          // props.payload.value.longitude = pos.lng
-          // console.log(pos, 'cordinsteshere')
           reverseGeocode(pos)
         },
         () => {
@@ -301,7 +193,6 @@
     const geocoder = new google.maps.Geocoder()
     geocoder.geocode({ location: latLng }, (results, status) => {
       if (status === 'OK' && results && results[0]) {
-        console.log(results, 'mu location')
         currentLocation.value = results[0]
         updateMap(results[0], true)
         searchNearbyPlaces()
@@ -361,7 +252,6 @@
     }
   }
   
-  
   async function searchNearbyPlaces() {
     if (!currentCoordinates.value) return
   
@@ -378,31 +268,8 @@
           searchPerformed.value = true
           
           if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-           const amenitiesArray = results.slice(0, 10).map((place) => {
-                const mainType = place.types?.find((type: any) => typeMapping[type]);
-                if (mainType) {
-                  return {
-                    name: place.name,
-                    address: place.vicinity,
-                    description: place.vicinity,
-                    latitude: place.geometry.location.lat(),
-                    longitude: place.geometry.location.lng(),
-                    type: typeMapping[mainType], // Mapped type
-                  };
-                }
-              })
-              .filter(Boolean); // Remove any undefined entries
-  
-              //              // Emit the updated payload
-              props.payload.neighbouringLandmarks = amenitiesArray
-              emit("update:payload", {
-              ...props.payload,
-              neighbouringLandmarks: { value: amenitiesArray },
-            });
-  
             places.value = results
             amenities.value = results.slice(0, 10) // Store first 10 results as amenities
-            isLocationModalOpen.value = true;
             addPlaceMarkers(results)
           } else {
             places.value = []
@@ -480,5 +347,3 @@
     z-index: 9999;
   }
   </style>
-  
-  

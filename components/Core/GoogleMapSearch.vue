@@ -19,16 +19,7 @@
     <CoreModal :isOpen="isLocationModalOpen" @close="isLocationModalOpen = false" title="Confirm property's address">
         <p class="text-xs text-[#667185]">Please review the address and ensure that all fields marked with '*' are completed</p>
         <div class="space-y-4">
-          <!-- <div>
-            <p class="text-xs text-[#667185]">Please review the address and ensure that all fields marked with '*' are completed</p>
-          </div> -->
          <section>
-          <!-- <label class="text-xs mb-2 text-[#1D2739]">Country *</label>
-          <select class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100">
-            <option value="NG">
-              Nigeria
-            </option>
-          </select> -->
           <label class="text-xs mb-2 text-[#1D2739]">Country *</label>
           <select v-model="selectedCountry" class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100">
             <option value="NG">Nigeria</option>
@@ -77,6 +68,7 @@
   </template>
   
   <script setup lang="ts">
+  import type { PropType } from 'vue'
   import { useGetLocation } from "@/composables/core/useGetLocation";
   import { ref, onMounted } from 'vue'
   
@@ -91,14 +83,22 @@
       } = useGetLocation();
   
   
-  const props = defineProps({
-    payload: {
-      type: Object,
-      required: true,
-      default: () => ({})
-    }
-  });
+  // const props = defineProps({
+  //   payload: {
+  //     type: Object,
+  //     required: true,
+  //     default: () => ({})
+  //   }
+  // });
   
+  // Define props with proper types for ref values
+const props = defineProps({
+  payload: {
+    type: Object as PropType<LocationPayload>,
+    required: true
+  }
+})
+
   const isLocationModalOpen = ref(false)
   
   interface Amenity {
@@ -117,9 +117,14 @@
   
   const emit = defineEmits<{
     (e: 'update:amenities', amenities: any): void
-    (e: 'update:payload', amenities: any): void
+    (e: 'update:payload', data: LocationPayload): void
     (e: 'update:location', location: Coordinates): void
   }>()
+
+//   const emit = defineEmits<{
+//   'update:location': [address: string]
+//   'update:payload': [payload: LocationPayload]
+// }>()
   
   const  selectedCountry = ref('Nigeria')
   
@@ -212,14 +217,159 @@
     cemetery: "Cemeteries",
     funeral_home: "Funeral Homes",
   };
-  
+
   watch(places, (newAmenities) => {
-      emit("update:payload", {
-       ...props.payload,
-        neighbouringLandmarks: { value: newAmenities },
-   });
-    // emit('update:amenities', newAmenities)
-  })
+  const filteredAmenities = newAmenities.filter(
+    (place) => !(place.name === "Lagos" && place.address === "Lagos")
+  );
+  
+  const amenitiesArray = filteredAmenities.slice(0, 10).map((place) => {
+    const mainType = place.types?.find((type) => typeMapping[type]);
+    const fallbackType = place.types?.[0] || "Unknown"; // Fallback to first type if no mapped type
+    return {
+      name: place.name,
+      address: place.vicinity,
+      description: place.vicinity,
+      latitude: place.geometry.location.lat(),
+      longitude: place.geometry.location.lng(),
+      type: typeMapping[mainType] || fallbackType, // Use mapped type or fallback type
+    };
+  }).filter(Boolean);
+  
+  console.log(amenitiesArray, 'new amenities here poooo');
+  emit("update:payload", {
+    ...props.payload,
+    neighbouringLandmarks: { value: amenitiesArray },
+  });
+});
+
+// watch(currentLocation, (newLocation) => {
+//   console.log(newLocation.formatted_address, 'my location')
+//   if (newLocation && newLocation.formatted_address) {
+//     emit('update:location', {
+//       ...props.payload,
+//       address: newLocation.formatted_address
+//     })
+
+//     emit("update:payload", {
+//       ...props.payload,
+//       value: {
+//         ...props.payload.value,
+//         latitude: newLocation.geometry?.location?.lat(),
+//         longitude: newLocation.geometry?.location?.lng(),
+//         address: newLocation.formatted_address
+//       }
+//     });
+//   }
+// });
+
+// watch(currentLocation, (newLocation) => {
+//   if (!newLocation?.formatted_address) return;
+
+//   console.log(newLocation.formatted_address, 'my location');
+
+//   const updatedPayload = {
+//     ...props.payload,
+//     address: newLocation.formatted_address
+//   };
+
+//   emit('update:location', updatedPayload);
+
+//   emit('update:payload', {
+//     ...updatedPayload,
+//     value: {
+//       ...props.payload?.value,
+//       latitude: newLocation.geometry?.location?.lat(),
+//       longitude: newLocation.geometry?.location?.lng(),
+//       address: newLocation.formatted_address
+//     }
+//   });
+// });
+
+// watch(currentLocation, (newLocation) => {
+//   if (!newLocation?.formatted_address) return;
+
+//   console.log(newLocation.formatted_address, 'my location');
+
+//   // Assign values directly to `props.payload.<field>.value`
+//   props.payload.address.value = newLocation.formatted_address;
+//   props.payload.latitude.value = newLocation.geometry?.location?.lat();
+//   props.payload.longitude.value = newLocation.geometry?.location?.lng();
+
+//   emit('update:location', props.payload.address.value);
+
+//   emit('update:payload', {
+//     ...props.payload,
+//     value: {
+//       ...props.payload.value,
+//       latitude: props.payload.latitude.value,
+//       longitude: props.payload.longitude.value,
+//       address: props.payload.address.value
+//     }
+//   });
+// });
+
+
+interface LocationPayload {
+  address: { value: string }
+  latitude: { value: string }
+  longitude: { value: string }
+  value?: {
+    latitude: string
+    longitude: string
+    address: string
+  }
+}
+
+
+
+watch(currentLocation, (newLocation) => {
+  if (!newLocation?.formatted_address) return;
+
+  console.log(newLocation.formatted_address, 'my location');
+
+  // Since the payload properties are refs, we can access their .value
+  props.payload.address.value = newLocation.formatted_address;
+  props.payload.latitude.value = String(newLocation.geometry?.location?.lat());
+  props.payload.longitude.value = String(newLocation.geometry?.location?.lng());
+
+  emit('update:location', props.payload.address.value);
+
+  emit('update:payload', {
+    ...props.payload,
+    value: {
+      latitude: props.payload.latitude.value,
+      longitude: props.payload.longitude.value,
+      address: props.payload.address.value,
+    }
+  });
+});
+
+
+
+  
+  // watch(places, (newAmenities) => {
+  //   const amenitiesArray = newAmenities.slice(0, 10).map((place: any) => {
+  //               const mainType = place.types?.find((type: any) => typeMapping[type]);
+  //               if (mainType) {
+  //                 return {
+  //                   name: place.name,
+  //                   address: place.vicinity,
+  //                   description: place.vicinity,
+  //                   latitude: place.geometry.location.lat(),
+  //                   longitude: place.geometry.location.lng(),
+  //                   type: typeMapping[mainType], // Mapped type
+  //                 };
+  //               }
+  //             })
+  //             .filter(Boolean); // Remove any undefined entries
+  //             console.log(amenitiesArray, 'new amenities here poooo')
+  //     emit("update:payload", {
+  //      ...props.payload,
+  //       neighbouringLandmarks: { value: amenitiesArray },
+  //  });
+  //   // emit('update:amenities', newAmenities)
+  // })
   
   
   function initializeGoogleServices() {

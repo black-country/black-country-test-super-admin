@@ -1,6 +1,6 @@
 <template>
     <main class="">
-
+<!-- {{ tenantsList }} -->
       <div class="border-[0.5px] border-gray-100 rounded-lg">
         <div
           class="bg-white border-[0.5px] border-gray-50 rounded-lg overflow-hidden"
@@ -14,55 +14,57 @@
                   >
                     Tenant Name
                   </th>
-                  <th class="py-5 px-5 text-right text-sm font-medium text-gray-500 tracking-wider">
+                  <th class="py-5 px-5 text-left text-sm font-medium text-gray-500 tracking-wider">
                     Room Number
                   </th>
-                  <th class="py-5 px-5 text-right text-sm font-medium text-gray-500 tracking-wider">
+                  <th class="py-5 px-5 text-left text-sm font-medium text-gray-500 tracking-wider">
                     Payment Frequency
                   </th>
-                  <th class="py-5 px-5 text-right text-sm font-medium text-gray-500 tracking-wider">
+                  <th class="py-5 px-5 text-left text-sm font-medium text-gray-500 tracking-wider">
                     Payment Count
                   </th>
-                  <th class="py-5 px-5 text-right text-sm font-medium text-gray-500 tracking-wider">
+                  <th class="py-5 px-5 text-left text-sm font-medium text-gray-500 tracking-wider">
                     Current rent status
                   </th>
                 </tr>
               </thead>
-              <tbody  v-if="!loadingTenants" class="divide-y divide-gray-50 z-10">
+              <tbody  v-if="!loadingPropertyTenants" class="divide-y divide-gray-50 z-10">
                 <tr
                   class="cursor-pointer"
-                  v-for="(tenant, index) in tenantsList"
-                  :key="tenant.id"
+                  v-for="(item, index) in tenantsList"
+                  :key="item.id"
                 >
-                  <td>
+                  <td  class="py-5 px-5 whitespace-nowrap text-left text-sm text-[#667185] font-semibold relative">
                         <p>
-                        {{ tenant?.firstName }} {{ tenant?.lastName }}
+                        {{ item?.tenant?.firstName }} {{ item?.tenant?.lastName }}
                         </p>
                     </td>
-                    <td>
+                    <td  class="py-5 px-5 whitespace-nowrap text-left text-sm text-[#667185] font-semibold relative">
                         <p>
-                        {{ tenant?.rentalApplication?.room?.name ?? 'Nil' }} 
+                        {{ item?.room?.name ?? 'Nil' }} 
                         </p>
                     </td>
-                    <td>
+                    <td  class="py-5 px-5 whitespace-nowrap text-left text-sm text-[#667185] font-semibold relative">
                         <p>
-                        {{ tenant?.rentalApplication?.room?.rentFrequency ?? 'Nil' }} 
+                        {{ item?.room?.rentFrequency ?? 'Nil' }} 
                         </p>
                     </td>
-                    <td>
+                    <td  class="py-5 px-5 whitespace-nowrap text-left text-sm text-[#667185] font-semibold relative">
                         <p>
-                        {{ tenant?.house?.paymentCount ?? 'Nil' }} 
+                        {{ item?.house?.paymentCount ?? 'Nil' }} 
                         </p>
                     </td>
-                    <td>
+                    <td  class="py-5 px-5 whitespace-nowrap text-left text-sm text-[#667185] font-semibold relative">
                         <p>
-                        {{ tenant?.status ?? 'Nil' }} 
+                        <span class="rounded-full px-3 py-2 text-sm font-semibold" :class="[item.tenant.status === 'not paid' ? 'text-[#BA110B] bg-[#FBEAE9]' : 'text-[#039855] bg-[#E7F6EC]']">
+                          {{ item?.tenant?.status.toUpperCase() ?? 'Nil' }} 
+                        </span>
                         </p>
                     </td>
                 </tr>
               </tbody>
             </table>
-            <section id="loader" class="w-full" v-if="loadingTenants">
+            <section id="loader" class="w-full" v-if="loadingPropertyTenants">
               <div class="rounded-md p-4 w-full">
                 <div class="animate-pulse flex space-x-4 w-full">
                   <div class="h-44 w-full bg-slate-200 rounded"></div>
@@ -71,16 +73,16 @@
             </section>
           </div>
           <CorePagination
-            v-if="!loadingTenants && tenantsList.length > 0"
-            :total="metadata.total"
-            :page="metadata.page"
-            :perPage="metadata.perPage"
-            :pages="metadata.pages"
+            v-if="!loadingPropertyTenants && tenantsList?.length > 0"
+            :total="metadata?.total"
+            :page="metadata?.page"
+            :perPage="metadata?.perPage"
+            :pages="metadata?.pages"
             @page-changed="handlePageChange"
           />
         </div>
         <div
-          v-if="!loadingTenants && tenantsList.length === 0"
+          v-if="!loadingPropertyTenants && tenantsList.length === 0"
           class="flex justify-center items-center flex-col my-20"
         >
           <div class="flex justify-center flex-col items-center gap-y-4 items-center">
@@ -145,9 +147,9 @@
   </template>
   
   <script lang="ts" setup>
-  import {  useGetTenantsWithActiveRentals } from '@/composables/modules/property/fetchTenantWithActiveRentalApplication'
+  import { useGetPropertyTenants } from '@/composables/modules/property/useFetchPropertyTenants'
   import { useRouter, useRoute } from "vue-router";
-  const { tenantsList, loadingTenants, getTenantsWithActiveRentals, metadata, setPaginationObj, filters } = useGetTenantsWithActiveRentals()
+  const { tenantsList, loadingPropertyTenants, getPropertyTenants, metadata, setPaginationObj, filters } = useGetPropertyTenants()
   
 
   const route = useRoute();
@@ -160,7 +162,7 @@
 
   const handlePageChange = (val: any) => {
     metadata.value.page = val || 1;
-    getTenantsWithActiveRentals(); // Explicitly call the method to fetch new data
+    getPropertyTenants(); // Explicitly call the method to fetch new data
   };
   
   const downloadDropdown = ref(false);

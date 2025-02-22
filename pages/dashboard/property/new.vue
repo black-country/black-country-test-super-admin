@@ -176,9 +176,15 @@
                   "
                 >
                 </CreatePropertyForm>
+                <!-- {{ payload.latitude }}
+                {{ payload.longitude }}
+                {{ payload.address }} -->
                 <CoreGoogleMapSearch
                 class="z-10"
                 :payload="payload"
+                @update:amenities="handleAmenitiesUpdate"
+                @update:payload="handlePayloadUpdate"
+                @update:location="handleLocationUpdate"
                 v-if="activeParentStep === 1 && basicPropertyInformationStep === 2"></CoreGoogleMapSearch>
                 <CoreProgressStepper
                  id="part2"
@@ -828,6 +834,60 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload?.rules?.valu
   const routeToBasics = () => {
     router.push(`/dashboard/property/new?parentStep=1&childStep=1`)
   }
+
+  const locationPayload = ref({})
+
+  const neighbouringLandmarksArray = ref([]) as any;
+  
+  const handleSelectedAmenity = (item: any) => {
+    // Push the new object into the array
+    neighbouringLandmarksArray.value.push({
+      name: item.name,
+      type: item.type,
+      description: item.display_name,
+      longitude: item.lon, // Corrected: lat and lon were swapped
+      latitude: item.lat,  // Corrected: lat and lon were swapped
+      address: item.display_name,
+    });
+  
+    // Update payload with the current array
+    payload.neighbouringLandmarks.value = neighbouringLandmarksArray.value;
+  };
+  
+  const handleLocationSearch = (data: any) => {
+    payload.latitude.value = data.lat
+    payload.longitude.value = data.lon
+    payload.address.value = data.display_name
+  }
+  //Commented
+  // const handlePayloadUpdate = (data: any) => {
+  //   console.log(data, 'Hello payload Here')
+  //   locationPayload.value = data
+  //   payload.latitude.value = data?.latitude
+  //   payload.longitude.value = data?.longitude
+  //   payload.neighbouringLandmarks.value = data?.neighbouringLandmarks
+  // }
+
+//   const handleLocationUpdate = (location: any) => {
+//     console.log(location, 'Hello loacation payload Here')
+//   }
+
+//   const handlePayloadUpdate = (data: any) => {
+//     console.log(data, 'Hello payload Here');
+
+//     // Ensure locationPayload is a valid ref or reactive property
+//     locationPayload.value = data;
+
+//     // Ensure payload is an object with reactive properties
+//     if (payload && typeof payload === 'object') {
+//         if ('latitude' in payload) payload.latitude = data?.latitude;
+//         if ('longitude' in payload) payload.longitude = data?.longitude;
+//         if ('neighbouringLandmarks' in payload) payload.neighbouringLandmarks = data?.neighbouringLandmarks;
+//     } else {
+//         console.error("Payload is not an object or properly initialized", payload);
+//     }
+// };
+
   
   //Preview section code
   
@@ -1191,29 +1251,6 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload?.rules?.valu
     sessionStorage.setItem('property', JSON.stringify(incomingData.value))
   }
   
-  
-  const neighbouringLandmarksArray = ref([]) as any;
-  
-  const handleSelectedAmenity = (item: any) => {
-    // Push the new object into the array
-    neighbouringLandmarksArray.value.push({
-      name: item.name,
-      type: item.type,
-      description: item.display_name,
-      longitude: item.lon, // Corrected: lat and lon were swapped
-      latitude: item.lat,  // Corrected: lat and lon were swapped
-      address: item.display_name,
-    });
-  
-    // Update payload with the current array
-    payload.neighbouringLandmarks.value = neighbouringLandmarksArray.value;
-  };
-  
-  const handleLocationSearch = (data: any) => {
-    payload.latitude.value = data.lat
-    payload.longitude.value = data.lon
-    payload.address.value = data.display_name
-  }
   
   const handleCommonAreas = (data: any) => {
   

@@ -30,7 +30,7 @@
           </li>
           <li>
             <a class="pb-3" href="#" @click="setActiveTab('RENT_ACTIVE')" :class="activeTab === 'RENT_ACTIVE' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
-              Active
+              Latest
             </a>
           </li>
           <!-- <li>
@@ -49,7 +49,7 @@
       <div v-if="filteredApplications.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-5">
         <div v-for="(application, index) in filteredApplications" :key="index"
           class="bg-white p-4 rounded-lg cursor-pointer border-[0.5px] border-gray-100"
-          @click="router.push(`/dashboard/property/rental-applications/${application?.id}`)">
+          @click="handleNavigation(application)">
           <div class="flex items-center justify-between">
             <div class="flex items-center">
               <!-- {{  }} -->
@@ -176,6 +176,17 @@ const filteredApplications = computed(() => {
     return rentalsList.value.filter(application => application.status === activeTab.value);
   }
 });
+
+const handleNavigation = (application: any) => {
+  console.log(application, 'here')
+  // router.push(`/dashboard/property/rental-applications/${application?.id}`)
+  router.push({
+     path: `/dashboard/property/rental-applications/${application?.id}`,
+     query: {
+      houseId: application?.house.id
+     }
+  })
+}
 </script>
 
 <style scoped>

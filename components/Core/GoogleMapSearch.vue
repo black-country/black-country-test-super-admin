@@ -6,6 +6,7 @@
             <input
               ref="searchInput"
               type="text"
+              v-model="payload.address.value"
               placeholder="Enter a location"
               class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
@@ -23,8 +24,8 @@
           <label class="text-xs mb-2 text-[#1D2739]">Country *</label>
           <select v-model="selectedCountry" class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100">
             <option value="NG">Nigeria</option>
-            <option value="US">United States</option>
-            <option value="CA">Canada</option>
+            <!-- <option value="US">United States</option>
+            <option value="CA">Canada</option> -->
             <!-- Add more options or dynamically load them -->
           </select>
          </section>
@@ -71,7 +72,6 @@
   import type { PropType } from 'vue'
   import { useGetLocation } from "@/composables/core/useGetLocation";
   import { ref, onMounted } from 'vue'
-  
   const {
         states,
         cities,
@@ -82,22 +82,9 @@
         handleStateChange,
       } = useGetLocation();
   
-  
-  // const props = defineProps({
-  //   payload: {
-  //     type: Object,
-  //     required: true,
-  //     default: () => ({})
-  //   }
-  // });
-  
+
   // Define props with proper types for ref values
-const props = defineProps({
-  payload: {
-    type: Object as PropType<LocationPayload>,
-    required: true
-  }
-})
+  const props = defineProps<{ payload: any }>()
 
   const isLocationModalOpen = ref(false)
   
@@ -115,11 +102,11 @@ const props = defineProps({
     lng: number
   }
   
-  const emit = defineEmits<{
-    (e: 'update:amenities', amenities: any): void
-    (e: 'update:payload', data: LocationPayload): void
-    (e: 'update:location', location: Coordinates): void
-  }>()
+  // const emit = defineEmits<{
+  //   (e: 'update:amenities', amenities: any): void
+  //   (e: 'update:payload', data: LocationPayload): void
+  //   (e: 'update:location', location: Coordinates): void
+  // }>()
 
 //   const emit = defineEmits<{
 //   'update:location': [address: string]
@@ -216,15 +203,15 @@ const props = defineProps({
     aquarium: "Aquariums",
     cemetery: "Cemeteries",
     funeral_home: "Funeral Homes",
-  };
+  } as any
 
   watch(places, (newAmenities) => {
   const filteredAmenities = newAmenities.filter(
-    (place) => !(place.name === "Lagos" && place.address === "Lagos")
+    (place: any) => !(place.name === "Lagos" && place.address === "Lagos")
   );
   
-  const amenitiesArray = filteredAmenities.slice(0, 10).map((place) => {
-    const mainType = place.types?.find((type) => typeMapping[type]);
+  const amenitiesArray = filteredAmenities.slice(0, 50000).map((place: any) => {
+    const mainType = place.types?.find((type: any) => typeMapping[type]);
     const fallbackType = place.types?.[0] || "Unknown"; // Fallback to first type if no mapped type
     return {
       name: place.name,
@@ -237,77 +224,12 @@ const props = defineProps({
   }).filter(Boolean);
   
   console.log(amenitiesArray, 'new amenities here poooo');
-  emit("update:payload", {
-    ...props.payload,
-    neighbouringLandmarks: { value: amenitiesArray },
-  });
+  props.payload.neighbouringLandmarks.value = amenitiesArray
+  // emit("update:payload", {
+  //   ...props.payload,
+  //   neighbouringLandmarks: { value: amenitiesArray },
+  // });
 });
-
-// watch(currentLocation, (newLocation) => {
-//   console.log(newLocation.formatted_address, 'my location')
-//   if (newLocation && newLocation.formatted_address) {
-//     emit('update:location', {
-//       ...props.payload,
-//       address: newLocation.formatted_address
-//     })
-
-//     emit("update:payload", {
-//       ...props.payload,
-//       value: {
-//         ...props.payload.value,
-//         latitude: newLocation.geometry?.location?.lat(),
-//         longitude: newLocation.geometry?.location?.lng(),
-//         address: newLocation.formatted_address
-//       }
-//     });
-//   }
-// });
-
-// watch(currentLocation, (newLocation) => {
-//   if (!newLocation?.formatted_address) return;
-
-//   console.log(newLocation.formatted_address, 'my location');
-
-//   const updatedPayload = {
-//     ...props.payload,
-//     address: newLocation.formatted_address
-//   };
-
-//   emit('update:location', updatedPayload);
-
-//   emit('update:payload', {
-//     ...updatedPayload,
-//     value: {
-//       ...props.payload?.value,
-//       latitude: newLocation.geometry?.location?.lat(),
-//       longitude: newLocation.geometry?.location?.lng(),
-//       address: newLocation.formatted_address
-//     }
-//   });
-// });
-
-// watch(currentLocation, (newLocation) => {
-//   if (!newLocation?.formatted_address) return;
-
-//   console.log(newLocation.formatted_address, 'my location');
-
-//   // Assign values directly to `props.payload.<field>.value`
-//   props.payload.address.value = newLocation.formatted_address;
-//   props.payload.latitude.value = newLocation.geometry?.location?.lat();
-//   props.payload.longitude.value = newLocation.geometry?.location?.lng();
-
-//   emit('update:location', props.payload.address.value);
-
-//   emit('update:payload', {
-//     ...props.payload,
-//     value: {
-//       ...props.payload.value,
-//       latitude: props.payload.latitude.value,
-//       longitude: props.payload.longitude.value,
-//       address: props.payload.address.value
-//     }
-//   });
-// });
 
 
 interface LocationPayload {
@@ -321,6 +243,10 @@ interface LocationPayload {
   }
 }
 
+// watch(props.payload.address, () => {
+//   isLocationModalOpen.value = true
+// }, { immediate: true, deep: true})
+
 
 
 watch(currentLocation, (newLocation) => {
@@ -330,47 +256,23 @@ watch(currentLocation, (newLocation) => {
 
   // Since the payload properties are refs, we can access their .value
   props.payload.address.value = newLocation.formatted_address;
-  props.payload.latitude.value = String(newLocation.geometry?.location?.lat());
-  props.payload.longitude.value = String(newLocation.geometry?.location?.lng());
+  props.payload.latitude.value = newLocation.geometry?.location?.lat();
+  props.payload.longitude.value = newLocation.geometry?.location?.lng();
 
-  emit('update:location', props.payload.address.value);
+  // props.payload.neighbouringLandmarks.value = amenitiesArray
 
-  emit('update:payload', {
-    ...props.payload,
-    value: {
-      latitude: props.payload.latitude.value,
-      longitude: props.payload.longitude.value,
-      address: props.payload.address.value,
-    }
-  });
+  // emit('update:location', props.payload.address.value);
+
+  // emit('update:payload', {
+  //   ...props.payload,
+  //   value: {
+  //     latitude: props.payload.latitude.value,
+  //     longitude: props.payload.longitude.value,
+  //     address: props.payload.address.value,
+  //   }
+  // });
 });
 
-
-
-  
-  // watch(places, (newAmenities) => {
-  //   const amenitiesArray = newAmenities.slice(0, 10).map((place: any) => {
-  //               const mainType = place.types?.find((type: any) => typeMapping[type]);
-  //               if (mainType) {
-  //                 return {
-  //                   name: place.name,
-  //                   address: place.vicinity,
-  //                   description: place.vicinity,
-  //                   latitude: place.geometry.location.lat(),
-  //                   longitude: place.geometry.location.lng(),
-  //                   type: typeMapping[mainType], // Mapped type
-  //                 };
-  //               }
-  //             })
-  //             .filter(Boolean); // Remove any undefined entries
-  //             console.log(amenitiesArray, 'new amenities here poooo')
-  //     emit("update:payload", {
-  //      ...props.payload,
-  //       neighbouringLandmarks: { value: amenitiesArray },
-  //  });
-  //   // emit('update:amenities', newAmenities)
-  // })
-  
   
   function initializeGoogleServices() {
     try {
@@ -406,8 +308,8 @@ watch(currentLocation, (newLocation) => {
             if (place.geometry) {
               console.log(place, 'places here')
               currentLocation.value = place
-              props.payload.latitude = place.geometry.location.lat()
-              props.payload.longitude = place.geometry.location.lng()
+              props.payload.latitude.value = place.geometry.location.lat()
+              props.payload.longitude.value = place.geometry.location.lng()
               currentCoordinates.value = {
                 lat: place.geometry.location.lat(),
                 lng: place.geometry.location.lng()
@@ -432,8 +334,8 @@ watch(currentLocation, (newLocation) => {
             lng: position.coords.longitude,
           }
           currentCoordinates.value = pos
-          props.payload.latitude = pos.lat
-          props.payload.longitude = pos.lng
+          props.payload.latitude.value = pos.lat
+          props.payload.longitude.value = pos.lng
           // props.payload.value.longitude = pos.lng
           // console.log(pos, 'cordinsteshere')
           reverseGeocode(pos)
@@ -528,7 +430,7 @@ watch(currentLocation, (newLocation) => {
           searchPerformed.value = true
           
           if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-           const amenitiesArray = results.slice(0, 10).map((place) => {
+           const amenitiesArray = results.slice(0, 5000).map((place) => {
                 const mainType = place.types?.find((type: any) => typeMapping[type]);
                 if (mainType) {
                   return {
@@ -544,14 +446,14 @@ watch(currentLocation, (newLocation) => {
               .filter(Boolean); // Remove any undefined entries
   
               //              // Emit the updated payload
-              props.payload.neighbouringLandmarks = amenitiesArray
-              emit("update:payload", {
-              ...props.payload,
-              neighbouringLandmarks: { value: amenitiesArray },
-            });
+              props.payload.neighbouringLandmarks.value = amenitiesArray
+            //   emit("update:payload", {
+            //   ...props.payload,
+            //   neighbouringLandmarks: { value: amenitiesArray },
+            // });
   
             places.value = results
-            amenities.value = results.slice(0, 10) // Store first 10 results as amenities
+            amenities.value = results.slice(0, 5000) // Store first 10 results as amenities
             isLocationModalOpen.value = true;
             addPlaceMarkers(results)
           } else {

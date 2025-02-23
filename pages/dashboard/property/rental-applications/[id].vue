@@ -49,7 +49,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 p-6 lg:max-w-6xl">
+        <div class="flex-1 lg:p-6 pt-16 lg:pt-0 lg:max-w-6xl">
           <div>
             <PropertyApplicantDetails :rentalObj="rentalObj" />
           </div>

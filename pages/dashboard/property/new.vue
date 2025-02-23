@@ -176,15 +176,9 @@
                   "
                 >
                 </CreatePropertyForm>
-                <!-- {{ payload.latitude }}
-                {{ payload.longitude }}
-                {{ payload.address }} -->
                 <CoreGoogleMapSearch
                 class="z-10"
                 :payload="payload"
-                @update:amenities="handleAmenitiesUpdate"
-                @update:payload="handlePayloadUpdate"
-                @update:location="handleLocationUpdate"
                 v-if="activeParentStep === 1 && basicPropertyInformationStep === 2"></CoreGoogleMapSearch>
                 <CoreProgressStepper
                  id="part2"
@@ -859,35 +853,6 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload?.rules?.valu
     payload.longitude.value = data.lon
     payload.address.value = data.display_name
   }
-  //Commented
-  // const handlePayloadUpdate = (data: any) => {
-  //   console.log(data, 'Hello payload Here')
-  //   locationPayload.value = data
-  //   payload.latitude.value = data?.latitude
-  //   payload.longitude.value = data?.longitude
-  //   payload.neighbouringLandmarks.value = data?.neighbouringLandmarks
-  // }
-
-//   const handleLocationUpdate = (location: any) => {
-//     console.log(location, 'Hello loacation payload Here')
-//   }
-
-//   const handlePayloadUpdate = (data: any) => {
-//     console.log(data, 'Hello payload Here');
-
-//     // Ensure locationPayload is a valid ref or reactive property
-//     locationPayload.value = data;
-
-//     // Ensure payload is an object with reactive properties
-//     if (payload && typeof payload === 'object') {
-//         if ('latitude' in payload) payload.latitude = data?.latitude;
-//         if ('longitude' in payload) payload.longitude = data?.longitude;
-//         if ('neighbouringLandmarks' in payload) payload.neighbouringLandmarks = data?.neighbouringLandmarks;
-//     } else {
-//         console.error("Payload is not an object or properly initialized", payload);
-//     }
-// };
-
   
   //Preview section code
   

@@ -1,16 +1,20 @@
 export default {
   ssr: false,
   target: "static",
+  router: {
+    base: '/admin/'
+  },
   app: {
+    baseURL: '/admin/',
     head: {
-      title: "Black Country",
+      title: "Black Country - Admin",
       htmlAttrs: { lang: "en" },
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "format-detection", content: "telephone=no" },
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.svg" }],
+      link: [{ rel: "icon", type: "image/x-icon", href: "/admin/favicon.svg" }],
     },
   },
   modules: ["@nuxtjs/tailwindcss"],

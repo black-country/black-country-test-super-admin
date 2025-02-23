@@ -6,7 +6,7 @@
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-medium">{{ title }}</h3>
             <button v-if="showCloseBtn" @click="closeModal" class="text-gray-500 hover:text-gray-700">
-              <XIcon class="w-6 h-6" />
+              <!-- <XIcon class="w-6 h-6" /> -->
             </button>
           </div>
           <div class="mb-6">
@@ -19,7 +19,7 @@
   
   <script setup lang="ts">
   import { ref, defineProps, defineEmits } from 'vue';
-  import { XIcon } from '@heroicons/vue/solid';
+  // import { XIcon } from '@heroicons/vue/solid';
   
   const props = defineProps({
     isOpen: {

@@ -23,19 +23,11 @@
         <p
           :class="`${computedColorMap(rentalObj.status)} text-xs flex justify-center items-center px-3 py-2 rounded-lg border-[0.5px]`"
         >
-          {{ rentalObj.status }}
+          <!-- {{ rentalObj.status }} -->
+            {{ computedStatusMap(rentalObj.status) }}
         </p>
 
      </div>
-        <!-- <p class="text-sm px-3 py-2 rounded-lg border-[0.5px]">{{ rentalObj.status }}</p> -->
-        <!-- <div v-if="rentalObj.status !== 'PENDING'" class="flex space-x-4">
-          <button v-if="rentalObj.status === 'APPROVED'" @click="declineModal = true" class="bg-[#EBE5E0] text-sm text-[#292929] px-6 py-2.5 rounded-md">
-            Decline
-          </button>
-          <button v-if="rentalObj.status !== 'APPROVED'" @click="approveModal = true" class="bg-[#292929] text-white px-6 py-2.5 text-sm rounded-md">
-            Approve
-          </button>
-        </div> -->
         <div v-if="rentalObj.status === 'PENDING'" class="flex space-x-4">
           <button @click="declineModal = true" class="bg-[#EBE5E0] text-sm text-[#292929] text-xs px-6 py-2 rounded-md">
             Decline
@@ -57,7 +49,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 p-6 lg:max-w-6xl">
+        <div class="flex-1 lg:p-6 pt-16 lg:pt-0 lg:max-w-6xl">
           <div>
             <PropertyApplicantDetails :rentalObj="rentalObj" />
           </div>
@@ -162,16 +154,47 @@ const cancel = () => {
 //     return colorMap[status] ?? 'Nil'
 // }
 
-const computedColorMap = (status) => {
+// 'CANCELLED',
+
+//    'PENDING',
+// 'APPROVED',
+//    'REJECTED',
+//   'RENT_ACTIVE',
+
+//   'LEASE_SENT',
+//    'LEASE_SIGNED',
+//   'RENT_INACTIVE'
+
+const computedColorMap = (status: any) => {
   const colorMap = {
     PENDING: 'text-[#DD900D] bg-[#FEF6E7]',
     APPROVED: 'bg-[#E7F6EC] text-[#099137]',
     REJECTED: 'bg-[#FBEAE9] text-[#D92D20]',
-    RENT_ACTIVE: 'text-[#1D4ED8] bg-[#E8EDFB]'
+    RENT_ACTIVE: 'text-[#1D4ED8] bg-[#E8EDFB]',
+    CANCELLED: 'bg-[#F3F4F6] text-[#6B7280]', // Grey for cancelled
+    RENT_INACTIVE: 'bg-[#F3F4F6] text-[#374151]', // Muted dark grey
+    LEASE_SIGNED: 'bg-[#ECFDF5] text-[#047857]', // Green to indicate success
+    LEASE_SENT: 'bg-[#EFF6FF] text-[#1E40AF]', // Blue to indicate action in progress
   };
 
   return colorMap[status] ?? 'Nil';
+}
+
+const computedStatusMap = (status: any) => {
+  const statusMapping = {
+  CANCELLED: "Cancelled",
+  PENDING: "Pending Approval",
+  APPROVED: "Approved",
+  LEASE_SENT: "Lease Sent",
+  LEASE_SIGNED: "Lease Signed",
+  REJECTED: "Rejected",
+  RENT_ACTIVE: "Active Tenancy",
+  RENT_INACTIVE: "Rent Ended",
 };
+
+return statusMapping[status] ?? 'Nil';
+}
+
 
 // Continue action
 const continueAction = async () => {

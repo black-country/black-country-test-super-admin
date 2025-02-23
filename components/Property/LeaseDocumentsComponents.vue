@@ -65,11 +65,12 @@
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
         >
           <div
-            class="bg-white rounded-lg shadow p-4"
+            class="bg-white rounded-lg border-[0.5px] p-4"
             v-for="lease in filteredLeaseAgreements"
             :key="lease.id"
           >
-            <div class="flex justify-between items-start">
+          <!-- {{lease}} -->
+            <div class="flex justify-between items-start h-full">
               <div class="space-y-2 w-full">
                 <div
                   v-if="isLeaseAgreementContentEmpty(lease.leaseAgreementContent)"
@@ -92,17 +93,17 @@
                 <div v-else>
                   <iframe
                       :src="`https://docs.google.com/viewer?url=${encodeURIComponent(extractUrl(lease?.leaseAgreementContent))}&embedded=true`"
-                      class="w-full h-60"
+                      class="w-full"
                       frameborder="0"
                     ></iframe>
                 </div>
               </section>
                 <div class="flex justify-between items-center">
-                  <h6 class="text-base font-semibold text-gray-800 truncate">
-                    {{ lease.signeeName ?? "Nil" }}
-                  </h6>
+                  <p class="text-sm font-semibold text-gray-800 truncate">
+                    {{ lease?.agreementName ?? "Nil" }}
+                  </p>
                   <div
-                    class="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
+                    class="relative whitespace-nowrap pb-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
                   >
                     <button
                       class="p-2"
@@ -111,8 +112,8 @@
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="22"
-                        height="22"
+                        width="16"
+                        height="16"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="#4a4a4a"
@@ -297,13 +298,14 @@
                     </div>
                   </div>
                 </div>
-                <p class="text-xs text-gray-600">
+
+                <p class="text-sm text-gray-600">
                   Tenant:
                   <span class="font-medium text-[#1D2739]"
-                    >{{ user.firstName }} {{ user.lastName }}</span
+                    >{{ lease?.signeeName ?? 'Nil' }}</span
                   >
                 </p>
-                <p class="text-xs text-gray-600">
+                <p class="text-sm text-gray-600">
                   Last updated:
                   <span class="font-medium text-[#1D2739]">{{
                     moment(lease.createdAt).format("DD MMM, YYYY")

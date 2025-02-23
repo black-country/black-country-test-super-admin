@@ -21,9 +21,10 @@ function debounce(fn: Function, delay: number) {
     return debounced;
 }
 
-export const useGetProperties = () => {
-    const loadingProperties = ref(false);
-    const propertiesList = ref([] as any);
+export const useGetPropertyPaymentHistory = () => {
+    const route = useRoute()
+    const loadingPaymentHistory = ref(false);
+    const paymentList = ref([] as any);
     const searchQuery = ref<string>("");
     const metadata = ref({
         page: 1,
@@ -31,6 +32,8 @@ export const useGetProperties = () => {
         total: 100,
         pages: 0,
     });
+
+    const houseId = route?.params?.id
 
     // Filters including dates and agentId
     const filters = ref({
@@ -41,15 +44,15 @@ export const useGetProperties = () => {
         agentId: null,
     });
 
-    const { $_fetch_properties } = property_api;
-    const getProperties = async () => {
-        loadingProperties.value = true;
+    const { $_fetch_property_payment_histories } = property_api;
+    const fetchPaymentHistory = async () => {
+        loadingPaymentHistory.value = true;
         try {
-            const res = await $_fetch_properties(metadata.value, filters.value) as any;
+            const res = await $_fetch_property_payment_histories(houseId, metadata.value, filters.value) as any;
     
             if (res.type !== 'ERROR') {
                 // Sort properties by 'createdAt' in descending order
-                propertiesList.value = (res?.data?.result ?? []).sort((a: any, b: any) => {
+                paymentList.value = (res?.data?.result ?? []).sort((a: any, b: any) => {
                     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
                 });
                 metadata.value = res?.data?.metadata;
@@ -57,12 +60,12 @@ export const useGetProperties = () => {
         } catch (error) {
             console.error('Error fetching properties:', error);
         } finally {
-            loadingProperties.value = false;
+            loadingPaymentHistory.value = false;
         }
     };
 
-    // Debounced version of getProperties to avoid multiple API calls
-    const debouncedGetProperties = debounce(getProperties, 300); // 300ms delay
+    // Debounced version of fetchPaymentHistory to avoid multiple API calls
+    const debouncedfetchPaymentHistory = debounce(fetchPaymentHistory, 300); // 300ms delay
 
     // Watch for changes in filters and metadata.page/perPage
     watch(filters, () => {
@@ -70,14 +73,14 @@ export const useGetProperties = () => {
             setPaginationObj(1); // Reset to the first page when search query changes
         }
         console.log(filters, 'filters updated')
-        loadingProperties.value = true;
-        getProperties()
+        loadingPaymentHistory.value = true;
+        fetchPaymentHistory()
     }, { deep: true });
 
     watch( [metadata.value.page, metadata.value.perPage], // Watch only page and perPage
         () => {
-            // debouncedGetProperties(); // Use the debounced version here
-            getProperties()
+            // debouncedfetchPaymentHistory(); // Use the debounced version here
+            fetchPaymentHistory()
         }
     );
 
@@ -93,20 +96,20 @@ export const useGetProperties = () => {
     };
 
     onMounted(() => {
-        getProperties()
+        fetchPaymentHistory()
         // Call debounced function once on mount
-        // debouncedGetProperties();
+        // debouncedfetchPaymentHistory();
     });
 
     onBeforeUnmount(() => {
         // Clear timeout to avoid memory leaks
-        debouncedGetProperties.cancel?.();
+        debouncedfetchPaymentHistory.cancel?.();
     });
 
     return {
-        getProperties,
-        loadingProperties,
-        propertiesList,
+        fetchPaymentHistory,
+        loadingPaymentHistory,
+        paymentList,
         searchQuery,
         metadata,
         filters,

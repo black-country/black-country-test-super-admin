@@ -50,7 +50,7 @@
 
           <!-- Delete icon (top-right corner) -->
           <button
-            @click="deleteAllImages(feature.name)"
+            @click="deleteMostRecentImage(feature.name)"
             class="absolute top-2 right-2 text-white bg-opacity-50 p-2 rounded-full"
           >
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -206,7 +206,7 @@ const handleFileUpload = async (event: Event, featureName: string) => {
 };
 
 // // Delete all images in a feature
-// const deleteAllImages = (featureName: string) => {
+// const deleteMostRecentImage = (featureName: string) => {
 //   const room = rooms.value[activeRoom.value];
 //   if (!room) return;
 
@@ -221,20 +221,39 @@ const handleFileUpload = async (event: Event, featureName: string) => {
 //   }
 // };
 
-const deleteAllImages = (featureName: string) => {
+// const deleteMostRecentImage = (featureName: string) => {
+//   const room = rooms.value[activeRoom.value];
+//   if (!room) return;
+
+//   const feature = room.features.find((f: any) => f.name === featureName);
+//   if (feature) {
+//     // Preserve the feature's images before clearing them
+//     const featureImages = [...feature.images];
+
+//     // Clear feature images
+//     feature.images = []; 
+
+//     // Remove feature images from the room's images array
+//     room.images = room.images.filter((img: string) => !featureImages.includes(img));
+
+//     // Sync the payload with the updated local rooms value
+//     props.payload.rooms.value = [...rooms.value]; // Sync back to payload
+//   }
+// };
+
+const deleteMostRecentImage = (featureName: string) => {
   const room = rooms.value[activeRoom.value];
   if (!room) return;
 
   const feature = room.features.find((f: any) => f.name === featureName);
-  if (feature) {
-    // Preserve the feature's images before clearing them
-    const featureImages = [...feature.images];
+  if (feature && feature.images.length > 0) {
+    // Get the last added image (most recent)
+    const lastImage = feature.images.pop(); // Removes the last image from feature.images
 
-    // Clear feature images
-    feature.images = []; 
-
-    // Remove feature images from the room's images array
-    room.images = room.images.filter((img: string) => !featureImages.includes(img));
+    if (lastImage) {
+      // Remove the last image from the room's images array
+      room.images = room.images.filter((img: string) => img !== lastImage);
+    }
 
     // Sync the payload with the updated local rooms value
     props.payload.rooms.value = [...rooms.value]; // Sync back to payload

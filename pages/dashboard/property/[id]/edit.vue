@@ -301,7 +301,7 @@
 
                 <div class="flex justify-between items-center mb-10">
                   <p class="text-[#1D2739] font-normal">Basic property information</p>
-                  <button @click="router.push('/dashboard/property/new')" class="text-[#326543] font-semibold">Edit</button>
+                  <button @click="handleFirstSectionEdit('basic-property-information')" class="text-[#326543] font-semibold">Edit</button>
                 </div>
                 <div class="pb-6">
                   <div class="flex justify-between items-center">
@@ -350,7 +350,7 @@
                 <div class="border-t border-gray-50 py-4 ">
                   <div class="flex justify-between items-center mb-10">
                     <p class="text-[#1D2739] font-normal">Detailed property information</p>
-                    <button @click="router.push('/dashboard/property/new?parentStep=2&childStep=1')" class="text-[#326543] font-semibold">Edit</button>
+                    <button @click="handleFirstSectionEdit('detailed-property-information')"  class="text-[#326543] font-semibold">Edit</button>
                   </div>
                   <div>
                     <h4 class="font-normal text-[#667185] text-sm">Is the common area furnished?</h4>
@@ -494,7 +494,7 @@
 
                 <div class="flex justify-between items-center my-5 pb-8">
                   <p class="text-[#1D2739] font-semibold">Add visuals</p>
-                  <button @click="router.push('/dashboard/property/new?parentStep=3&childStep=1')" class="text-[#326543] font-semibold">Edit</button>
+                  <button @click="handleFirstSectionEdit('visuals')"  class="text-[#326543] font-semibold">Edit</button>
                 </div>
 
                 <div>    
@@ -612,7 +612,7 @@
                   <!-- <h2 class="text font-normal mb-6">Finalize listings and edit</h2> -->
                   <div class="flex justify-between items-center my-5 pb-8">
                     <p class="text-[#1D2739] font-semibold">Finalize listings and edit</p>
-                    <button @click="router.push('/dashboard/property/new?parentStep=4&childStep=1')" class="text-[#326543] font-semibold">Edit</button>
+                    <button @click="handleFirstSectionEdit('finalizing')"   class="text-[#326543] font-semibold">Edit</button>
                   </div>
                   <div class="mb-6">
                     <h3 class="text font-normal text-gray-600">
@@ -1671,4 +1671,27 @@ const isNextButtonDisabled = computed(() => {
   }
   return false;
 });
+
+
+const handleFirstSectionEdit = (stepText: any) => {
+    isPreviewMode.value = false
+    isReviewMode.value = false
+    
+    if(stepText === 'basic-property-information'){
+      activeParentStep.value = 1
+    }
+
+    if(stepText === 'detailed-property-information'){
+      activeParentStep.value = 2
+    }
+
+    if(stepText === 'visuals'){
+      activeParentStep.value = 3
+    }
+
+    if(stepText === 'finalizing'){
+      activeParentStep.value = 4
+    }
+   
+  }
 </script>

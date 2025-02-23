@@ -24,7 +24,7 @@ export default {
   },
   runtimeConfig: {
     public: {
-      googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY // Ensure to set this environment variable
+      googleMapsApiKey: 'AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg' // Ensure to set this environment variable
     },
   },
   plugins: [],

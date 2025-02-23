@@ -8,6 +8,7 @@ const loading = ref(false);
 
 export const useApproveRental = () => {
   const router = useRouter(); // Initialize router
+  const route = useRoute()
   const { showToast } = useCustomToast();
 
   // Function to handle rental action (either cancel or approve)
@@ -26,7 +27,10 @@ export const useApproveRental = () => {
           toastType: "success",
           duration: 3000
         });
-        router.push('/dashboard/property/rental-applications/accept-success')
+        router.push({
+          path: '/dashboard/property/rental-applications/accept-success',
+          query: { houseId: route?.query?.houseId}
+        })
       } else {
         showToast({
           title: "Error",

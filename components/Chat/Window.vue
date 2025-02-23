@@ -1,6 +1,7 @@
 <template>
     <div  ref="scrollContainer" class="flex-1 scroll-container z-10 overflow-y-auto p-4 space-y-3 bg-white">
       <!-- {{messages}} -->
+       <!-- {{ roomChats }} -->
        <!-- {{roomChats.length}} -->
         <!-- {{sortedMessagesWithHeaders}} -->
       <div v-for="(msg, index) in sortedMessagesWithHeaders" :key="msg.id || msg.dateHeader">

@@ -1,5 +1,5 @@
 <template>
-    <div class="max-w-4xl mx-auto px-4 -mt-3">
+    <div class="-mt-3">
       <!-- Tabs Navigation -->
       <div v-if="showTabs" class="flex overflow-x-auto space-x-4 mb-4">
         <button
@@ -106,6 +106,8 @@
   <script lang="ts" setup>
 //   import { useFetchMaintenanceRequests } from '@/composables/modules/tenants/useFetchMaintenenceRequests';
   import { useFetchAdminMaintenanceRequests } from '@/composables/modules/maintenance/useFetchAllMaintenenceRequests'
+  // import { useFetchInvoices } from "@/composables/modules/maintenance/useFetchInvoices";
+  // const { fetching, invoicesList, metadata } = useFetchInvoices();
 const { maintenanceRequestsList, fetching, queryObj } = useFetchAdminMaintenanceRequests()
   import { ref, computed } from 'vue';
   import { useRouter } from 'vue-router';

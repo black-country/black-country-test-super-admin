@@ -3,14 +3,14 @@
     <section v-if="loading">
       <div class="rounded-md p-4 w-full mx-auto">
         <div class="animate-pulse flex space-x-4">
-          <div class="h-44 w-full bg-slate-200 rounded col-span-1"></div>
+          <div class="h-32 w-full bg-slate-200 rounded col-span-1"></div>
         </div>
       </div>
     </section>
     <div v-else-if="images && !loading" class="container mx-auto p-4">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <!-- Main large image on the left -->
-            <div class="relative h-[600px] overflow-hidden rounded-lg cursor-pointer" @click="openCarousel(0)">
+            <div class="relative h-[400px] overflow-hidden rounded-lg cursor-pointer" @click="openCarousel(0)">
                 <img :src="images[0]" alt="Property Image"
                     class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
             </div>
@@ -18,14 +18,14 @@
             <!-- Right side 2x2 grid -->
             <div class="grid grid-cols-2 gap-4">
                 <div v-for="(image, index) in displayedImages" :key="index" @click="openCarousel(index + 1)"
-                    class="relative h-[290px] overflow-hidden rounded-lg cursor-pointer">
+                    class="relative h-[190px] overflow-hidden rounded-lg cursor-pointer">
                     <img :src="image" :alt="`Property Image ${index + 1}`"
                         class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                 </div>
 
                 <!-- View All button with blurred background -->
                 <div @click="openCarousel(0)"
-                    class="relative h-[290px] overflow-hidden rounded-lg cursor-pointer group">
+                    class="relative h-[190px] overflow-hidden rounded-lg cursor-pointer group">
                     <!-- Blurred background image -->
                     <img :src="lastDisplayedImage" alt="Background"
                         class="absolute inset-0 w-full h-full object-cover blur-sm brightness-50 group-hover:scale-105 transition-transform duration-300" />

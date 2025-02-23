@@ -10,9 +10,9 @@
           <div class="hidden lg:flex gap-x-4">
             <button @click="setActiveTab('members')" :class="[activeTab === 'members' ? 'bg-[#5B8469] text-white' : 'text-[#292929] text-sm bg-[#F0F2F5]']"
             class="font-medium text-sm px-4 py-2 rounded-md ">Members</button>
-          <button @click="setActiveTab('roles-permissions')"
+          <!-- <button @click="setActiveTab('roles-permissions')"
             :class="[activeTab === 'roles-permissions' ? 'bg-[#5B8469] text-white' : 'text-[#292929] text-sm bg-[#F0F2F5]']"
-            class=" px-4 py-2 text-sm rounded-md">Roles & permissions</button>
+            class=" px-4 py-2 text-sm rounded-md">Roles & permissions</button> -->
           <button @click="setActiveTab('audit-trail')"
             :class="[activeTab === 'audit-trail' ? 'bg-[#5B8469] text-white' : 'bg-[#F0F2F5] text-[#292929]']"
             class="font-medium text-sm  px-4 py-2 rounded-md">Audit trail</button>

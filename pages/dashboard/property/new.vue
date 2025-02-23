@@ -268,7 +268,7 @@
               <p class="text-[#1D2739] font-normal  text-2xl max-w-lg pb-10">Review property details and proceed to publish to the public</p>
               <div class="flex justify-between items-center mb-10">
                 <p class="text-[#1D2739] font-normal">Basic property information</p>
-                <a href="#part1" class="text-[#326543] font-semibold">Edit</a>
+                <button @click="handleFirstSectionEdit('basic-property-information')" class="text-[#326543] font-semibold">Edit</button>
               </div>
               <div class="pb-6">
                 <div class="flex justify-between items-center">
@@ -317,15 +317,15 @@
               <div class="border-t border-gray-50 py-4 ">
                 <div class="flex justify-between items-center mb-10">
                   <p class="text-[#1D2739] font-normal">Detailed property information</p>
-                  <button @click="router.push('/dashboard/property/new?parentStep=2&childStep=1')" class="text-[#326543] font-semibold">Edit</button>
+                  <button type="button" @click="handleFirstSectionEdit('detailed-property-information')" class="text-[#326543] font-semibold">Edit</button>
                 </div>
                 <div>
                   <h4 class="font-normal text-[#667185] text-sm">Is the common area furnished?</h4>
-                  <p>{{ payload.isFurnishedCommonArea.value ? 'Yes' : 'No' }}</p>
+                  <p>{{ payload?.isFurnishedCommonArea?.value ? 'Yes' : 'No' }}</p>
                 </div>
                 <div class="mt-4">
                   <h4 class="font-normal text-[#667185] text-sm">Interior amenities</h4>
-                  {{ payload }}
+                  <!-- {{ payload }} -->
                   <div class="flex flex-wrap gap-2 mt-2">
                     <span v-for="item in interiorAmenities" :key="item" class="bg-white border-[0.5px] border-[#E4E7EC] font-normal text-sm flex items-center gap-x-2 p-2 px-3 rounded-md">
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -346,7 +346,7 @@
                           </clipPath>
                           </defs>
                           </svg>                
-                      {{ item.name }}</span>
+                      {{ item?.name }}</span>
                   </div>
                 </div>
                 <div class="mt-4">
@@ -460,7 +460,7 @@
   
               <div class="flex justify-between items-center my-5 pb-8">
                 <p class="text-[#1D2739] font-semibold">Add visuals</p>
-                <button @click="router.push('/dashboard/property/new?parentStep=3&childStep=1')" class="text-[#326543] font-semibold">Edit</button>
+                <button type="button" @click="handleFirstSectionEdit('visuals')" class="text-[#326543] font-semibold">Edit</button>
               </div>
   
               <div>    
@@ -588,7 +588,7 @@
                 <!-- <h2 class="text font-normal mb-6">Finalize listings and edit</h2> -->
                 <div class="flex justify-between items-center my-5 pb-8">
                   <p class="text-[#1D2739] font-semibold">Finalize listings and edit</p>
-                  <button @click="router.push('/dashboard/property/new?parentStep=4&childStep=1')" class="text-[#326543] font-semibold">Edit</button>
+                  <button @click="handleFirstSectionEdit('finalizing')"  class="text-[#326543] font-semibold">Edit</button>
                 </div>
                 <div class="mb-6">
                   <h3 class="text font-normal text-gray-600">
@@ -689,6 +689,18 @@
 
                 </form>
               </div>
+
+
+              <!-- <div>
+                <p>Additional Charges</p>
+
+                <ul  v-for="(charge, index) in (Array.isArray(payload?.additionalCharges?.value) && payload.additionalCharges.value.length > 0 ? payload.additionalCharges.value : localAdditionalCharges)">
+                     <li>
+                      <p>{{ charge.additionalChargeId }}</p>
+                       <p>{{ charge.amount ?? 'Nil' }}</p>
+                    </li>
+                </ul>
+              </div> -->
             </div>
           </main>
         </LayoutWithoutSidebar>
@@ -800,35 +812,64 @@ const localStorageRooms = (Array.isArray(payload?.rooms?.value) && payload.rooms
   ? payload.rooms.value
   : storedRooms;
 
-const localQuestions = (Array.isArray(payload?.questions?.value) && payload.questions.value.length > 0)
+const localQuestions = (Array.isArray(payload?.questions?.value) && payload?.questions?.value?.length > 0)
   ? payload.questions.value
   : storedQuestions;
 
-const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.length > 0)
+const localRules = (Array.isArray(payload?.rules?.value) && payload?.rules?.value?.length > 0)
   ? payload.rules.value
+  : storedRules;
+
+  const localAdditonalCharges = (Array.isArray(payload?.additionalCharges?.value) && payload?.additionalCharges?.value?.length > 0)
+  ? payload.additionalCharges.value
   : storedRules;
 
 
   const routeToBasics = () => {
     router.push(`/dashboard/property/new?parentStep=1&childStep=1`)
   }
+
+  const locationPayload = ref({})
+
+  const neighbouringLandmarksArray = ref([]) as any;
+  
+  const handleSelectedAmenity = (item: any) => {
+    // Push the new object into the array
+    neighbouringLandmarksArray.value.push({
+      name: item.name,
+      type: item.type,
+      description: item.display_name,
+      longitude: item.lon, // Corrected: lat and lon were swapped
+      latitude: item.lat,  // Corrected: lat and lon were swapped
+      address: item.display_name,
+    });
+  
+    // Update payload with the current array
+    payload.neighbouringLandmarks.value = neighbouringLandmarksArray.value;
+  };
+  
+  const handleLocationSearch = (data: any) => {
+    payload.latitude.value = data.lat
+    payload.longitude.value = data.lon
+    payload.address.value = data.display_name
+  }
   
   //Preview section code
   
   const floorObj = computed(() => {
-      return flooringsList.value.find((item) => item.id === payload.flooringTypeId.value)
+      return flooringsList?.value.find((item) => item.id === payload?.flooringTypeId.value)
     })
   
     const propertyObj = computed(() => {
-      return propertyTypesList.value.find((item) => item.id ===  payload.houseTypeId.value)
+      return propertyTypesList?.value.find((item) => item.id ===  payload?.houseTypeId.value)
     })
   
     const interiorAmenities = computed(() => {
-      return payload.value.commonAreas.filter((item: any) => item.type === 'interior')
+      return payload?.value?.commonAreas.filter((item: any) => item?.type === 'interior')
     })
   
     const exteriorAmenities = computed(() => {
-      return payload.value.commonAreas.filter((item: any) => item.type === 'exterior')
+      return payload?.value?.commonAreas.filter((item: any) => item?.type === 'exterior')
     })
   
     // Current selected room
@@ -1176,29 +1217,6 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
   }
   
   
-  const neighbouringLandmarksArray = ref([]) as any;
-  
-  const handleSelectedAmenity = (item: any) => {
-    // Push the new object into the array
-    neighbouringLandmarksArray.value.push({
-      name: item.name,
-      type: item.type,
-      description: item.display_name,
-      longitude: item.lon, // Corrected: lat and lon were swapped
-      latitude: item.lat,  // Corrected: lat and lon were swapped
-      address: item.display_name,
-    });
-  
-    // Update payload with the current array
-    payload.neighbouringLandmarks.value = neighbouringLandmarksArray.value;
-  };
-  
-  const handleLocationSearch = (data: any) => {
-    payload.latitude.value = data.lat
-    payload.longitude.value = data.lon
-    payload.address.value = data.display_name
-  }
-  
   const handleCommonAreas = (data: any) => {
   
   
@@ -1444,6 +1462,26 @@ const localRules = (Array.isArray(payload?.rules?.value) && payload.rules.value.
     },
     { immediate: true, flush: 'post' }
   );
+
+  const handleFirstSectionEdit = (stepText: any) => {
+    isReviewMode.value = false
+    if(stepText === 'basic-property-information'){
+      activeParentStep.value = 1
+    }
+
+    if(stepText === 'detailed-property-information'){
+      activeParentStep.value = 2
+    }
+
+    if(stepText === 'visuals'){
+      activeParentStep.value = 3
+    }
+
+    if(stepText === 'finalizing'){
+      activeParentStep.value = 4
+    }
+   
+  }
   </script>
   
   <style scoped>

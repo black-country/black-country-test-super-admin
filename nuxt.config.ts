@@ -2,6 +2,7 @@ export default {
   ssr: false,
   target: "static",
   app: {
+    baseURL: '/admin/',
     head: {
       title: "Black Country",
       htmlAttrs: { lang: "en" },
@@ -27,6 +28,16 @@ export default {
       googleMapsApiKey: 'AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg' // Ensure to set this environment variable
     },
   },
+  router: {
+    extendRoutes(routes: any, resolve: any) {
+      // Adjust all routes to be prefixed with `/about/`
+      routes.forEach((route: any) => {
+        if (route.path !== '/admin') {
+           route.path = `/admin${route.path}`
+        }
+      })
+    }
+  },
   plugins: [],
   vite: {
     optimizeDeps: {
@@ -36,7 +47,7 @@ export default {
       transpile: ['@vueup/vue-quill'],
       rollupOptions: {
         output: {
-          manualChunks(id) {
+          manualChunks(id: any) {
             if (id.includes("pdfjs-dist")) {
               return "pdfjs";
             }

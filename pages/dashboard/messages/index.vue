@@ -352,7 +352,7 @@
         </section>
 
           <div class="flex items-center space-x-2 p-2 border-b-[0.5px] border-gray-100 relative py-3.5">
-            <div
+            <!-- <div
               class="relative flex items-center bg-[#EAEAEA] rounded-lg px-3 py-2 w-full"
             >
               <svg
@@ -373,7 +373,85 @@
                 class="bg-[#EAEAEA] text-gray-600 text-sm ml-2 py-1.5 focus:outline-none w-full"
                 placeholder="Search"
               />
+            </div> -->
+
+            <div class="relative w-full max-w-md mx-auto" ref="componentRef">
+    <!-- Search Input -->
+    <div class="relative flex items-center bg-[#EAEAEA] rounded-lg px-3 py-2 w-full">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5 text-gray-500"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.386a1 1 0 11-1.414 1.415l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <input
+        v-model="userSearchInput"
+        type="text"
+        class="bg-[#EAEAEA] text-gray-600 text-sm ml-2 py-1.5 focus:outline-none w-full"
+        placeholder="Search"
+        @input="handleInput"
+      />
+    </div>
+
+    <!-- Dropdown -->
+    <div
+      v-if="isDropdownVisible"
+      class="absolute mt-2 w-full bg-white rounded-lg shadow-lg border border-gray-100 z-50"
+    >
+      <!-- Users List -->
+      <div v-if="filteredUsers.length > 0" class="max-h-[300px] overflow-y-auto">
+        <div
+          v-for="user in filteredUsers"
+          :key="user.id"
+          class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full overflow-hidden">
+              <img
+                :src="user.image"
+                :alt="user.name"
+                class="w-full h-full object-cover"
+              />
             </div>
+            <div>
+              <h3 class="text-sm font-medium text-gray-900">{{ user.name }}</h3>
+              <p class="text-xs text-gray-500">{{ user.role }}</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs text-gray-400">{{ user.date }}</span>
+            <svg
+              v-if="user.isVerified"
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-green-500"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div
+        v-else
+        class="px-4 py-6 text-center"
+      >
+        <p class="text-gray-500 text-sm">No users found</p>
+      </div>
+    </div>
+  </div>
             <button @click="toggleMembers">
               <svg
                 width="44"
@@ -1027,6 +1105,70 @@ const computedMembersList = computed(() => [
   ...(tenantsList.value?.map((tenant: any) => ({ ...tenant, group: "TENANT" })) || [])
 ]);
 
+const userSearchInput = ref('');
+const isDropdownVisible = ref(false);
+const componentRef = ref<HTMLElement | null>(null);
+
+// Sample users data - replace with your actual data source or API call
+const users = ref<User[]>([
+  {
+    id: 1,
+    name: 'Jeffery McKenzie',
+    role: 'Agent',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-02-26%20at%2013.24.04-9yJ9RIeWhhWHAVHYWfnJlmKfzK0zdd.png',
+    date: '08 Feb',
+    isVerified: true
+  },
+  {
+    id: 2,
+    name: 'Susie Roob',
+    role: 'Tenant',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-02-26%20at%2013.24.04-9yJ9RIeWhhWHAVHYWfnJlmKfzK0zdd.png',
+    date: '08 Feb',
+    isVerified: true
+  },
+  {
+    id: 3,
+    name: 'Lonnie Wisoky',
+    role: 'Non tenant',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-02-26%20at%2013.24.04-9yJ9RIeWhhWHAVHYWfnJlmKfzK0zdd.png',
+    date: '08 Feb'
+  },
+  {
+    id: 4,
+    name: 'Stacey Towne',
+    role: 'Service Provider',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-02-26%20at%2013.24.04-9yJ9RIeWhhWHAVHYWfnJlmKfzK0zdd.png',
+    date: '08 Feb'
+  }
+]);
+
+const filteredUsers = computed(() => {
+  if (!userSearchInput.value) return [];
+  return users.value.filter(user =>
+    user.name.toLowerCase().includes(userSearchInput.value.toLowerCase()) ||
+    user.role.toLowerCase().includes(userSearchInput.value.toLowerCase())
+  );
+});
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (componentRef.value && !componentRef.value.contains(event.target as Node)) {
+    isDropdownVisible.value = false;
+  }
+};
+
+const handleInput = () => {
+  isDropdownVisible.value = userSearchInput.value.length > 0;
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
 </script>
 
 <style scoped>
@@ -1068,5 +1210,9 @@ const computedMembersList = computed(() => [
   .lg-border-r {
     border-right: none;
   }
+}
+
+.absolute {
+  transition: all 0.2s ease-in-out;
 }
 </style>

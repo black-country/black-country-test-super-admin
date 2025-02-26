@@ -28,7 +28,7 @@ export default {
   },
   runtimeConfig: {
     public: {
-      googleMapsApiKey: 'AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg' // Ensure to set this environment variable
+      googleMapsApiKey:  process.env.VITE_GOOGLE_MAPS_API_KEY,
     },
   },
   router: {

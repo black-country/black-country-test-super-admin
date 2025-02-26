@@ -28,6 +28,7 @@ export const use_auth_login = () => {
         password: credential.password.value,
         app: 'admin-app'
       });
+      // window.location.href = "/dashboard"
 
       if(res.status == 200 || res.status == 201){
         console.log(res, 'res here');
@@ -39,6 +40,7 @@ export const use_auth_login = () => {
           duration: 3000
         });
         router.push("/dashboard");
+        window.location.href = "/admin/dashboard"
       }
 
     } catch (error) {

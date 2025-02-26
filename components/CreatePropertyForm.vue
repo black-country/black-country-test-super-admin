@@ -120,7 +120,7 @@
           v-model.number="payload.bedroomCount.value"
         />
         <button
-          @click="payload.bedroomCount.value++"
+          @click="handleBedroomNumberIncrease"
           type="button"
           class="bg-[#F9FAFB] text-gray-600 px-4 py-2 rounded-lg"
         >
@@ -181,6 +181,24 @@ const handleFloorNumberDecrease = () => {
 const handleBedroomNumberDecrease = () => {
   if (props.payload.bedroomCount.value === 0) return
   props.payload.bedroomCount.value--
+  props.payload.rooms.value.pop();
+}
+const handleBedroomNumberIncrease = () => {
+  props.payload.bedroomCount.value++
+  props.payload.rooms.value.push({
+    name: `Room ${props.payload.rooms.value.length + 1}`,
+    availability: "available_now",
+    availableFrom: null,
+    occupantName: "",
+    isMaster: false,
+    rentAmount: "",
+    rentFrequency: "monthly",
+    isFurnished: true,
+    features: [],
+    images: [],
+    additionalCharges: [],
+    bedroomCount: props.payload.bedroomCount.value,  
+  });
 }
 
 const handleBathroomNumberDecrease = () => {

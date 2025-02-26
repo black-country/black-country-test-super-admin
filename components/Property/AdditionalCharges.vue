@@ -2,14 +2,26 @@
 import { useGetAdditionalCharges } from '@/composables/modules/property/useFetchAdditionalCharges'
 import { ref, watch, defineEmits, defineProps, computed, onMounted } from 'vue';
 
-interface AdditionalCharge {
-  additionalChargeId: string;
-  amount: number;
+interface AdditionalChargeData {
+  id: string;
+  category: string;
+  chargeType: string;
+  name: string;
+  optional: boolean;
+  description: string;
+  createdAt: string;
+}
+
+interface ChargeItem {
+  id: string;
+  amount: string;
+  frequency: string | null;
+  additionalCharge: AdditionalChargeData;
 }
 
 const props = defineProps({
   value: {
-    type: Array as () => AdditionalCharge[],
+    type: Array as () => ChargeItem[],
     required: true,
     default: () => []
   }
@@ -23,31 +35,30 @@ const isServiceEnabled = ref(false);
 const serviceFrequency = ref('Monthly');
 const additionalCharges = ref<Record<string, string>>({});
 
-// Initialize state from props
 onMounted(() => {
-  // Set initial values for toggles and amounts based on provided value
-  props.value.forEach(charge => {
-    additionalCharges.value[charge.additionalChargeId] = formatCurrency(charge.amount.toString());
-    
-    // Set toggle states based on existence of charges
-    const chargeType = additionalChargesList.value.find(c => c.id === charge.additionalChargeId)?.name;
-    if (chargeType === 'Caution Fee') {
-      isCautionEnabled.value = true;
-    }
-    if (chargeType === 'Service Charge') {
-      isServiceEnabled.value = true;
+  props.value.forEach(item => {
+    if (item.additionalCharge && item.additionalCharge.id) {
+      const chargeId = item.additionalCharge.id;
+      additionalCharges.value[chargeId] = formatCurrency(item.amount);
+      
+      // Set toggle states based on charge name
+      if (item.additionalCharge.name === 'Caution Fee') {
+        isCautionEnabled.value = true;
+      }
+      if (item.additionalCharge.name === 'Service Charge') {
+        isServiceEnabled.value = true;
+      }
     }
   });
 });
 
-// Watch for changes in props.value
-watch(() => props.value, (newValue) => {
-  newValue.forEach(charge => {
-    if (!additionalCharges.value[charge.additionalChargeId]) {
-      additionalCharges.value[charge.additionalChargeId] = formatCurrency(charge.amount.toString());
+watch(additionalChargesList, () => {
+  additionalChargesList.value.forEach(charge => {
+    if (!additionalCharges.value[charge.id]) {
+      additionalCharges.value[charge.id] = '0';
     }
   });
-}, { deep: true });
+}, { immediate: true });
 
 const formatCurrency = (value: string) => {
   if (!value) return '';
@@ -97,7 +108,7 @@ const handleInputChange = (chargeId: string, value: string) => {
         <template v-if="charge.name === 'Caution Fee'">
           <div class="flex flex-col space-y-2">
             <div class="flex justify-between items-center">
-              <label class="block text-[#1D2739] font-medium text-sm">{{ charge.name }}</label>
+              <label class="block text-[#1D2739] font-medium text-sm capitalize">{{ charge.name }}</label>
               <button @click="isCautionEnabled = !isCautionEnabled"
                 :class="isCautionEnabled ? 'bg-green-600' : 'bg-gray-300'"
                 class="w-10 h-6 rounded-full transition duration-300 relative">

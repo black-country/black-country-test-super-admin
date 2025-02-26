@@ -4,14 +4,14 @@ export default {
   app: {
     baseURL: '/admin/',
     head: {
-      title: "Black Country",
+      title: "Black Country - Admin",
       htmlAttrs: { lang: "en" },
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "format-detection", content: "telephone=no" },
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.svg" }],
+      link: [{ rel: "icon", type: "image/x-icon", href: "/admin/favicon.svg" }],
     },
   },
   modules: ["@nuxtjs/tailwindcss"],
@@ -20,12 +20,12 @@ export default {
     cssPath: "@/assets/css/main.css",
   },
   axios: {
-    // Axios options here
     timeout: 10000, // Example: set timeout to 10 seconds
+    // Axios options here
   },
   runtimeConfig: {
     public: {
-      googleMapsApiKey: 'AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg' // Ensure to set this environment variable
+      googleMapsApiKey:  process.env.VITE_GOOGLE_MAPS_API_KEY,
     },
   },
   router: {

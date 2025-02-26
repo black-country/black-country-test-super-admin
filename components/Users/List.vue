@@ -99,7 +99,7 @@
                     <p class="break-words"> {{ moment(tenant?.createdAt).format('DD MMMM YYYY, HH:mm:ss A') ?? 'Nil' }}</p>
                   </p>
                   <p v-else-if="column.key === 'updatedAt'">
-                    <p class="break-words"> {{ moment(tenant?.upatedAt).format('DD MMMM YYYY, HH:mm:ss A') ?? 'Nil' }}</p>
+                    <p class="break-words"> {{ moment(tenant?.updatedAt).format('DD MMMM YYYY, HH:mm:ss A') ?? 'Nil' }}</p>
                   </p>
                   <p class="inline px-3 py-2 rounded-full text-sm"
                     :class="[tenant.status === 'not paid' ? 'text-[#BA110B] bg-[#FBEAE9]' : 'bg-[#E7F6EC] text-[#099137]']"

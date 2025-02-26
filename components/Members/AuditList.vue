@@ -207,9 +207,39 @@
   import { useRouter, useRoute } from "vue-router";
   const { exportPaginatedData, isDownloading }  = usePaginatedFetchAndDownload()
 
-  const downloadData = (exportType: any) => {
-    exportPaginatedData('/audits', exportType, 'audits_data_export', ['metadata.authUser.firstName', 'createdAt', 'eventType', 'actionDescription.summary', 'entityType', 'metadata.ipAddress', 'status' ]);
-  }
+  // const downloadData = (exportType: any) => {
+  //   exportPaginatedData('/audits', exportType, 'audits_data_export', ['metadata.authUser.firstName', 'createdAt', 'eventType', 'actionDescription.summary', 'entityType', 'metadata.ipAddress', 'status' ]);
+  // }
+  const downloadData = (exportType: ExportType) => {
+  const dataKeys = [
+    'metadata.authUser.firstName',
+    'createdAt',
+    'eventType',
+    'actionDescription.summary',
+    'entityType',
+    'metadata.ipAddress',
+    'status'
+  ];
+
+  const customHeaders = [
+    'User',
+    'Date',
+    'Event Type',
+    'Action',
+    'Entity Type',
+    'IP Address',
+    'Status'
+  ];
+
+  exportPaginatedData(
+    '/audits',
+    exportType,
+    'audits_data_export',
+    dataKeys,
+    customHeaders  // Add this new parameter
+  );
+}
+
   const route = useRoute();
   const router = useRouter();
   const testConfigModal = ref(true);

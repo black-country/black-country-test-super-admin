@@ -6,24 +6,12 @@
         <div class="flex items-center gap-x-4">
           <h4 class="text-[#1D2739] text-sm">Members</h4>
 
-          <!-- Desktop View Buttons -->
           <div class="hidden lg:flex gap-x-4">
             <button @click="setActiveTab('members')" :class="[activeTab === 'members' ? 'bg-[#5B8469] text-white' : 'text-[#292929] text-sm bg-[#F0F2F5]']"
             class="font-medium text-sm px-4 py-2 rounded-md ">Members</button>
-          <!-- <button @click="setActiveTab('roles-permissions')"
-            :class="[activeTab === 'roles-permissions' ? 'bg-[#5B8469] text-white' : 'text-[#292929] text-sm bg-[#F0F2F5]']"
-            class=" px-4 py-2 text-sm rounded-md">Roles & permissions</button> -->
           <button @click="setActiveTab('audit-trail')"
             :class="[activeTab === 'audit-trail' ? 'bg-[#5B8469] text-white' : 'bg-[#F0F2F5] text-[#292929]']"
             class="font-medium text-sm  px-4 py-2 rounded-md">Audit trail</button>
-            <!-- <button @click="activeTab = 'members'" :class="[activeTab === 'members' ? 'bg-[#5B8469] text-white' : '']"
-              class="bg-[#5B8469] font-medium px-4 py-2 text-sm rounded-md text-white">Members</button>
-            <button @click="router.push('/dashboard/members/roles')"
-              :class="[activeTab === 'roles-permissions' ? 'bg-[#5B8469] text-white' : ' ']"
-              class="text-[#292929] font-medium text-sm bg-[#F0F2F5] px-4 py-2 rounded-md">Roles & permissions</button>
-            <button @click="activeTab = 'audit-trail'"
-              :class="[activeTab === 'audit-trail' ? 'bg-[#5B8469] text-white' : 'bg-[#F0F2F5] text-[#292929]']"
-              class="text-[#292929] font-medium text-sm bg-[#F0F2F5] px-4 py-2 rounded-md">Audit trail</button> -->
           </div>
 
           <!-- Mobile View Hamburger Menu -->

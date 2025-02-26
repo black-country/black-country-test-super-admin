@@ -1,16 +1,20 @@
 export default {
   ssr: false,
   target: "static",
+  router: {
+    base: '/admin/'
+  },
   app: {
+    baseURL: '/admin/',
     head: {
-      title: "Black Country",
+      title: "Black Country - Admin",
       htmlAttrs: { lang: "en" },
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "format-detection", content: "telephone=no" },
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.svg" }],
+      link: [{ rel: "icon", type: "image/x-icon", href: "/admin/favicon.svg" }],
     },
   },
   modules: ["@nuxtjs/tailwindcss"],
@@ -27,6 +31,16 @@ export default {
       googleMapsApiKey: 'AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg' // Ensure to set this environment variable
     },
   },
+  router: {
+    extendRoutes(routes: any, resolve: any) {
+      // Adjust all routes to be prefixed with `/about/`
+      routes.forEach((route: any) => {
+        if (route.path !== '/admin') {
+           route.path = `/admin${route.path}`
+        }
+      })
+    }
+  },
   plugins: [],
   vite: {
     optimizeDeps: {
@@ -36,7 +50,7 @@ export default {
       transpile: ['@vueup/vue-quill'],
       rollupOptions: {
         output: {
-          manualChunks(id) {
+          manualChunks(id: any) {
             if (id.includes("pdfjs-dist")) {
               return "pdfjs";
             }

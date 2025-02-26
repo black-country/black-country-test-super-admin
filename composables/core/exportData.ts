@@ -142,12 +142,17 @@ function exportAsCSV(data: Array<Record<string, any>>, fileName: string, headers
 
 function exportAsPDF(data: Array<Record<string, any>>, fileName: string, headers: string[]) {
   try {
-    const doc = new jsPDF();
+    // const doc = new jsPDF();
+    const doc = new jsPDF('l', 'mm', 'a4'); 
     const rows = data.map(item => Object.values(item));
-
     autoTable(doc, {
-      head: [headers], // Use formatted headers
+      head: [headers], 
       body: rows,
+      styles: {
+        cellPadding: 4,
+        halign: 'center',
+        valign: 'middle',
+      },
     });
 
     doc.save(`${fileName}.pdf`);

@@ -1,11 +1,17 @@
 <template>
   <main class="min-h-screen ">
-    <div v-if="!loadingRentals && rentalsList.length" class="border-[0.5px] border-gray-100 rounded-lg">
+    <div v-if="!loadingRentals " class="border-[0.5px] border-gray-100 rounded-lg">
+    <!-- <div v-if="!loadingRentals && rentalsList.length" class="border-[0.5px] border-gray-100 rounded-lg"> -->
       <nav class="mb-4">
         <ul class="flex space-x-4 border-b border-gray-100 py-4 px-6">
           <li>
             <a class="pb-3" href="#" @click="setActiveTab('ALL')" :class="activeTab === 'ALL' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
               All Applications
+            </a>
+          </li>
+          <li>
+            <a class="pb-3" href="#" @click="setActiveTab('RENT_ACTIVE')" :class="activeTab === 'RENT_ACTIVE' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
+              Latest
             </a>
           </li>
           <li>
@@ -28,11 +34,7 @@
               Declined
             </a>
           </li>
-          <li>
-            <a class="pb-3" href="#" @click="setActiveTab('RENT_ACTIVE')" :class="activeTab === 'RENT_ACTIVE' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
-              Latest
-            </a>
-          </li>
+          
           <!-- <li>
             <a class="pb-3" href="#" @click="setActiveTab('RENT_INACTIVE')" :class="activeTab === 'RENT_INACTIVE' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
               In-Active

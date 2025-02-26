@@ -40,7 +40,7 @@ export const use_auth_login = () => {
           duration: 3000
         });
         router.push("/dashboard");
-        window.location.href = "/dashboard"
+        // window.location.href = "/dashboard"
       }
 
     } catch (error) {

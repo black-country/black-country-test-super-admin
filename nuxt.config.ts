@@ -1,9 +1,6 @@
 export default {
   ssr: false,
   target: "static",
-  router: {
-    base: '/admin/'
-  },
   app: {
     baseURL: '/admin/',
     head: {
@@ -23,8 +20,8 @@ export default {
     cssPath: "@/assets/css/main.css",
   },
   axios: {
-    // Axios options here
     timeout: 10000, // Example: set timeout to 10 seconds
+    // Axios options here
   },
   runtimeConfig: {
     public: {

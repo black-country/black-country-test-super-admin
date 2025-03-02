@@ -183,21 +183,6 @@ const firstSection = ref([
   { icon: 'total-income', value: '0', label: 'Rooms rented out' },
 ])
 
-// const memberObj = ref({
-//   id: "46839d09-c9b8-4306-bdb8-55d202b92650",
-//   firstName: "Prince2",
-//   lastName: "Ita",
-//   profilePicture: "https://example.com",
-//   email: "prince1659@mailinator.com",
-//   isEmailVerified: true,
-//   group: "ADMIN",
-//   isActive: true,
-//   createdAt: "2024-09-06T09:27:46.980Z",
-//   updatedAt: "2024-09-21T18:59:02.560Z",
-//   role: "ADMIN",
-//   status: "active"
-// })
-
 const handleDeleteConfirm = async () => {
   if (memberObj.value.id) {                                
     await deleteMember(memberObj.value.id).then(() => {

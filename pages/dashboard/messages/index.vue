@@ -933,4 +933,8 @@ const filteredMembersList = computed(() => {
     border-right: none;
   }
 }
+
+.absolute {
+  transition: all 0.2s ease-in-out;
+}
 </style>

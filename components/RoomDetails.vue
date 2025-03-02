@@ -312,24 +312,46 @@ const isAnyRoomMaster = computed(() => {
 });
 
 // Initialize room data
+// const initializeRoomData = () => {
+//   roomData.value = props.payload.rooms.value.length
+//     ? [...props.payload.rooms.value]
+//     : Array.from({ length: props.payload.bedroomCount.value }, (_, i) => ({
+//       name: `Room ${i + 1}`,
+//       availability: 'available_now',
+//       availableFrom: null,
+//       occupantName: '',
+//       isMaster: false,
+//       rentAmount: '',
+//       rentFrequency: 'monthly',
+//       isFurnished: true,
+//       features: [],
+//       images: [],
+//       additionalCharges: [] // Initialize with empty additional charges array
+//     }));
+//   rooms.value = roomData.value;
+// };
 const initializeRoomData = () => {
-  roomData.value = props.payload.rooms.value.length
+  const bedroomCount = props.payload.bedroomCount.value;
+  
+  roomData.value = props.payload.rooms.value.length === bedroomCount
     ? [...props.payload.rooms.value]
-    : Array.from({ length: props.payload.bedroomCount.value }, (_, i) => ({
-      name: `Room ${i + 1}`,
-      availability: 'available_now',
-      availableFrom: null,
-      occupantName: '',
-      isMaster: false,
-      rentAmount: '',
-      rentFrequency: 'monthly',
-      isFurnished: true,
-      features: [],
-      images: [],
-      additionalCharges: [] // Initialize with empty additional charges array
-    }));
+    : Array.from({ length: bedroomCount }, (_, i) => ({
+        name: `Room ${i + 1}`,
+        availability: 'available_now',
+        availableFrom: null,
+        occupantName: '',
+        isMaster: false,
+        rentAmount: '',
+        rentFrequency: 'monthly',
+        isFurnished: true,
+        features: [],
+        images: [],
+        additionalCharges: [] // Initialize with empty additional charges array
+      }));
+  
   rooms.value = roomData.value;
 };
+
 
 
     // Improved save room data method

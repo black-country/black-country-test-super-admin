@@ -11,7 +11,6 @@ export const use_update_profile = () => {
   const { updateUser } = useUser()
   
 
-  // Initialize the credential object with default values
   const credential = ref({
     firstName: "",
     lastName: "",
@@ -23,10 +22,9 @@ export const use_update_profile = () => {
   const loading = ref(false);
   const error = ref(null); // Track error messages
 
-  // Function to update the profile
   const updateProfile = async (profilePayload: any) => {
     loading.value = true;
-    error.value = null; // Reset error before the API call
+    error.value = null;
 
     try {
       const res = (await auth_api.$_update_profile(profilePayload)) as any;

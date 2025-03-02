@@ -132,7 +132,12 @@ const formatDate = computed(() => {
 
       // Function to download checklist as PDF
       const downloadChecklist = () => {
-        const doc = new jsPDF();
+        // const doc = new jsPDF();
+        const doc = new jsPDF({
+            orientation: 'landscape',
+            unit: 'mm',
+            format: 'a4'
+          });
       
         // Add title to PDF
         doc.setFontSize(18);

@@ -99,7 +99,7 @@
                 </div>
               </section>
                 <div class="flex justify-between items-center">
-                  <p class="text-sm font-semibold text-gray-800 truncate">
+                  <p @click="viewTemplate(lease)"  class="text-sm cursor-pointer font-semibold text-gray-800 truncate">
                     {{ lease?.agreementName ?? "Nil" }}
                   </p>
                   <div
@@ -299,13 +299,13 @@
                   </div>
                 </div>
 
-                <p class="text-sm text-gray-600">
+                <p @click="viewTemplate(lease)"  class="text-sm cursor-pointer text-gray-600">
                   Tenant:
                   <span class="font-medium text-[#1D2739]"
                     >{{ lease?.signeeName ?? 'Nil' }}</span
                   >
                 </p>
-                <p class="text-sm text-gray-600">
+                <p @click="viewTemplate(lease)"  class="text-sm cursor-pointer text-gray-600">
                   Last updated:
                   <span class="font-medium text-[#1D2739]">{{
                     moment(lease.createdAt).format("DD MMM, YYYY")

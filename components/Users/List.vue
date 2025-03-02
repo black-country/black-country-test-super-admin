@@ -220,11 +220,20 @@ const { exportPaginatedData, isDownloading } = usePaginatedFetchAndDownload()
 
 import { useClearLocalStorage } from '@/composables/core/useClearLocalStorage';
 const { clearLocalStorage } = useClearLocalStorage();
-// Define the method to handle the download
+
+const usersCustomHeaders = {
+  'firstName': 'First Name',
+  'email': 'Email Address',
+  'type': 'User Type',
+  'updatedAt': 'Last Login',
+  'accountStatus': 'Account Status',
+  'createdAt': 'Date Joined',
+};
+
 const downloadData = (exportType: any) => {
-  // Call the export function with the desired format (csv, pdf, or excel)
-  exportPaginatedData('/tenants', exportType, 'tenant_data_export', ['firstName', 'rentalApplication.house.name', 'rentalApplication.room.name', 'rentalApplication.room.rentFrequency', 'house.paymentCount', 'status']);
-}
+  const visibleColumnKeys = visibleColumns.value.map(column => column.key);
+  exportPaginatedData('/tenants', exportType, 'tenant_data_export', visibleColumnKeys, usersCustomHeaders);
+};
 const route = useRoute();
 const router = useRouter();
 const testConfigModal = ref(true);

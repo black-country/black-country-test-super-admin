@@ -259,7 +259,7 @@ const onCancel = () => {
 
 
 const totalUnreadMessages = computed(() => {
-  return activeChatsList.value.reduce((sum, chat) => sum + (chat.unreadMessagesCount || 0), 0);
+  return activeChatsList.value.filter(item => item.unreadMessagesCount > 0).length
 });
 
 

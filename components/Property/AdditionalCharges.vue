@@ -35,13 +35,28 @@ const isServiceEnabled = ref(false);
 const serviceFrequency = ref('Monthly');
 const additionalCharges = ref<Record<string, string>>({});
 
+// onMounted(() => {
+//   props.value.forEach(item => {
+//     if (item.additionalCharge && item.additionalCharge.id) {
+//       const chargeId = item.additionalCharge.id;
+//       additionalCharges.value[chargeId] = formatCurrency(item.amount);
+//       if (item.additionalCharge.name === 'Caution Fee') {
+//         isCautionEnabled.value = true;
+//       }
+//       if (item.additionalCharge.name === 'Service Charge') {
+//         isServiceEnabled.value = true;
+//       }
+//     }
+//   });
+// });
+
+
 onMounted(() => {
+  const storedCharges = JSON.parse(localStorage.getItem('charges') || '{}');
   props.value.forEach(item => {
     if (item.additionalCharge && item.additionalCharge.id) {
       const chargeId = item.additionalCharge.id;
       additionalCharges.value[chargeId] = formatCurrency(item.amount);
-      
-      // Set toggle states based on charge name
       if (item.additionalCharge.name === 'Caution Fee') {
         isCautionEnabled.value = true;
       }
@@ -50,7 +65,17 @@ onMounted(() => {
       }
     }
   });
+  Object.keys(storedCharges).forEach(chargeId => {
+    if (storedCharges[chargeId]) {
+      additionalCharges.value[chargeId] = storedCharges[chargeId];
+    }
+  });
 });
+
+
+watch(additionalCharges, (newCharges) => {
+  localStorage.setItem('charges', JSON.stringify(newCharges));
+}, { deep: true });
 
 watch(additionalChargesList, () => {
   additionalChargesList.value.forEach(charge => {
@@ -70,12 +95,15 @@ const unformatCurrency = (value: string): number => {
   return parseInt(value.replace(/[^\d]/g, ''), 10) || 0;
 };
 
+
 const orderedCharges = computed(() => {
   return additionalChargesList.value.sort((a, b) => {
-    const order = ["Agent Fee", "Legal Fee", "Caution Fee", "Service Charge"];
-    return order.indexOf(a.name) - order.indexOf(b.name);
+    const trimOrder = (name: string) => name.trim().toLowerCase();
+    const order = ["agent fee", "legal fee", "caution fee", "service charge"];
+    return order.indexOf(trimOrder(a.name)) - order.indexOf(trimOrder(b.name));
   });
 });
+
 
 const mappedAdditionalCharges = computed(() => {
   return orderedCharges.value
@@ -105,7 +133,7 @@ const handleInputChange = (chargeId: string, value: string) => {
   <div class="w-full space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div v-for="charge in orderedCharges" :key="charge.id" class="space-y-1">
-        <template v-if="charge.name === 'Caution Fee'">
+        <template v-if="charge.name === 'Caution fee'">
           <div class="flex flex-col space-y-2">
             <div class="flex justify-between items-center">
               <label class="block text-[#1D2739] font-medium text-sm capitalize">{{ charge.name }}</label>
@@ -117,16 +145,15 @@ const handleInputChange = (chargeId: string, value: string) => {
               </button>
             </div>
             <p class="text-sm text-[#667185]">Enable or disable caution fee</p>
-            <input :value="additionalCharges[charge.id]" type="text" placeholder="e.g 80000" 
-              :disabled="!isCautionEnabled"
-              @input="handleInputChange(charge.id, $event.target.value)"
+            <input :value="additionalCharges[charge.id]" type="text" placeholder="e.g 80000"
+              :disabled="!isCautionEnabled" @input="handleInputChange(charge.id, $event.target.value)"
               class="w-full px-3 py-3.5 bg-[#F0F2F5] border-[0.5px] border-gray-100 outline-none rounded-lg text-gray-900 disabled:opacity-50">
           </div>
         </template>
         <template v-else-if="charge.name === 'Service Charge'">
           <div class="flex flex-col space-y-2">
             <div class="flex justify-between items-center">
-              <label class="block text-[#1D2739] font-medium text-sm">{{ charge.name }}</label>
+              <label class="block text-[#1D2739] font-medium text-sm capitalize">{{ charge.name }}</label>
               <button @click="isServiceEnabled = !isServiceEnabled"
                 :class="isServiceEnabled ? 'bg-green-600' : 'bg-gray-300'"
                 class="w-10 h-6 rounded-full transition duration-300 relative">
@@ -136,12 +163,12 @@ const handleInputChange = (chargeId: string, value: string) => {
             </div>
             <p class="text-sm text-[#667185]">Enable or disable service charge</p>
             <div class="flex items-center">
-              <select v-model="serviceFrequency" class="px-3 rounded-l-lg py-3.5 border-r-0 outline-none text-gray-900 bg-[#F0F2F5]">
+              <select v-model="serviceFrequency"
+                class="px-3 rounded-l-lg py-3.5 border-r-0 outline-none text-gray-900 bg-[#F0F2F5]">
                 <option>Monthly</option>
                 <option>Yearly</option>
               </select>
-              <input :value="additionalCharges[charge.id]" type="text" placeholder="80000"
-                :disabled="!isServiceEnabled" 
+              <input :value="additionalCharges[charge.id]" type="text" placeholder="80000" :disabled="!isServiceEnabled"
                 @input="handleInputChange(charge.id, $event.target.value)"
                 class="w-full px-3 py-3.5 border-l-0 bg-[#F0F2F5] outline-none rounded-r-lg text-gray-900 disabled:opacity-50">
             </div>
@@ -150,7 +177,7 @@ const handleInputChange = (chargeId: string, value: string) => {
         <template v-else>
           <div class="flex flex-col space-y-1">
             <label class="block text-sm font-medium text-[#1D2739]">{{ charge.name }}</label>
-            <input :value="additionalCharges[charge.id]" type="text" placeholder="e.g 80000" 
+            <input :value="additionalCharges[charge.id]" type="text" placeholder="e.g 80000"
               @input="handleInputChange(charge.id, $event.target.value)"
               class="w-full px-3 py-3.5 bg-[#F0F2F5] border-[0.5px] border-gray-100 outline-none rounded-lg text-gray-900">
           </div>

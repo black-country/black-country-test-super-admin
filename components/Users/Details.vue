@@ -123,7 +123,7 @@
         </div>
 
         <div>
-          <p class="text-sm mb-2">Payment count</p>
+          <p class="text-sm mb-2">Payment cZount</p>
           <div class="bg-gray-50 p-4 rounded text-sm">{{tenantObj?.home?.rentPayment?.totalNumberOfPays ?? 'Nil'}}</div>
         </div>
 

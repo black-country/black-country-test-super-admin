@@ -46,7 +46,7 @@
             </a>
           </li> -->
         </ul>
-      </nav>
+      </nav> 
 
       <div v-if="filteredApplications.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-5">
         <div v-for="(application, index) in filteredApplications" :key="index"

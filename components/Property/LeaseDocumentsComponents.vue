@@ -70,7 +70,7 @@
             :key="lease.id"
           >
           <!-- {{lease}} -->
-            <div class="flex justify-between items-start h-full">
+            <div class="flex justify-between items-start h-full" >
               <div class="space-y-2 w-full">
                 <div
                   v-if="isLeaseAgreementContentEmpty(lease.leaseAgreementContent)"
@@ -83,15 +83,15 @@
                   />
                 </div>
                 <!-- v-if="!isUrl(selectedLease?.leaseAgreementContent)" -->
-              <section v-else>
+              <section v-else @click="viewTemplate(lease)">
                 <!-- {{ lease.leaseAgreementContent }} -->
-                <div
+                <div 
                   v-if="!containsHttps(lease?.leaseAgreementContent)"
                   v-html="shortenedText(lease?.leaseAgreementContent)"
                   class="p-4 rounded-lg text-[10px] overflow-hidden min-h-[150px] max-h-[150px]"
                 ></div>
-                <div v-else>
-                  <iframe
+                <div v-else >
+                  <iframe 
                       :src="`https://docs.google.com/viewer?url=${encodeURIComponent(extractUrl(lease?.leaseAgreementContent))}&embedded=true`"
                       class="w-full"
                       frameborder="0"

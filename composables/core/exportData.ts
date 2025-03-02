@@ -41,9 +41,9 @@ export function usePaginatedFetchAndDownload() {
       }
 
       const allPageData = await Promise.all(pagePromises);
-      mergedData.value = [ 
-        ...firstPageData.result, 
-        ...allPageData.flatMap(page => page.data) 
+      mergedData.value = [
+        ...firstPageData.result,
+        ...allPageData.flatMap(page => page.data)
       ];
     } catch (e) {
       useNuxtApp().$toast.error('Something went wrong while downloading the report.', {
@@ -57,10 +57,11 @@ export function usePaginatedFetchAndDownload() {
   }
 
   async function exportPaginatedData(
-    url: string, 
-    exportType: ExportType, 
-    fileName: string = 'export', 
-    dataKeys: string[]  // Accepting data keys dynamically
+    url: string,
+    exportType: ExportType,
+    fileName: string = 'export',
+    dataKeys: string[],  // Accepting data keys dynamically
+    customHeaderMapping: Record<string, string> = {}
   ) {
     await fetchAllPages(url);
     if (!mergedData.value || mergedData.value.length === 0) {
@@ -69,17 +70,18 @@ export function usePaginatedFetchAndDownload() {
       return;
     }
 
-    exportData(mergedData.value, exportType, fileName, dataKeys); // Passing data keys to exportData
+    exportData(mergedData.value, exportType, fileName, dataKeys, customHeaderMapping); // Passing data keys to exportData
   }
 
   return { exportPaginatedData, isDownloading, error, mergedData, total_pages };
 }
 
 export function exportData(
-  data: Array<Record<string, any>>, 
-  exportType: ExportType, 
-  fileName: string = 'export', 
-  dataKeys: string[] // New parameter to specify the keys dynamically
+  data: Array<Record<string, any>>,
+  exportType: ExportType,
+  fileName: string = 'export',
+  dataKeys: string[], // New parameter to specify the keys dynamically
+  customHeaderMapping: Record<string, string> = {}
 ): void {
   if (!data || data.length === 0) {
     console.error('No data to export');
@@ -93,6 +95,9 @@ export function exportData(
 
   // Helper function to format header names
   const formatHeader = (key: string) => {
+    if (customHeaderMapping[key]) {
+      return customHeaderMapping[key]; // Use custom header if available
+    }
     return key
       .replace(/\./g, ' ') // Replace dot notation with space
       .replace(/([a-z])([A-Z])/g, '$1 $2') // Add space between camelCase words
@@ -127,12 +132,19 @@ export function exportData(
   }
 }
 
-function exportAsCSV(data: Array<Record<string, any>>, fileName: string, headers: string[]) {
+async function exportAsCSV(data: Array<Record<string, any>>, fileName: string, headers: string[]) {
   try {
     const csvData = [headers, ...data.map(item => Object.values(item))]; // Add headers as the first row
     const csv = papaparseUnparse(csvData);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, `${fileName}.csv`);
+    await new Promise<void>((resolve, reject) => {
+      try {
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        saveAs(blob, `${fileName}.csv`);
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
     promptModal('CSV', 'success');
   } catch (error) {
     promptModal('CSV', 'error');
@@ -140,22 +152,30 @@ function exportAsCSV(data: Array<Record<string, any>>, fileName: string, headers
   }
 }
 
-function exportAsPDF(data: Array<Record<string, any>>, fileName: string, headers: string[]) {
-  try {
-    // const doc = new jsPDF();
-    const doc = new jsPDF('l', 'mm', 'a4'); 
-    const rows = data.map(item => Object.values(item));
-    autoTable(doc, {
-      head: [headers], 
-      body: rows,
-      styles: {
-        cellPadding: 4,
-        halign: 'center',
-        valign: 'middle',
-      },
-    });
 
-    doc.save(`${fileName}.pdf`);
+async function exportAsPDF(data: Array<Record<string, any>>, fileName: string, headers: string[]) {
+  try {
+    const doc = new jsPDF('l', 'mm', 'a4');
+    const rows = data.map(item => Object.values(item));
+
+    await new Promise<void>((resolve, reject) => {
+      try {
+        autoTable(doc, {
+          head: [headers],
+          body: rows,
+          styles: {
+            cellPadding: 4,
+            halign: 'center',
+            valign: 'middle',
+          },
+        });
+
+        doc.save(`${fileName}.pdf`);
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
     promptModal('PDF', 'success');
   } catch (error) {
     promptModal('PDF', 'error');
@@ -163,13 +183,20 @@ function exportAsPDF(data: Array<Record<string, any>>, fileName: string, headers
   }
 }
 
-function exportAsExcel(data: Array<Record<string, any>>, fileName: string, headers: string[]) {
+async function exportAsExcel(data: Array<Record<string, any>>, fileName: string, headers: string[]) {
   try {
-    const worksheetData = [headers, ...data.map(item => Object.values(item))]; // Add headers as the first row
-    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData); // Use headers and data in sheet creation
+    const worksheetData = [headers, ...data.map(item => Object.values(item))];
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    XLSX.writeFile(workbook, `${fileName}.xlsx`);
+    await new Promise<void>((resolve, reject) => {
+      try {
+        XLSX.writeFile(workbook, `${fileName}.xlsx`);
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
     promptModal('EXCEL', 'success');
   } catch (error) {
     promptModal('EXCEL', 'error');
@@ -177,14 +204,15 @@ function exportAsExcel(data: Array<Record<string, any>>, fileName: string, heade
   }
 }
 
+
 const promptModal = (type: 'CSV' | 'PDF' | 'EXCEL', status: 'success' | 'error') => {
   Swal.fire({
     title: status === 'success' ? 'Success' : 'Error',
     text: `${type} was ${status === 'success' ? 'exported successfully' : 'not exported'}!`,
     icon: status,
-    showCancelButton: false, 
-    showConfirmButton: true, 
-    confirmButtonText: "OK", 
+    showCancelButton: false,
+    showConfirmButton: true,
+    confirmButtonText: "OK",
     confirmButtonColor: "#3085d6",
   });
 };

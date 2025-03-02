@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full">
+    <div class="w-full overflow-x-hidden">
       <div class="flex justify-between items-center mb-2">
         <h2 class="text-xl font-semibold">{{ currentTitle }}</h2>
         <span class="text-gray-800">{{ currentStep }}/{{ totalSteps }} (sub step)</span>

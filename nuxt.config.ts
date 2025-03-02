@@ -1,6 +1,9 @@
 export default {
   ssr: false,
   target: "static",
+  router: {
+    base: '/admin/'
+  },
   app: {
     baseURL: '/admin/',
     head: {
@@ -25,19 +28,19 @@ export default {
   },
   runtimeConfig: {
     public: {
-      googleMapsApiKey:  process.env.VITE_GOOGLE_MAPS_API_KEY,
+      googleMapsApiKey: process.env.VITE_GOOGLE_MAPS_API_KEY,
     },
   },
-  router: {
-    extendRoutes(routes: any, resolve: any) {
-      // Adjust all routes to be prefixed with `/about/`
-      routes.forEach((route: any) => {
-        if (route.path !== '/admin') {
-           route.path = `/admin${route.path}`
-        }
-      })
-    }
-  },
+  // router: {
+  //   extendRoutes(routes: any, resolve: any) {
+  //     // Adjust all routes to be prefixed with `/about/`
+  //     routes.forEach((route: any) => {
+  //       if (route.path !== '/admin') {
+  //         route.path = `/admin${route.path}`
+  //       }
+  //     })
+  //   }
+  // },
   plugins: [],
   vite: {
     optimizeDeps: {

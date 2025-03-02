@@ -28,7 +28,7 @@ export const useGetRentals = () => {
     const route = useRoute() as any
     const metadata = ref({
         page: 1,
-        perPage: 7,
+        perPage: 9,
         total: 100,
         pages: 0,
     });

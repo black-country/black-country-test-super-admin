@@ -60,7 +60,7 @@
 
       <div v-if="availability === 'available_now'" class="mt-4 space-y-4">
         <div class="w-full mt-4">
-          <label for="rentAmount" class="block text-sm font-medium mb-2">Set prices</label>
+          <label for="rentAmount" class="block text-sm font-medium mb-2">Rent Fee</label>
           <div class="flex items-center bg-[#E4E7EC] border-[0.5px] border-gray-50 rounded-md px-3 py-2">
             <select v-model="rentFrequency" class="bg-transparent py-1.5 text-sm outline-none border-none pr-2">
               <option value="monthly">Monthly</option>
@@ -93,7 +93,7 @@
         </div>
 
         <div class="w-full mt-4">
-          <label class="block text-sm font-medium mb-2">Set price</label>
+          <label class="block text-sm font-medium mb-2">Rent Fee</label>
           <div class="flex items-center bg-[#E4E7EC] border-[0.5px] border-gray-50 rounded-md px-3 py-2">
             <select v-model="rentFrequency" class="bg-transparent py-1.5 text-sm outline-none border-none pr-2">
               <option value="monthly">Monthly</option>

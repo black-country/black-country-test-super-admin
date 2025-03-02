@@ -178,7 +178,7 @@ export function exportData(
     return filteredItem;
   });
 
-  const formattedHeaders = customHeaders || dataKeys.map(key => formatHeader(key));
+  const formattedHeaders = customHeaderMapping || dataKeys.map(key => formatHeader(key));
 
   switch (exportType) {
     case 'csv':

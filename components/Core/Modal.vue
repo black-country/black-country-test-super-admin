@@ -2,7 +2,7 @@
 <template>
     <transition name="modal">
       <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-3">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-3"> <!-- h-[60%] overflow-y-scroll -->
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-medium">{{ title }}</h3>
             <button v-if="showCloseBtn" @click="closeModal" class="text-gray-500 hover:text-gray-700">

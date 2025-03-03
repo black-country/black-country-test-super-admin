@@ -64,6 +64,8 @@ export const useUser = () => {
     localStorage.clear();
     runtimeData.user.value = null;
     window.location.href = '/login'
+    useRouter().push("/login");
+
   };
 
   const setToken = (token: string) => {

@@ -3,18 +3,31 @@ import { io, Socket } from "socket.io-client";
 import { useUser } from "@/composables/auth/user";
 import { useGetRoomChats } from '@/composables/modules/messages/fetchRoomMessages';
 import { useCustomToast } from '@/composables/core/useCustomToast'
-import { useGetActiveChats } from '@/composables/modules/messages/fetchActiveChats'
 const { showToast } = useCustomToast();
-const { loadingActiveChats, activeChatsList } =  useGetActiveChats()
 
 export const useWebSocket = () => {
   const { token } = useUser();
-  const messages = ref<any[]>([]);
+  // const messages = ref<any[]>([]);
+  const messagesByRoom = ref<Record<string, any[]>>({});
+  const activeRoomId = ref<string | null>(null);
   const { getRoomChats } = useGetRoomChats();
   const newMessage = ref("");
   const baseUrl = import.meta.env.VITE_BASE_URL;
   const isConnected = ref(false);
   const socket = ref<Socket | null>(null);
+  const messageStatus = ref<"idle" | "sending" | "sent" | "error">("idle");
+
+  const currentRoomMessages = computed(() => {
+    if (!activeRoomId.value) return [];
+    return messagesByRoom.value[activeRoomId.value] || [];
+  });
+
+  const setActiveRoom = (roomId: string) => {
+    activeRoomId.value = roomId;
+    if (!messagesByRoom.value[roomId]) {
+      messagesByRoom.value[roomId] = [];
+    }
+  };
 
   const initializeSocket = () => {
     socket.value = io(baseUrl, {
@@ -29,7 +42,6 @@ export const useWebSocket = () => {
 
     // Connection events
     socket.value.on("connect", () => {
-      // console.log("Connected to WebSocket server");
       showToast({
         title: "Success",
         message: "Connection was successful",
@@ -42,69 +54,91 @@ export const useWebSocket = () => {
 
     socket.value.on("disconnect", () => {
       console.log("Disconnected from server");
-      // showToast({
-      //   title: "Error",
-      //   message: "Disconnected from websocket.",
-      //   toastType: "error",
-      //   duration: 3000
-      // });
       isConnected.value = false;
     });
 
     socket.value.on("error", (error) => {
-      // showToast({
-      //   title: "Error",
-      //   message: "Connection error:",
-      //   toastType: "error",
-      //   duration: 3000
-      // });
       isConnected.value = false;
     });
 
-    // Message handling
     // socket.value.on("message.new", (message: any) => {
-    //   console.log("New message received:", message);
+    //   console.log("New message receivedssssssss:", message.message);
     //   if (message && !messages.value.some(msg => msg.id === message?.message?.id)) {
-    //     messages.value = [...messages.value, {
-    //       ...message,
-    //       status: 'received'
-    //     }];
+    //     const newMessage = {
+    //       ...message.message, // Use only the message object
+    //       status: 'received' // Set the status here
+    //     };
+    //     messages.value = [...messages.value, newMessage];
     //   }
     // });
+
+    // socket.value.on("messages.update", (updatedMessages: any[]) => {
+    //   console.log("Messages updated:", updatedMessages);
+    //   messages.value = updatedMessages.map(msg => ({
+    //     ...msg,
+    //     status: 'received'
+    //   }));
+    // });
     socket.value.on("message.new", (message: any) => {
-      console.log("New message receivedssssssss:", message.message);
-      if (message && !messages.value.some(msg => msg.id === message?.message?.id)) {
-        const newMessage = {
-          ...message.message, // Use only the message object
-          status: 'received' // Set the status here
+      console.log("New message received:", message.message);
+      if (!message?.message) return;
+      const roomId = message.message.room?.id || message.message.recipientId || null;
+      if (!roomId) return;
+
+      if (!messagesByRoom.value[roomId]) {
+        messagesByRoom.value[roomId] = [];
+      }
+
+      if (!messagesByRoom.value[roomId].some(msg => msg.id === message.message.id)) {
+        const newMsg = {
+          ...message.message,
+          status: 'received'
         };
-        messages.value = [...messages.value, newMessage];
+
+        messagesByRoom.value = {
+          ...messagesByRoom.value,
+          [roomId]: [...messagesByRoom.value[roomId], newMsg]
+        };
       }
     });
 
     socket.value.on("messages.update", (updatedMessages: any[]) => {
       console.log("Messages updated:", updatedMessages);
-      messages.value = updatedMessages.map(msg => ({
-        ...msg,
-        status: 'received'
-      }));
-    });
-  };
 
-  const fetchInitialMessages = () => {
-    if (!socket.value?.connected) return;
+      const messageGroups: Record<string, any[]> = {};
 
-    socket.value.emit("messages.fetch", {}, (response: any) => {
-      if (response.status === "success") {
-        messages.value = response.data.map((msg: any) => ({
+      updatedMessages.forEach(msg => {
+        const roomId = msg.room?.id || msg.recipientId;
+        if (!roomId) return;
+
+        if (!messageGroups[roomId]) {
+          messageGroups[roomId] = [];
+        }
+
+        messageGroups[roomId].push({
           ...msg,
           status: 'received'
-        }));
-      } else {
-        console.error("Failed to fetch messages:", response);
-      }
+        });
+      });
+
+      messagesByRoom.value = { ...messagesByRoom.value, ...messageGroups };
     });
   };
+
+  // const fetchInitialMessages = () => {
+  //   if (!socket.value?.connected) return;
+
+  //   socket.value.emit("messages.fetch", {}, (response: any) => {
+  //     if (response.status === "success") {
+  //       messages.value = response.data.map((msg: any) => ({
+  //         ...msg,
+  //         status: 'received'
+  //       }));
+  //     } else {
+  //       console.error("Failed to fetch messages:", response);
+  //     }
+  //   });
+  // };
 
   // const sendMessage = async (payload: {
   //   recipientId: string;
@@ -135,8 +169,8 @@ export const useWebSocket = () => {
   //     socket.value?.emit("message.new", payload, (response: any) => {
   //       if (response.status === "success") {
   //         // Update temp message with actual message data
-  //         messages.value = messages.value.map(msg => 
-  //           msg.id === tempId 
+  //         messages.value = messages.value.map(msg =>
+  //           msg.id === tempId
   //             ? { ...response.data, status: 'sent' }
   //             : msg
   //         );
@@ -156,19 +190,18 @@ export const useWebSocket = () => {
   //         resolve(response.data);
   //       } else {
   //         // Update temp message to show error
-  //         messages.value = messages.value.map(msg => 
-  //           msg.id === tempId 
+  //         messages.value = messages.value.map(msg =>
+  //           msg.id === tempId
   //             ? { ...msg, status: 'error' }
   //             : msg
   //         );
 
   //         console.error("Failed to send message:", response);
-  //         reject(new Error(response.message || 'Failed to send message')); // Fixed the rejection issue
+  //         reject(new Error(response.message || 'Failed to send message'));
   //       }
   //     });
   //   });
   // };
-
 
   const sendMessage = async (payload: {
     recipientId: string;
@@ -181,8 +214,8 @@ export const useWebSocket = () => {
       console.error("Socket not connected");
       return;
     }
+    const roomId = payload.room || payload.recipientId;
 
-    // Create temporary message
     const tempId = `temp-${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const tempMessage = {
       id: tempId,
@@ -191,26 +224,31 @@ export const useWebSocket = () => {
       timestamp: new Date().toISOString(),
     };
 
-    // Add to messages immediately
-    messages.value = [...messages.value, tempMessage];
+    if (!messagesByRoom.value[roomId]) {
+      messagesByRoom.value[roomId] = [];
+    }
 
-    // Send message
+    messagesByRoom.value = {
+      ...messagesByRoom.value,
+      [roomId]: [...messagesByRoom.value[roomId], tempMessage]
+    };
+
     return new Promise((resolve, reject) => {
       socket.value?.emit("message.new", payload, (response: any) => {
         if (response.status === "success") {
-          // Update temp message with actual message data
-          messages.value = messages.value.map(msg => 
-            msg.id === tempId 
-              ? { ...response.data, status: 'sent' }
-              : msg
-          );
+          messagesByRoom.value = {
+            ...messagesByRoom.value,
+            [roomId]: messagesByRoom.value[roomId].map(msg =>
+              msg.id === tempId
+                ? { ...response.data, status: 'sent' }
+                : msg
+            )
+          };
 
-          // Update room chats if needed
           if (payload.room) {
             getRoomChats(response?.data?.room?.id);
           }
 
-          // Emit custom event if needed
           const { $emitter } = useNuxtApp();
           $emitter.emit('messageSent', {
             roomId: response?.data?.room?.id,
@@ -219,13 +257,15 @@ export const useWebSocket = () => {
 
           resolve(response.data);
         } else {
-          // Update temp message to show error
-          messages.value = messages.value.map(msg => 
-            msg.id === tempId 
-              ? { ...msg, status: 'error' }
-              : msg
-          );
-          
+          messagesByRoom.value = {
+            ...messagesByRoom.value,
+            [roomId]: messagesByRoom.value[roomId].map(msg =>
+              msg.id === tempId
+                ? { ...msg, status: 'error' }
+                : msg
+            )
+          };
+
           console.error("Failed to send message:", response);
           reject(new Error(response.message || 'Failed to send message'));
         }
@@ -247,10 +287,15 @@ export const useWebSocket = () => {
   });
 
   return {
-    messages,
+    // messages,
     newMessage,
     isConnected,
     sendMessage,
     socket: socket.value,
+    messagesByRoom,
+    currentRoomMessages,
+    setActiveRoom,
+    activeRoomId,
+    messageStatus
   };
 };

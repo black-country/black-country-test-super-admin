@@ -1,8 +1,8 @@
 <template>
   <div class="">
     <!-- Tabbed navigation for rooms -->
-     <!-- {{rooms}} -->
-    <div class="flex space-x-4 mb-6 overflow-x-auto whitespace-nowrap">
+    <!-- <div class="flex space-x-4 mb-6 overflow-x-auto whitespace-nowrap"> -->
+    <div class="grid grid-cols-5 gap-2 mb-6">
       <button
         v-for="(room, index) in rooms"
         :key="index"

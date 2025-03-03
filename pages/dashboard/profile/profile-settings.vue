@@ -101,6 +101,7 @@
   const triggerFileUpload = () => {
     fileInput.value?.click();
   };
+  const router = useRouter();
 
   // Function to handle file selection and upload
 const onFileSelected = async (event: Event) => {
@@ -120,6 +121,7 @@ const onFileSelected = async (event: Event) => {
       // Update profile with the secure URL after upload
       const uploadPayload = { profilePicture: uploadResponse.value.url }
       await updateProfile(uploadPayload);
+      router.push('/dashboard/profile')
     }
   }
 };

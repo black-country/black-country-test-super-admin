@@ -29,10 +29,13 @@
 import { useSignLease } from "@/composables/modules/lease/sign";
 import { useUser } from "@/composables/auth/user";
 import { useCustomToast } from "@/composables/core/useCustomToast";
+import { use_update_profile } from '@/composables/auth/updateProfile';
 const { user } = useUser();
 const { signLeaseAgreement, loading } = useSignLease();
 const { showToast } = useCustomToast();
 const signatureObj = ref({}) as any;
+const { credential, updateProfile, loading: updating } = use_update_profile();
+
 
 const payload = ref({
   signature: "",
@@ -126,7 +129,10 @@ const handleSignature = (data: any) => {
 const handleUploadedSignature = (data: any) => {
   console.log(data.url, "uploaded sign data");
   localStorage.setItem('lease-signature-url', data.url)
-   payload.value.signatureObj = data;
+  payload.value.signatureObj = data;
+  updateProfile({
+    signatureUrl : data.url
+  })
 };
 </script>
 

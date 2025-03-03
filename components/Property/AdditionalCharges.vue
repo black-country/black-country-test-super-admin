@@ -80,7 +80,7 @@ watch(additionalCharges, (newCharges) => {
 watch(additionalChargesList, () => {
   additionalChargesList.value.forEach(charge => {
     if (!additionalCharges.value[charge.id]) {
-      additionalCharges.value[charge.id] = '0';
+      additionalCharges.value[charge.id] = '';
     }
   });
 }, { immediate: true });
@@ -168,7 +168,7 @@ const handleInputChange = (chargeId: string, value: string) => {
                 <option>Monthly</option>
                 <option>Yearly</option>
               </select>
-              <input :value="additionalCharges[charge.id]" type="text" placeholder="80000" :disabled="!isServiceEnabled"
+              <input :value="additionalCharges[charge.id]" type="text" placeholder="e.g 80000" :disabled="!isServiceEnabled"
                 @input="handleInputChange(charge.id, $event.target.value)"
                 class="w-full px-3 py-3.5 border-l-0 bg-[#F0F2F5] outline-none rounded-r-lg text-gray-900 disabled:opacity-50">
             </div>

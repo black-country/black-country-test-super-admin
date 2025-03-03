@@ -150,13 +150,14 @@ const onFileSelected = async (event: Event) => {
         const uploadPayload = { profilePicture: uploadResponse.value.url };
         updatingImageProfile.value = true
         await updateProfile(uploadPayload)
-        updatingImageProfile.value = false
+        updatingImageProfile.value = false 
       }
     } catch (error) {
       console.error('Error uploading file:', error);
     } finally {
       // Set uploading state to false after completion
       // uploading.value = false;
+      router.push('/dashboard/profile')
     }
   } else {
     console.error('Invalid file selected');
@@ -171,6 +172,7 @@ const handleSave = async () => {
     lastName: lastNameParts.join(' ') || '',
   };
   await updateProfile(payload);
+  router.push('/dashboard/profile')
 };
 
 // On mounted, check if profileObj has a profilePicture

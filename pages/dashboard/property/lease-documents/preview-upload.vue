@@ -69,7 +69,7 @@
               <h3 class="text-sm font-medium mb-2">Landlord/Property Manager:</h3>
               <label class="block text-sm text-gray-500 mb-3">Signature</label>
               <div class="w-full border-b-2 border-dotted py-2 mb-4 bg-transparent outline-none">
-                <img v-if="emittedAgreementData?.signatureObj?.url || leaseSignatureUrl" :src="emittedAgreementData?.signatureObj?.url || leaseSignatureUrl" alt="Signature"
+                <img v-if="emittedAgreementData?.signatureObj?.url || leaseSignatureUrl || user.signatureUrl" :src="emittedAgreementData?.signatureObj?.url || leaseSignatureUrl || user.signatureUrl" alt="Signature"
                 class="h-[50px] w-auto  object-fill mix-blend-multiply  placeholder-gray-400" />
               </div>
               <label class="block text-sm text-gray-500 mb-1">Full Name</label>

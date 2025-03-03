@@ -491,26 +491,34 @@
         <div class="absolute bg-white border-[0.5px] border-gray-100 rounded-xl ml-10 lg:ml-72 mt-16 w-80"
           :style="popoverStyle" @click.stop>
           <div class="flex items-center justify-center">
-            <input type="text" placeholder="Search" v-model="allMembersSearchQuery"
+            <input type="text" placeholder="Searchh" v-model="payload.search"
               class=" w-full mr-3 border my-2 px-2 py-1.5 bg-[#EAEAEA] text-gray-600 text-sm ml-2 focus:outline-none rounded-md">
           </div>
           <div class="divide-y divide-gray-50">
-            <div class="space-y-4 max-h-96 divide-y divide-gray-100 overflow-y-auto scrollbar-visible py-4">
-              <div @click="handleSelectedMember(member)" v-for="member in filteredMembersList" :key="member.id"
+            <div class="space-y-4 max-h-96 divide-y divide-gray-100 overflow-y-auto scrollbar-visible py-4"
+              @scroll="handleScroll" ref="scrollContainer">
+              <div @click="handleSelectedMember(user)" v-for="user in usersList" :key="user.id"
                 class="flex cursor-pointer px-4 items-center gap-4 pt-3 first:pt-0">
-                <img src="@/assets/icons/users-avatar.svg" :alt="member.name"
+                <div>
+                  <img v-if="user.profilePicture" :src="user.profilePicture"
+                  class="w-10 h-10 rounded-full object-cover" alt=""/>
+                  <img v-else src="@/assets/icons/users-avatar.svg" :alt="user.name"
                   class="w-10 h-10 rounded-full object-cover" />
+                </div>
                 <div>
                   <h3 class="font-medium text-gray-900 text-sm">
-                    {{
-                      `${member.firstName ?? "--"} ${member.lastName ?? "--"
-                      }`
-                    }}
+                    {{ `${user.firstName ?? "--"} ${user.lastName ?? "--"}` }}
                   </h3>
                   <p class="text-gray-500 text-sm lowercase">
-                    {{ member?.group }}
+                    {{ user?.group || user?.type }}
                   </p>
                 </div>
+              </div>
+              <div v-if="loading" class="flex justify-center py-2">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+              </div>
+              <div v-if="!loading && usersList.length === 0" class="text-center text-gray-500 text-sm py-2">
+                No users found
               </div>
             </div>
           </div>
@@ -546,6 +554,7 @@ import MessagingView from "@/layouts/MessagingView.vue";
 import { useGetActiveChats } from "@/composables/modules/messages/fetchActiveChats";
 import { useGetRoomChats } from "@/composables/modules/messages/fetchRoomMessages";
 import { useWebSocket } from "@/composables/modules/messages/sockets";
+import { useFetchAllUsers } from "~/composables/modules/utils/fetchAllUsers";
 // const { tenantDetails, getTenantDetails, loading: fetchingTenantDetails } = useGetTenentDetails()
 
 // Composables
@@ -556,6 +565,7 @@ const { loadingMembers, membersList, // searchQuery, filters, metadata, getMembe
 } = useGetMembers();
 // const { messages, newMessage, isConnected, sendMessage } = useWebSocket();
 const { messagesByRoom, currentRoomMessages, setActiveRoom, socket, newMessage, isConnected, sendMessage } = useWebSocket();
+const { fetchAllUsers, loading, payload, usersList, loadMore, hasMore } = useFetchAllUsers();
 
 const openSideNav = ref(false);
 
@@ -566,9 +576,18 @@ const updateViewMode = () => {
   openSideNav.value = isDesktop.value;
 };
 
+const scrollContainer = ref(null);
+const handleScroll = (event) => {
+  const { scrollTop, scrollHeight, clientHeight } = event.target;
+  if (scrollHeight - scrollTop - clientHeight < 50 && hasMore.value && !loading.value) {
+    loadMore();
+  }
+};
+
 onMounted(() => {
   window.addEventListener("resize", updateViewMode);
   updateViewMode();
+  fetchAllUsers(payload.value);
 });
 
 watch(
@@ -627,7 +646,7 @@ const filteredUserList = computed(() => {
     return (
       firstName.toLowerCase().includes(query) ||
       lastName.toLowerCase().includes(query) ||
-      email?.toLowerCase().includes(query)  
+      email?.toLowerCase().includes(query)
     );
   });
 

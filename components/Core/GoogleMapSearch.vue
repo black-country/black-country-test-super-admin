@@ -73,7 +73,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { useGetLocation } from "@/composables/core/useGetLocation";
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 const {
   states,
   cities,
@@ -104,17 +104,6 @@ interface Coordinates {
   lng: number
 }
 
-// const emit = defineEmits<{
-//   (e: 'update:amenities', amenities: any): void
-//   (e: 'update:payload', data: LocationPayload): void
-//   (e: 'update:location', location: Coordinates): void
-// }>()
-
-//   const emit = defineEmits<{
-//   'update:location': [address: string]
-//   'update:payload': [payload: LocationPayload]
-// }>()
-
 const selectedCountry = ref('Nigeria')
 
 // Replace with your actual API key
@@ -129,12 +118,19 @@ const selectedType = ref('')
 const searchPerformed = ref(false)
 const currentCoordinates = ref<google.maps.LatLngLiteral | null>(null)
 
+// Default location (Lagos, Nigeria)
+const defaultLocation = {
+  lat: 6.5244,
+  lng: 3.3792
+}
+
 let map: google.maps.Map
 let placesService: google.maps.places.PlacesService
 let autocomplete: google.maps.places.Autocomplete
 let markers: google.maps.Marker[] = []
 let currentLocationMarker: google.maps.Marker | null = null
 let infoWindow: google.maps.InfoWindow
+let googleServicesInitialized = false
 
 onMounted(() => {
   if (!(window as any).google) {
@@ -144,14 +140,83 @@ onMounted(() => {
     script.defer = true
     script.onload = () => {
       initializeGoogleServices()
-      getUserLocation()
+      checkExistingLocation()
     }
     document.head.appendChild(script)
   } else {
     initializeGoogleServices()
-    getUserLocation()
+    checkExistingLocation()
   }
 })
+
+// Check if we have existing location data in the payload
+function checkExistingLocation() {
+  const hasLatitude = props.payload.latitude && props.payload.latitude.value
+  const hasLongitude = props.payload.longitude && props.payload.longitude.value
+  const hasAddress = props.payload.address && props.payload.address.value
+  
+  if (hasLatitude && hasLongitude) {
+    // We have existing coordinates, use them
+    const existingCoords = {
+      lat: parseFloat(props.payload.latitude.value),
+      lng: parseFloat(props.payload.longitude.value)
+    }
+    
+    currentCoordinates.value = existingCoords
+    
+    if (googleServicesInitialized) {
+      // If we have an address, create a place object directly
+      if (hasAddress) {
+        const place = {
+          geometry: {
+            location: new google.maps.LatLng(existingCoords.lat, existingCoords.lng)
+          },
+          name: 'Saved Location',
+          formatted_address: props.payload.address.value
+        } as google.maps.places.PlaceResult
+        
+        currentLocation.value = place
+        updateMap(place, true)
+        searchNearbyPlaces()
+      } else {
+        // Otherwise, reverse geocode to get the address
+        reverseGeocode(existingCoords)
+      }
+    }
+  } else if (hasAddress) {
+    // We have an address but no coordinates, geocode it
+    if (googleServicesInitialized) {
+      geocodeAddress(props.payload.address.value)
+    }
+  } else {
+    // No existing location data, get user location
+    getUserLocation()
+  }
+}
+
+function geocodeAddress(address: string) {
+  const geocoder = new google.maps.Geocoder()
+  geocoder.geocode({ address: address }, (results, status) => {
+    if (status === 'OK' && results && results[0]) {
+      const location = results[0].geometry.location
+      
+      currentCoordinates.value = {
+        lat: location.lat(),
+        lng: location.lng()
+      }
+      
+      props.payload.latitude.value = location.lat()
+      props.payload.longitude.value = location.lng()
+      
+      currentLocation.value = results[0]
+      updateMap(results[0], true)
+      searchNearbyPlaces()
+    } else {
+      console.error('Geocoder failed due to: ' + status)
+      getUserLocation() // Fall back to user location
+    }
+  })
+}
 
 const typeMapping = {
   school: "Schools",
@@ -227,10 +292,6 @@ watch(places, (newAmenities) => {
 
   console.log(amenitiesArray, 'new amenities here poooo');
   props.payload.neighbouringLandmarks.value = amenitiesArray
-  // emit("update:payload", {
-  //   ...props.payload,
-  //   neighbouringLandmarks: { value: amenitiesArray },
-  // });
 });
 
 
@@ -245,12 +306,6 @@ interface LocationPayload {
   }
 }
 
-// watch(props.payload.address, () => {
-//   isLocationModalOpen.value = true
-// }, { immediate: true, deep: true})
-
-
-
 watch(currentLocation, (newLocation) => {
   if (!newLocation?.formatted_address) return;
 
@@ -258,30 +313,19 @@ watch(currentLocation, (newLocation) => {
 
   // Since the payload properties are refs, we can access their .value
   props.payload.address.value = newLocation.formatted_address;
-  props.payload.latitude.value = newLocation.geometry?.location?.lat();
-  props.payload.longitude.value = newLocation.geometry?.location?.lng();
-
-  // props.payload.neighbouringLandmarks.value = amenitiesArray
-
-  // emit('update:location', props.payload.address.value);
-
-  // emit('update:payload', {
-  //   ...props.payload,
-  //   value: {
-  //     latitude: props.payload.latitude.value,
-  //     longitude: props.payload.longitude.value,
-  //     address: props.payload.address.value,
-  //   }
-  // });
+  
+  if (newLocation.geometry?.location) {
+    props.payload.latitude.value = newLocation.geometry.location.lat();
+    props.payload.longitude.value = newLocation.geometry.location.lng();
+  }
 });
-
 
 function initializeGoogleServices() {
   try {
-    // Initialize the map
+    // Initialize the map with default location (will be updated later)
     if (mapContainer.value) {
       map = new google.maps.Map(mapContainer.value, {
-        center: { lat: 0, lng: 0 },
+        center: defaultLocation,
         zoom: 13,
         styles: [
           {
@@ -321,6 +365,29 @@ function initializeGoogleServices() {
           }
         })
       }
+      
+      googleServicesInitialized = true
+      
+      // If we already have coordinates, use them
+      if (currentCoordinates.value) {
+        if (props.payload.address.value) {
+          // If we have an address, create a place object directly
+          const place = {
+            geometry: {
+              location: new google.maps.LatLng(currentCoordinates.value.lat, currentCoordinates.value.lng)
+            },
+            name: 'Saved Location',
+            formatted_address: props.payload.address.value
+          } as google.maps.places.PlaceResult
+          
+          currentLocation.value = place
+          updateMap(place, true)
+          searchNearbyPlaces()
+        } else {
+          // Otherwise, reverse geocode to get the address
+          reverseGeocode(currentCoordinates.value)
+        }
+      }
     }
   } catch (error) {
     console.error('Error initializing Google services:', error)
@@ -338,12 +405,19 @@ function getUserLocation() {
         currentCoordinates.value = pos
         props.payload.latitude.value = pos.lat
         props.payload.longitude.value = pos.lng
-        // props.payload.value.longitude = pos.lng
-        // console.log(pos, 'cordinsteshere')
-        reverseGeocode(pos)
+        
+        if (googleServicesInitialized) {
+          reverseGeocode(pos)
+        }
       },
-      () => {
+      (error) => {
+        console.error('Geolocation error:', error)
         handleLocationError(true)
+      },
+      { 
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
       }
     )
   } else {
@@ -351,24 +425,47 @@ function getUserLocation() {
   }
 }
 
+function handleLocationError(browserHasGeolocation: boolean) {
+  console.error(browserHasGeolocation ?
+    'Error: The Geolocation service failed.' :
+    'Error: Your browser doesn\'t support geolocation.')
+  
+  // Use default location only if we don't have existing coordinates
+  if (!currentCoordinates.value) {
+    currentCoordinates.value = defaultLocation
+    props.payload.latitude.value = defaultLocation.lat
+    props.payload.longitude.value = defaultLocation.lng
+    
+    if (googleServicesInitialized) {
+      reverseGeocode(defaultLocation)
+    }
+  }
+}
+
 function reverseGeocode(latLng: google.maps.LatLngLiteral) {
   const geocoder = new google.maps.Geocoder()
   geocoder.geocode({ location: latLng }, (results, status) => {
     if (status === 'OK' && results && results[0]) {
-      console.log(results, 'mu location')
+      console.log(results, 'my location')
       currentLocation.value = results[0]
       updateMap(results[0], true)
       searchNearbyPlaces()
     } else {
       console.error('Geocoder failed due to: ' + status)
+      // If reverse geocoding fails, still update the map with coordinates
+      const dummyPlace = {
+        geometry: {
+          location: new google.maps.LatLng(latLng.lat, latLng.lng)
+        },
+        name: 'Selected Location',
+        formatted_address: `Lat: ${latLng.lat.toFixed(6)}, Lng: ${latLng.lng.toFixed(6)}`
+      } as google.maps.places.PlaceResult
+      
+      currentLocation.value = dummyPlace
+      updateMap(dummyPlace, true)
+      searchNearbyPlaces()
     }
   })
-}
-
-function handleLocationError(browserHasGeolocation: boolean) {
-  console.error(browserHasGeolocation ?
-    'Error: The Geolocation service failed.' :
-    'Error: Your browser doesn\'t support geolocation.')
 }
 
 function updateMap(place: google.maps.places.PlaceResult, isCurrentLocation: boolean = false) {
@@ -398,8 +495,8 @@ function updateMap(place: google.maps.places.PlaceResult, isCurrentLocation: boo
   // Add info window for location
   const infoContent = `
       <div class="p-2">
-        <h3 class="font-semibold">${place.name}</h3>
-        <p>${place.formatted_address}</p>
+        <h3 class="font-semibold">${place.name || 'Selected Location'}</h3>
+        <p>${place.formatted_address || ''}</p>
       </div>
     `
 
@@ -447,12 +544,7 @@ async function searchNearbyPlaces() {
           })
             .filter(Boolean); // Remove any undefined entries
 
-          //              // Emit the updated payload
           props.payload.neighbouringLandmarks.value = amenitiesArray
-          //   emit("update:payload", {
-          //   ...props.payload,
-          //   neighbouringLandmarks: { value: amenitiesArray },
-          // });
 
           places.value = results
           amenities.value = results.slice(0, 5000) // Store first 10 results as amenities

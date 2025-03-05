@@ -69,8 +69,9 @@
               <h3 class="text-sm font-medium mb-2">Landlord/Property Manager:</h3>
               <label class="block text-sm text-gray-500 mb-3">Signature</label>
               <div class="w-full border-b-2 border-dotted py-2 mb-4 bg-transparent outline-none">
-                <img v-if="emittedAgreementData?.signatureObj?.url || leaseSignatureUrl || user.signatureUrl" :src="emittedAgreementData?.signatureObj?.url || leaseSignatureUrl || user.signatureUrl" alt="Signature"
-                class="h-[50px] w-auto  object-fill mix-blend-multiply  placeholder-gray-400" />
+                <img v-if="emittedAgreementData?.signatureObj?.url || leaseSignatureUrl || user.signatureUrl"
+                  :src="emittedAgreementData?.signatureObj?.url || leaseSignatureUrl || user.signatureUrl"
+                  alt="Signature" class="h-[50px] w-auto  object-fill mix-blend-multiply  placeholder-gray-400" />
               </div>
               <label class="block text-sm text-gray-500 mb-1">Full Name</label>
               <div class="border-b-2 border-dotted text-gray-800 py-2 mb-4">
@@ -124,8 +125,7 @@
                   </svg>
 
                   Justify</button>
-                <button
-                  :class="[alignmentPosition === 'left' ? 'bg-[#5B8469] text-white' : 'bg-gray-25 text-gray-500']"
+                <button :class="[alignmentPosition === 'left' ? 'bg-[#5B8469] text-white' : 'bg-gray-25 text-gray-500']"
                   @click="setAlignment('left')"
                   class="p-2 border-[0.5px] gap-y-2 border-gray-25 rounded-md text-xs flex justify-center items-center flex-col">
                   <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -607,7 +607,20 @@ watch(fontColor, (newColor) => {
 const proceedSaveAndExit = async () => {
   // const signatureUrl = emittedAgreementData?.value?.signatureObj?.secure_url || leaseSignatureUrl.value;
   const leaseSignature = localStorage.getItem('lease-signature-url')
-  if (!leaseSignature) {
+  if (leaseSignature || user?.value?.signatureUrl) {
+    const reqPayload = {
+      leaseAgreement: editor.value?.innerHTML,
+      isPublished: false,
+      houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
+      houseOwnerSignatureUrl: leaseSignature,
+      startDate: payloadObj?.startDate,
+      endDate: payloadObj?.endDate,
+      agreementName: payloadObj?.documentName
+    };
+    setSaveAndExitPayloadObj(reqPayload);
+    await handleSaveAndExit(payload.value.tenantId, payload.value.propertyId);
+  }
+  else {
     showToast({
       title: "Error",
       message: 'You need to sign before you can send the lease agreement.',
@@ -616,17 +629,6 @@ const proceedSaveAndExit = async () => {
     });
     return;
   }
-  const reqPayload = {
-    leaseAgreement: editor.value?.innerHTML,
-    isPublished: false,
-    houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
-    houseOwnerSignatureUrl: leaseSignature,
-    startDate: payloadObj?.startDate,
-    endDate: payloadObj?.endDate,
-    agreementName: payloadObj?.documentName
-  };
-  setSaveAndExitPayloadObj(reqPayload);
-  await handleSaveAndExit(payload.value.tenantId, payload.value.propertyId);
 };
 
 const proceedSaveAndSend = async () => {
@@ -634,28 +636,32 @@ const proceedSaveAndSend = async () => {
 
   // const signatureUrl = leaseSignatureUrl.value
   const leaseSignature = localStorage.getItem('lease-signature-url')
-  if (!leaseSignature) {
+  if (leaseSignature || user?.value?.signatureUrl) {
+    const reqPayload = {
+      leaseAgreement: editor.value?.innerHTML,
+      isPublished: true,
+      houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
+      houseOwnerSignatureUrl: leaseSignature ? leaseSignature : `${user?.value?.signatureUrl}`,
+      startDate: payloadObj?.startDate,
+      endDate: payloadObj?.endDate,
+      agreementName: payloadObj?.documentName
+    };
+
+    setSaveAndSendPayloadObj(reqPayload);
+    await handleSaveAndSend(payload.value.tenantId, payload.value.propertyId);
+  }
+  else {
     showToast({
       title: "Error",
       message: 'You need to sign before you can send the lease agreement.',
       toastType: "error",
       duration: 3000,
     });
+    console.log(leaseSignature, user?.value?.signatureUrl)
     return;
   }
 
-  const reqPayload = {
-    leaseAgreement: editor.value?.innerHTML,
-    isPublished: true,
-    houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
-    houseOwnerSignatureUrl: leaseSignature,
-    startDate: payloadObj?.startDate,
-    endDate: payloadObj?.endDate,
-    agreementName: payloadObj?.documentName
-  };
 
-  setSaveAndSendPayloadObj(reqPayload);
-  await handleSaveAndSend(payload.value.tenantId, payload.value.propertyId);
 };
 
 // Preview functionality

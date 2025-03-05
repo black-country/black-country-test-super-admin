@@ -1,8 +1,8 @@
 <template>
     <div class="w-full overflow-x-hidden">
-      <div class="flex justify-between items-center mb-2">
-        <h2 class="text-xl font-semibold">{{ currentTitle }}</h2>
-        <span class="text-gray-800">{{ currentStep }}/{{ totalSteps }} (sub step)</span>
+      <div class="flex justify-between items-center mb-2 md:gap-0 gap-4">
+        <h2 class="md:text-xl font-semibold">{{ currentTitle }}</h2>
+        <span class="text-sm md:text-base text-gray-800">{{ currentStep }}/{{ totalSteps }} (sub step)</span>
       </div>
       <div class="relative w-full h-1 bg-gray-200">
         <div 

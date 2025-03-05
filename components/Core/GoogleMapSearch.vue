@@ -279,9 +279,12 @@ watch(currentLocation, (newLocation) => {
 function initializeGoogleServices() {
   try {
     // Initialize the map
+    const initialCenter = currentCoordinates.value ? 
+      {lat: currentCoordinates.value.lat, lng: currentCoordinates.value.lng } 
+      : { lat: 6.5244, lng: 3.3792 }
     if (mapContainer.value) {
       map = new google.maps.Map(mapContainer.value, {
-        center: { lat: 0, lng: 0 },
+        center: initialCenter,
         zoom: 13,
         styles: [
           {
@@ -310,8 +313,17 @@ function initializeGoogleServices() {
           if (place.geometry) {
             console.log(place, 'places here')
             currentLocation.value = place
+            const addressDetails = parseAddressComponents(place) //i addede this
             props.payload.latitude.value = place.geometry.location.lat()
             props.payload.longitude.value = place.geometry.location.lng()
+            props.payload.address.value = addressDetails.street
+            selectedCountry.value = 'NG' 
+            const stateCode = findStateCode(addressDetails.state)
+            if (stateCode) {
+              selectedState.value = stateCode
+              handleStateChange(stateCode)
+            }
+            currentLocation.value = place //added this and ^ to strret
             currentCoordinates.value = {
               lat: place.geometry.location.lat(),
               lng: place.geometry.location.lng()
@@ -356,8 +368,20 @@ function reverseGeocode(latLng: google.maps.LatLngLiteral) {
   geocoder.geocode({ location: latLng }, (results, status) => {
     if (status === 'OK' && results && results[0]) {
       console.log(results, 'mu location')
-      currentLocation.value = results[0]
-      updateMap(results[0], true)
+      // currentLocation.value = results[0]
+      // updateMap(results[0], true)
+      // searchNearbyPlaces()  //uncomment and comment
+      const place = results[0]
+      const addressDetails = parseAddressComponents(place)
+      currentLocation.value = place
+      props.payload.address.value = addressDetails.street
+      selectedCountry.value = 'NG'
+      const stateCode = findStateCode(addressDetails.state)
+      if (stateCode) {
+        selectedState.value = stateCode
+        handleStateChange(stateCode)
+      }
+      updateMap(place, true)
       searchNearbyPlaces()
     } else {
       console.error('Geocoder failed due to: ' + status)
@@ -527,6 +551,46 @@ function highlightMarker(place: google.maps.places.PlaceResult) {
     google.maps.event.trigger(marker, 'click')
   }
 }
+
+//from here down added to separate data
+function parseAddressComponents(place: google.maps.places.PlaceResult) {
+  const addressComponents = place.address_components || [];
+  const componentTypes = {
+    street_number: 'streetNumber',
+    route: 'street',
+    locality: 'city',
+    administrative_area_level_1: 'state',
+    country: 'country',
+    postal_code: 'postalCode'
+  };
+  const parsedAddress = {};
+  addressComponents.forEach(component => {
+    component.types.forEach(type => {
+      if (componentTypes[type]) {
+        parsedAddress[componentTypes[type]] = component.long_name;
+      }
+    });
+  });
+  return {
+    street: parsedAddress.streetNumber ? `${parsedAddress.streetNumber} ${parsedAddress.street || ''}`.trim() : parsedAddress.street || '',
+    city: parsedAddress.city || '',
+    state: parsedAddress.state || '',
+    country: parsedAddress.country || '',
+    postalCode: parsedAddress.postalCode || ''
+    };
+  }
+  
+  function findStateCode(stateName: string) {
+    return states.value.find(state => 
+      state.name.toLowerCase() === stateName.toLowerCase()
+    )?.stateCode;
+  }
+  
+  function findCityId(cityName: string) {
+    return cities.value.find(city => 
+      city.name.toLowerCase() === cityName.toLowerCase()
+    )?.id;
+  }
 </script>
 
 <style scoped>

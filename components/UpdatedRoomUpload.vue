@@ -156,6 +156,56 @@ const persistToLocalStorage = debounce(() => {
 watch(rooms, persistToLocalStorage, { deep: true });
 
 // Handle multiple file uploads for a feature
+// const handleFileUpload = async (event: Event, featureName: string) => {
+//   if (!rooms.value[activeRoom.value]) return; // Ensure activeRoom exists
+
+//   const files = (event.target as HTMLInputElement).files;
+//   if (!files) return;
+
+//   const formData = new FormData();
+
+//   // Validate each file and add to FormData if valid
+//   for (let i = 0; i < files.length; i++) {
+//     const file = files[i];
+//     if (file.size > 2 * 1024 * 1024) {
+//       showToast({
+//           title: "Error",
+//           message: "File size exceeds 2MB. Please upload a smaller file.",
+//           toastType: "error",
+//           duration: 3000
+//         });
+//       // alert('File size exceeds 2MB. Please upload a smaller file.');
+//       continue;
+//     }
+//     formData.append('images', file);
+//   }
+
+//   // Proceed with upload if FormData has files
+//   if (formData.has('images')) {
+//     loading.value[featureName] = true; // Set loading state for the feature
+
+//     try {
+//       await uploadFiles(formData); // Batch upload files
+//       const room = rooms.value[activeRoom.value];
+//       const feature = room.features.find((f: any) => f.name === featureName);
+
+//       if (feature) {
+//         // Add uploaded image URLs to both feature and room
+//         const uploadedImages = uploadResponse.value.map((res: { url: string }) => res.url);
+//         feature.images.push(...uploadedImages); // Update feature images
+//         room.images.push(...uploadedImages); // Consolidate in room's images
+//       }
+
+//       // Sync the payload with the updated local rooms value
+//       props.payload.rooms.value = [...rooms.value]; // Sync back to payload
+//     } catch (error) {
+//       console.error('Failed to upload images:', error);
+//     } finally {
+//       loading.value[featureName] = false; // Reset loading state for the feature
+//     }
+//   }
+// };
+
 const handleFileUpload = async (event: Event, featureName: string) => {
   if (!rooms.value[activeRoom.value]) return; // Ensure activeRoom exists
 
@@ -163,29 +213,218 @@ const handleFileUpload = async (event: Event, featureName: string) => {
   if (!files) return;
 
   const formData = new FormData();
+  
+  // Target file size in bytes (100KB)
+  const TARGET_SIZE_KB = 100;
+  const TARGET_SIZE = TARGET_SIZE_KB * 1024;
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
-  // Validate each file and add to FormData if valid
+  // Function to compress image with iterative quality reduction
+  const compressImage = async (file: File, maxSizeBytes: number): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          // Calculate scaled dimensions - more aggressive reduction
+          let width = img.width;
+          let height = img.height;
+          
+          // Maximum dimensions - reduced for smaller file sizes
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+          
+          // Scale down dimensions
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width = Math.round((width * MAX_HEIGHT) / height);
+              height = MAX_HEIGHT;
+            }
+          }
+          
+          // Further reduce dimensions for larger images
+          if (file.size > 1024 * 1024) { // If original is > 1MB
+            width = Math.round(width * 0.8);
+            height = Math.round(height * 0.8);
+          }
+          
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Compression strategy with iterative quality reduction
+          // const compressWithQuality = (quality: number) => {
+          //   canvas.toBlob(
+          //     (blob) => {
+          //       if (!blob) {
+          //         reject(new Error('Canvas to Blob conversion failed'));
+          //         return;
+          //       }
+                
+          //       // If blob is still too large and quality can be reduced further
+          //       if (blob.size > maxSizeBytes && quality > 0.1) {
+          //         // Reduce quality and try again
+          //         compressWithQuality(quality - 0.1);
+          //       } else {
+          //         // Create new file from the compressed blob
+          //         const compressedFile = new File(
+          //           [blob], 
+          //           file.name.replace(/\.[^/.]+$/, "") + ".jpg", // Force .jpg extension
+          //           { type: 'image/jpeg', lastModified: Date.now() }
+          //         );
+                  
+          //         console.log(`Compressed ${file.name} from ${(file.size/1024).toFixed(2)}KB to ${(compressedFile.size/1024).toFixed(2)}KB`);
+          //         resolve(compressedFile);
+          //       }
+          //     },
+          //     'image/jpeg',
+          //     quality
+          //   );
+          // };
+          const compressWithQuality = (quality: number) => {
+  // Get file extension to determine format
+  const fileExtension = file.name.split('.').pop()?.toLowerCase();
+  let mimeType = 'image/jpeg'; // Default MIME type
+
+  // Set MIME type based on file extension
+  if (fileExtension === 'png') {
+    mimeType = 'image/png';
+  } else if (fileExtension === 'jpeg' || fileExtension === 'jpg') {
+    mimeType = 'image/jpeg';
+  } else if (fileExtension === 'webp') {
+    mimeType = 'image/webp';
+  } else {
+    reject(new Error('Unsupported file format'));
+    return;
+  }
+
+  // Convert canvas to blob and compress image
+  canvas.toBlob(
+    (blob) => {
+      if (!blob) {
+        reject(new Error('Canvas to Blob conversion failed'));
+        return;
+      }
+
+      // If blob is still too large and quality can be reduced further
+      if (blob.size > maxSizeBytes && quality > 0.1) {
+        // Reduce quality and try again
+        compressWithQuality(quality - 0.1);
+      } else {
+        // Create new file from the compressed blob
+        const compressedFile = new File(
+          [blob],
+          file.name.replace(/\.[^/.]+$/, "") + `.${fileExtension}`, // Preserve original file extension
+          { type: mimeType, lastModified: Date.now() }
+        );
+
+        console.log(`Compressed ${file.name} from ${(file.size / 1024).toFixed(2)}KB to ${(compressedFile.size / 1024).toFixed(2)}KB`);
+        resolve(compressedFile);
+      }
+    },
+    mimeType, // Use the correct MIME type based on the format
+    quality
+  );
+};
+
+          
+          // Start with middle quality (0.5 = 50%)
+          compressWithQuality(0.5);
+        };
+        img.onerror = () => {
+          reject(new Error('Image loading failed'));
+        };
+      };
+      reader.onerror = () => {
+        reject(new Error('File reading failed'));
+      };
+    });
+  };
+
+  // Set loading state for compression process
+  loading.value[featureName] = true;
+  
+  // Array to collect valid files (original or compressed)
+  let validFiles = [];
+  let compressedCount = 0;
+  
+  // Process each file with compression
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    if (file.size > 2 * 1024 * 1024) {
-      showToast({
-          title: "Error",
-          message: "File size exceeds 2MB. Please upload a smaller file.",
-          toastType: "error",
-          duration: 3000
+    
+    try {
+      // Check if it's an image file
+      if (file.type.startsWith('image/')) {
+        // Show compression status
+        showToast({
+          title: "Processing",
+          message: `Optimizing image ${i+1}/${files.length}...`,
+          toastType: "info",
+          duration: 1500
         });
-      // alert('File size exceeds 2MB. Please upload a smaller file.');
-      continue;
+        
+        // Compress the image
+        const compressedFile = await compressImage(file, TARGET_SIZE);
+        
+        // Validate size after compression
+        if (compressedFile.size > MAX_FILE_SIZE) {
+          showToast({
+            title: "Error",
+            message: `File ${file.name} still exceeds 2MB after compression.`,
+            toastType: "error",
+            duration: 3000
+          });
+          continue;
+        }
+        
+        formData.append('images', compressedFile);
+        validFiles.push(compressedFile);
+        compressedCount++;
+      } else {
+        // For non-image files, check size and add without compression
+        if (file.size > MAX_FILE_SIZE) {
+          showToast({
+            title: "Error",
+            message: "File size exceeds 2MB. Please upload a smaller file.",
+            toastType: "error",
+            duration: 3000
+          });
+          continue;
+        }
+        formData.append('images', file);
+        validFiles.push(file);
+      }
+    } catch (error) {
+      console.error(`Error processing file ${file.name}:`, error);
+      showToast({
+        title: "Error",
+        message: `Failed to process ${file.name}`,
+        toastType: "error",
+        duration: 3000
+      });
     }
-    formData.append('images', file);
   }
 
   // Proceed with upload if FormData has files
   if (formData.has('images')) {
-    loading.value[featureName] = true; // Set loading state for the feature
-
     try {
+      const startTime = performance.now();
+      
       await uploadFiles(formData); // Batch upload files
+      
+      const uploadTime = performance.now() - startTime;
+      console.log(`Upload completed in ${uploadTime.toFixed(2)}ms`);
+      
       const room = rooms.value[activeRoom.value];
       const feature = room.features.find((f: any) => f.name === featureName);
 
@@ -198,11 +437,35 @@ const handleFileUpload = async (event: Event, featureName: string) => {
 
       // Sync the payload with the updated local rooms value
       props.payload.rooms.value = [...rooms.value]; // Sync back to payload
+      
+      // Show success message with compression stats
+      if (compressedCount > 0) {
+        showToast({
+          title: "Success",
+          message: `Uploaded ${validFiles.length} images (${compressedCount} compressed)`,
+          toastType: "success",
+          duration: 3000
+        });
+      }
     } catch (error) {
       console.error('Failed to upload images:', error);
+      showToast({
+        title: "Error",
+        message: "Failed to upload images. Please try again.",
+        toastType: "error",
+        duration: 3000
+      });
     } finally {
       loading.value[featureName] = false; // Reset loading state for the feature
     }
+  } else {
+    loading.value[featureName] = false; // Reset loading state if no valid files
+    showToast({
+      title: "Info",
+      message: "No valid files to upload",
+      toastType: "info",
+      duration: 2000
+    });
   }
 };
 

@@ -179,41 +179,228 @@ watch(
 
 // **File Upload Handling**
 // Optimized file handling for multiple uploads
+// const handleFileUpload = async (event: Event) => {
+//   const files = (event.target as HTMLInputElement).files;
+//   if (!files) return;
+
+//   const formData = new FormData();
+
+//   // Validate file size before appending
+//   for (let i = 0; i < files.length; i++) {
+//     const file = files[i];
+//     if (file.size > MAX_FILE_SIZE) {
+//       showToast({
+//             title: "Error",
+//             message: `File ${file.name} exceeds 2MB limit. Please choose a smaller file.`,
+//             toastType: "error",
+//             duration: 3000
+//           });
+//       continue; // Skip files that exceed the size limit
+//     }
+//     formData.append('images', file); // Add each image to FormData
+//   }
+
+//   // Proceed only if there are valid files
+//   if (formData.has('images')) {
+//     isLoading.value = true;
+//     try {
+//       // Use batchUpload composable to upload files
+//       await uploadFiles(formData);
+
+//       // Add the uploaded images' secure URLs to the `images` array
+//       uploadResponse.value.forEach((response: { url: string }) => {
+//         images.value.unshift(response.url);
+//         props.payload.images.value.unshift(response.url)
+//       });
+//     } catch (error) {
+//       console.error("Image upload failed", error);
+//     } finally {
+//       isLoading.value = false;
+//     }
+//   }
+// };
+
 const handleFileUpload = async (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
   if (!files) return;
 
   const formData = new FormData();
+  
+  // Target file size in bytes (100KB)
+  const TARGET_SIZE_KB = 100;
+  const TARGET_SIZE = TARGET_SIZE_KB * 1024;
 
-  // Validate file size before appending
+  // Function to compress image with iterative quality reduction
+  const compressImage = async (file: File, maxSizeBytes: number): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          // Calculate scaled dimensions - more aggressive reduction
+          let width = img.width;
+          let height = img.height;
+          
+          // Maximum dimensions - reduced for smaller file sizes
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+          
+          // Scale down dimensions
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width = Math.round((width * MAX_HEIGHT) / height);
+              height = MAX_HEIGHT;
+            }
+          }
+          
+          // Further reduce dimensions for larger images
+          if (file.size > 1024 * 1024) { // If original is > 1MB
+            width = Math.round(width * 0.8);
+            height = Math.round(height * 0.8);
+          }
+          
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Compression strategy
+          const compressWithQuality = (quality: number) => {
+            canvas.toBlob(
+              (blob) => {
+                if (!blob) {
+                  reject(new Error('Canvas to Blob conversion failed'));
+                  return;
+                }
+                
+                // If blob is still too large and quality can be reduced further
+                if (blob.size > maxSizeBytes && quality > 0.1) {
+                  // Reduce quality and try again
+                  compressWithQuality(quality - 0.1);
+                } else {
+                  // Create new file from the compressed blob
+                  const compressedFile = new File(
+                    [blob], 
+                    file.name.replace(/\.[^/.]+$/, "") + ".jpg", // Force .jpg extension
+                    { type: 'image/jpeg', lastModified: Date.now() }
+                  );
+                  
+                  console.log(`Compressed ${file.name} from ${(file.size/1024).toFixed(2)}KB to ${(compressedFile.size/1024).toFixed(2)}KB`);
+                  resolve(compressedFile);
+                }
+              },
+              'image/jpeg',
+              quality
+            );
+          };
+          
+          // Start with middle quality (0.5 = 50%)
+          compressWithQuality(0.5);
+        };
+        img.onerror = () => {
+          reject(new Error('Image loading failed'));
+        };
+      };
+      reader.onerror = () => {
+        reject(new Error('File reading failed'));
+      };
+    });
+  };
+
+  // Process files with compression
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    if (file.size > MAX_FILE_SIZE) {
-      showToast({
+    
+    try {
+      // Only compress images
+      if (file.type.startsWith('image/')) {
+        // Show loading indicator for this specific file
+        showToast({
+          title: "Compressing",
+          message: `Optimizing ${file.name}...`,
+          toastType: "info",
+          duration: 2000
+        });
+        
+        const compressedFile = await compressImage(file, TARGET_SIZE);
+        
+        // Check if still too large after compression
+        if (compressedFile.size > MAX_FILE_SIZE) {
+          showToast({
             title: "Error",
-            message: `File ${file.name} exceeds 2MB limit. Please choose a smaller file.`,
+            message: `File ${file.name} still exceeds size limit after compression.`,
             toastType: "error",
             duration: 3000
           });
-      continue; // Skip files that exceed the size limit
+          continue;
+        }
+        
+        formData.append('images', compressedFile);
+      } else {
+        // For non-image files, add original if within size limit
+        if (file.size > MAX_FILE_SIZE) {
+          showToast({
+            title: "Error",
+            message: `File ${file.name} exceeds size limit and cannot be compressed.`,
+            toastType: "error",
+            duration: 3000
+          });
+          continue;
+        }
+        formData.append('images', file);
+      }
+    } catch (error) {
+      console.error(`Error processing file ${file.name}:`, error);
+      showToast({
+        title: "Error",
+        message: `Failed to process ${file.name}.`,
+        toastType: "error",
+        duration: 3000
+      });
     }
-    formData.append('images', file); // Add each image to FormData
   }
 
   // Proceed only if there are valid files
   if (formData.has('images')) {
     isLoading.value = true;
     try {
+      const startTime = performance.now();
+      
       // Use batchUpload composable to upload files
       await uploadFiles(formData);
+      
+      const uploadTime = performance.now() - startTime;
+      console.log(`Upload completed in ${uploadTime.toFixed(2)}ms`);
 
       // Add the uploaded images' secure URLs to the `images` array
       uploadResponse.value.forEach((response: { url: string }) => {
         images.value.unshift(response.url);
-        props.payload.images.value.unshift(response.url)
+        props.payload.images.value.unshift(response.url);
+      });
+      
+      showToast({
+        title: "Success",
+        message: `Uploaded ${uploadResponse.value.length} optimized images`,
+        toastType: "success",
+        duration: 3000
       });
     } catch (error) {
       console.error("Image upload failed", error);
+      showToast({
+        title: "Error",
+        message: "Failed to upload images. Please try again.",
+        toastType: "error",
+        duration: 3000
+      });
     } finally {
       isLoading.value = false;
     }

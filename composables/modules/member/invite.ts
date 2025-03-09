@@ -39,8 +39,8 @@ export const useInviteMember = () => {
                     toastType: "success",
                     duration: 3000
                   });
-                router.push("/dashboard/members/invite-success");
-                window.location.href = "/dashboard/members/invite-success"
+                router.push("/admin/dashboard/members/invite-success");
+                window.location.href = "/admin/dashboard/members/invite-success"
             } else {
                 showToast({
                     title: "Error",

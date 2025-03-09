@@ -29,8 +29,8 @@
 
         <section>
           <label class="text-xs mb-2 text-[#1D2739]">Street *</label>
-          <input :value="payload.address.value"
-            class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100" />
+          <input :value="getStreetAddress(payload.address.value)"
+    class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100" />
         </section>
         <!-- {{ states[0] }} -->
         <section>
@@ -364,30 +364,30 @@ function getUserLocation() {
 }
 
 function reverseGeocode(latLng: google.maps.LatLngLiteral) {
-  const geocoder = new google.maps.Geocoder()
+  const geocoder = new google.maps.Geocoder();
   geocoder.geocode({ location: latLng }, (results, status) => {
     if (status === 'OK' && results && results[0]) {
-      console.log(results, 'mu location')
-      // currentLocation.value = results[0]
-      // updateMap(results[0], true)
-      // searchNearbyPlaces()  //uncomment and comment
-      const place = results[0]
-      const addressDetails = parseAddressComponents(place)
-      currentLocation.value = place
-      props.payload.address.value = addressDetails.street
-      selectedCountry.value = 'NG'
-      const stateCode = findStateCode(addressDetails.state)
+      const place = results[0];
+      const addressDetails = parseAddressComponents(place);
+      
+      // Update the street address and other location details
+      props.payload.address.value = addressDetails.street;
+      selectedCountry.value = 'NG';
+      
+      const stateCode = findStateCode(addressDetails.state);
       if (stateCode) {
-        selectedState.value = stateCode
-        handleStateChange(stateCode)
+        selectedState.value = stateCode;
+        handleStateChange(stateCode);
       }
-      updateMap(place, true)
-      searchNearbyPlaces()
+      
+      updateMap(place, true);
+      searchNearbyPlaces();
     } else {
-      console.error('Geocoder failed due to: ' + status)
+      console.error('Geocoder failed due to: ' + status);
     }
-  })
+  });
 }
+
 
 function handleLocationError(browserHasGeolocation: boolean) {
   console.error(browserHasGeolocation ?
@@ -563,7 +563,7 @@ function parseAddressComponents(place: google.maps.places.PlaceResult) {
     country: 'country',
     postal_code: 'postalCode'
   };
-  const parsedAddress = {};
+  const parsedAddress: { [key: string]: string } = {};
   addressComponents.forEach(component => {
     component.types.forEach(type => {
       if (componentTypes[type]) {
@@ -571,14 +571,16 @@ function parseAddressComponents(place: google.maps.places.PlaceResult) {
       }
     });
   });
+
   return {
     street: parsedAddress.streetNumber ? `${parsedAddress.streetNumber} ${parsedAddress.street || ''}`.trim() : parsedAddress.street || '',
     city: parsedAddress.city || '',
     state: parsedAddress.state || '',
     country: parsedAddress.country || '',
     postalCode: parsedAddress.postalCode || ''
-    };
-  }
+  };
+}
+
   
   function findStateCode(stateName: string) {
     return states.value.find(state => 
@@ -591,6 +593,20 @@ function parseAddressComponents(place: google.maps.places.PlaceResult) {
       city.name.toLowerCase() === cityName.toLowerCase()
     )?.id;
   }
+
+  function getStreetAddress(fullAddress: string): string { //replace this with appopriate function tir
+  if (!fullAddress || !states.value) return ''
+  for (let state of states.value) {
+    const stateIndex = fullAddress.indexOf(state.name)  
+    if (stateIndex !== -1) {
+      return fullAddress.substring(0, stateIndex).trim()
+    }
+  }
+  return fullAddress.trim()
+}
+
+
+
 </script>
 
 <style scoped>

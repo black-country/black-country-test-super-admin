@@ -167,7 +167,8 @@
 
                 <p @click="viewTemplate(lease)" class="text-sm cursor-pointer text-gray-600">
                   Tenant:
-                  <span class="font-medium text-[#1D2739]">{{ lease?.signeeName ?? 'Nil' }}</span>
+                  <!-- <span class="font-medium text-[#1D2739]">{{ lease?.signeeName ?? 'Nil' }}</span> -->
+                  <span class="font-medium text-[#1D2739]">{{ lease?.rentalApplication?.tenant?.firstName ?? 'Nil' }} {{ lease?.rentalApplication?.tenant?.lastName }}</span>
                 </p>
                 <p @click="viewTemplate(lease)" class="text-sm cursor-pointer text-gray-600">
                   Last updated:

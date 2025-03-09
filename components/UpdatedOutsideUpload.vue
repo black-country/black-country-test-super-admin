@@ -274,34 +274,80 @@ const handleFileUpload = async (event: Event) => {
           ctx?.drawImage(img, 0, 0, width, height);
           
           // Compression strategy
-          const compressWithQuality = (quality: number) => {
-            canvas.toBlob(
-              (blob) => {
-                if (!blob) {
-                  reject(new Error('Canvas to Blob conversion failed'));
-                  return;
-                }
+          // const compressWithQuality = (quality: number) => {
+          //   canvas.toBlob(
+          //     (blob) => {
+          //       if (!blob) {
+          //         reject(new Error('Canvas to Blob conversion failed'));
+          //         return;
+          //       }
                 
-                // If blob is still too large and quality can be reduced further
-                if (blob.size > maxSizeBytes && quality > 0.1) {
-                  // Reduce quality and try again
-                  compressWithQuality(quality - 0.1);
-                } else {
-                  // Create new file from the compressed blob
-                  const compressedFile = new File(
-                    [blob], 
-                    file.name.replace(/\.[^/.]+$/, "") + ".jpg", // Force .jpg extension
-                    { type: 'image/jpeg', lastModified: Date.now() }
-                  );
+          //       // If blob is still too large and quality can be reduced further
+          //       if (blob.size > maxSizeBytes && quality > 0.1) {
+          //         // Reduce quality and try again
+          //         compressWithQuality(quality - 0.1);
+          //       } else {
+          //         // Create new file from the compressed blob
+          //         const compressedFile = new File(
+          //           [blob], 
+          //           file.name.replace(/\.[^/.]+$/, "") + ".jpg", // Force .jpg extension
+          //           { type: 'image/jpeg', lastModified: Date.now() }
+          //         );
                   
-                  console.log(`Compressed ${file.name} from ${(file.size/1024).toFixed(2)}KB to ${(compressedFile.size/1024).toFixed(2)}KB`);
-                  resolve(compressedFile);
-                }
-              },
-              'image/jpeg',
-              quality
-            );
-          };
+          //         console.log(`Compressed ${file.name} from ${(file.size/1024).toFixed(2)}KB to ${(compressedFile.size/1024).toFixed(2)}KB`);
+          //         resolve(compressedFile);
+          //       }
+          //     },
+          //     'image/jpeg',
+          //     quality
+          //   );
+          // };
+          const compressWithQuality = (quality: number) => {
+  // Get file extension to determine format
+  const fileExtension = file.name.split('.').pop()?.toLowerCase();
+  let mimeType = 'image/jpeg'; // Default MIME type
+
+  // Set MIME type based on file extension
+  if (fileExtension === 'png') {
+    mimeType = 'image/png';
+  } else if (fileExtension === 'jpeg' || fileExtension === 'jpg') {
+    mimeType = 'image/jpeg';
+  } else if (fileExtension === 'webp') {
+    mimeType = 'image/webp';
+  } else {
+    reject(new Error('Unsupported file format'));
+    return;
+  }
+
+  // Convert canvas to blob and compress image
+  canvas.toBlob(
+    (blob) => {
+      if (!blob) {
+        reject(new Error('Canvas to Blob conversion failed'));
+        return;
+      }
+
+      // If blob is still too large and quality can be reduced further
+      if (blob.size > maxSizeBytes && quality > 0.1) {
+        // Reduce quality and try again
+        compressWithQuality(quality - 0.1);
+      } else {
+        // Create new file from the compressed blob
+        const compressedFile = new File(
+          [blob],
+          file.name.replace(/\.[^/.]+$/, "") + `.${fileExtension}`, // Preserve original file extension
+          { type: mimeType, lastModified: Date.now() }
+        );
+
+        console.log(`Compressed ${file.name} from ${(file.size / 1024).toFixed(2)}KB to ${(compressedFile.size / 1024).toFixed(2)}KB`);
+        resolve(compressedFile);
+      }
+    },
+    mimeType, // Use the correct MIME type based on the format
+    quality
+  );
+};
+
           
           // Start with middle quality (0.5 = 50%)
           compressWithQuality(0.5);

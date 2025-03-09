@@ -5,7 +5,7 @@ const payload = ref({
     search: "",
     page: 1,
     perPage: 20
-})
+});
 const usersList = ref<any[]>([]);
 const totalUsers = ref(0);
 const hasMore = ref(true);
@@ -18,12 +18,13 @@ export const useFetchAllUsers = () => {
             const res = (await utilities_api.$_get_all_users(payload.value)) as any;
             if (res.type !== "ERROR") {
                 const newUsers = [
-                    ...res.data.result.tenants,
-                    ...res.data.result.serviceProviders,
-                    ...res.data.result.agents,
-                    ...res.data.result.admins,
+                    ...res.data.result.tenants.map((user: any) => ({ ...user, role: 'TENANT' })),
+                    ...res.data.result.serviceProviders.map((user: any) => ({ ...user, role: 'SERVICE_PROVIDER' })),
+                    ...res.data.result.agents.map((user: any) => ({ ...user, role: 'AGENT' })),
+                    ...res.data.result.admins.map((user: any) => ({ ...user, role: 'ADMIN' })),
                 ];
                 totalUsers.value = res.data.metadata.total;
+                
                 let filteredUsers = newUsers;
                 if (payload.value.search) {
                     filteredUsers = newUsers.filter((user) =>
@@ -32,6 +33,7 @@ export const useFetchAllUsers = () => {
                             .includes(payload.value.search.toLowerCase())
                     );
                 }
+
                 usersList.value = loadMore
                     ? [...usersList.value, ...filteredUsers]
                     : filteredUsers;
@@ -64,5 +66,5 @@ export const useFetchAllUsers = () => {
         await fetchAllUsers();
     });
 
-    return { fetchAllUsers, loadMore, loading, payload, usersList, totalUsers, hasMore, resetSearch};
+    return { fetchAllUsers, loadMore, loading, payload, usersList, totalUsers, hasMore, resetSearch };
 };

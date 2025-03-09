@@ -119,12 +119,6 @@
               v-model="time"
               class="w-full text-sm outline-none border py-3.5 pl-4 pr-10 text-[#101828] bg-[#F9FAFB] rounded-lg border-[#E4E7EC]"
             />
-            <!-- <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18.3333 10C18.3333 14.6 14.6 18.3333 10 18.3333C5.4 18.3333 1.66667 14.6 1.66667 10C1.66667 5.4 5.4 1.66666 10 1.66666C14.6 1.66666 18.3333 5.4 18.3333 10Z" stroke="#667085" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M13.0917 12.65L10.5083 11.1083C10.0417 10.8333 9.66667 10.2 9.66667 9.67499V6.25833" stroke="#667085" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div> -->
           </div>
         </div>
       </div>
@@ -169,6 +163,16 @@
     'Saturday',
     'Sunday'
   ];
+
+  const startDateTime = computed(() => {
+  if (startDate.value && time.value) {
+    const [hours, minutes] = time.value.split(':');
+    const combinedDate = new Date(startDate.value);
+    combinedDate.setHours(hours, minutes, 0, 0);
+    return combinedDate.toISOString();
+  }
+  return '';
+});
 
   // Computed property to dynamically set the min date
 const minDate = computed(() => {
@@ -223,7 +227,7 @@ const minDate = computed(() => {
     unmounted(el: HTMLElement) {
       document.removeEventListener('click', el.clickOutsideEvent);
     },
-  };
+  }; 
 
   const props = defineProps({
     isLastStep: Boolean
@@ -235,7 +239,7 @@ const minDate = computed(() => {
 
   const emitData = () => {
   if (isValid.value) {
-    emit('next', { frequency: frequency.value,  startDate: startDate.value, endDate: endDate.value, time: time.value, selectedDays:selectedDays.value });
+    emit('next', { frequency: frequency.value,  startDate: startDate.value, endDate: endDate.value, time: time.value, selectedDays:selectedDays.value, startDateTime:startDateTime.value});
   }
 };
   </script>

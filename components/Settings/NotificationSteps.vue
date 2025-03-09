@@ -124,7 +124,7 @@ const currentStep = ref(1);
 
 // Payload state: Stores data for all steps
 const payload = ref<Array<any>>([]);
-
+ 
 const steps = computed<Step[]>(() => {
   if (props.type === "scheduled") {
     return [
@@ -169,11 +169,18 @@ const saveScheduleAsDraft = () => {
     fileUrl: itm?.url,
     fileName: itm?.name,
   }));
+  if(props.type === 'immediate'){
+    selectedDate.value = new Date().toISOString(); 
+    status.value = "sent"
+  } else {
+    selectedDate.value = notificationPayload?.value?.startDateTime
+    status.value = "pending"
+  }
 
   const payloadObj = {
     subject: notificationPayload.value.subject,
     notificationType: route?.query?.notification,
-    scheduleStartDate: notificationPayload?.value?.startDate,
+    scheduleStartDate: selectedDate.value,
     recipientType: notificationPayload?.value?.recipientType?.toUpperCase(),
     recipients: reciepientsArray ?? [],
     metadata: {
@@ -191,6 +198,9 @@ const saveScheduleAsDraft = () => {
   setPayload(payloadObj);
   saveAndExitSchedule();
 }
+const selectedDate = ref()
+const status = ref("sent")
+
 
 const nextStep = (data: any) => {
   // Merge new data with existing notificationPayload
@@ -205,11 +215,18 @@ const nextStep = (data: any) => {
     fileUrl: itm?.url,
     fileName: itm?.name,
   }));
+  if(props.type === 'immediate'){
+    selectedDate.value = new Date().toISOString(); 
+    status.value = "sent"
+  } else {
+    selectedDate.value = notificationPayload?.value?.startDateTime
+    status.value = "pending"
+  }
 
   const payloadObj = {
     subject: notificationPayload.value.subject,
     notificationType: route?.query?.notification,
-    scheduleStartDate: notificationPayload?.value?.startDate,
+    scheduleStartDate: selectedDate.value,
     recipientType: notificationPayload?.value?.recipientType.toUpperCase(),
     recipients: reciepientsArray,
     metadata: {
@@ -221,9 +238,10 @@ const nextStep = (data: any) => {
       htmlContent: notificationPayload?.value?.content,
       attachments: filesArray,
     },
-    status: "sent",
+    status: status.value
   };
-
+  console.log(payloadObj)
+  console.log(selectedDate.value)
   setPayload(payloadObj);
 
   // Check if user is on the last step

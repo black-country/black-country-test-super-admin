@@ -2,7 +2,7 @@
       <main class="min-h-screen">
         <div v-if="!loadingRentals && rentalsList.length" class="">    
           <div v-if="filteredApplications.length" class="grid grid-cols-1 md:grid-cols-2  gap-4">
-            <div v-for="(application, index) in filteredApplications" :key="index"
+            <div v-for="(application, index) in filteredApplications.filter(application => application.status === 'NEW' || application.status === 'PENDING')" :key="index"
               class="bg-white p-4 rounded-lg cursor-pointer border-[0.5px] border-gray-100"
               @click="router.push(`/dashboard/property/rental-applications/${application?.id}`)">
               <div class="flex items-center justify-between">
@@ -33,6 +33,10 @@
                   class="bg-red-100 text-red-700 px-2.5 py-1.5 rounded-full text-xs font-semibold">
                   Declined
                 </div>
+                <div v-if="application.status === 'CANCELLED'"
+                  class="bg-red-100 text-red-700 px-2.5 py-1.5 rounded-full text-xs font-semibold">
+                  Cancelled
+                </div>
               </div>
               <div class="mt-4">
                 <p class="text-[#1D2739] text-xs">{{ application?.house?.name }}</p>
@@ -42,7 +46,7 @@
           </div>
     
           <!-- Empty state for filtered results -->
-          <div v-else class="text-center py-10 flex justify-center items-center flex-col border rounded-md border-gray-100">
+          <div v-if="!filteredApplications.filter(application => application.status === 'NEW' || application.status === 'PENDING').length " class="text-center py-10 flex justify-center items-center flex-col border rounded-md border-gray-100">
             <svg width="153" height="124" viewBox="0 0 153 124" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="76.5" cy="58" r="52" fill="#EAEAEA"/>
               <circle cx="21.5" cy="25" r="5" fill="#BDBDBD"/>
@@ -67,7 +71,8 @@
               </svg>
               
               
-            <p class="text-gray-500">No applications found for {{ activeTab }} status.</p>
+            <p class="text-gray-500">No applications found.</p>
+            <!-- <p class="text-gray-500">No applications found for {{ activeTab }} status.</p> -->
           </div>
         </div>
         <section v-else>

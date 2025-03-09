@@ -1,7 +1,7 @@
 <template>
   <Layout class="bg-red-500">
     <template #header-content>
-      <div v-if="!loading" class="flex justify-between items-center p-4 w-full">
+      <div v-if="!loading" class="flex justify-between items-center md:p-4 w-full">
         <div class="flex items-center space-x-5">
           <button
             @click="router.back()"
@@ -25,12 +25,12 @@
 
             Back
           </button>
-          <span class="text-xl font-medium text-[#1D2739]"
+          <span class="md:text-xl font-medium text-[#1D2739]"
             >{{ tenantDetails?.firstName }}
             {{  tenantDetails?.lastName }}</span
           >
         </div>
-        <div class="flex space-x-4">
+        <div class="flex md:space-x-4 space-x-1">
           <button @click="router.push({path: '/dashboard/messages', query: { userId: tenantDetails?.id }})"
           >
           <svg width="52" height="44" viewBox="0 0 52 44" fill="none" xmlns="http://www.w3.org/2000/svg">

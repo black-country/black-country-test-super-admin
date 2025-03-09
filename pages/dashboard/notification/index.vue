@@ -318,6 +318,8 @@
                   stroke-linejoin="round"
                 />
               </svg>
+            <div v-if="notificationCount > 0" class="h-2 w-2 bg-red-600 absolute rounded-full top-2.5 right-2.5"></div>
+
             </div>
             <div
               @click="router.push('/dashboard/profile')"
@@ -425,8 +427,9 @@
                         </p>
                       </div>
                     </div>
-                    <div class="text-xs text-gray-500">
-                      {{ formatDate(notification.createdAt) }}
+                    <div class="text-xs text-gray-500 flex items-center">
+                      <span>{{ formatDate(notification.createdAt) }}</span>
+                      <div v-if="notification.readAt === null" class="h-1.5 w-1.5 bg-red-600 rounded-full"></div>
                     </div>
                   </div>
                 </div>
@@ -715,7 +718,9 @@ import { useUserInitials } from "@/composables/core/useUserInitials";
 import { useUser } from "@/composables/auth/user";
 const { user } = useUser();
 import { useGetNotifications } from "@/composables/modules/notification/fetch";
-const { loadingNotification, notificationList } = useGetNotifications();
+const { loadingNotification, notificationList, getNotifications } = useGetNotifications();
+import { useFetchNotificationCount } from '~/composables/modules/notification/fetchCount';
+import { useMarkNotificationAsRead } from '~/composables/modules/notification/markAsRead';
 import { useRouter } from "vue-router";
 import { dynamicIcons } from "@/utils/assets";
 const showBLogoutModal = ref(false);
@@ -723,6 +728,8 @@ const router = useRouter();
 const initials = ref("") as any;
 
 const { groupedNotifications, formatNotifications } = useFormatNotifications();
+const { notificationCount } = useFetchNotificationCount();
+const {markNotificationAsRead} = useMarkNotificationAsRead();
 
 // Format the notifications when the component is mounted
 formatNotifications(notificationList.value);
@@ -768,9 +775,12 @@ function formatDate(dateString: string) {
   });
 }
 
-const viewNotification = (item: any) => {
+const viewNotification = async (item: any) => {
   console.log(item, "here");
   selectedNotification.value = item;
+  await markNotificationAsRead(item?.id);
+  getNotifications();
+  // formatNotifications(notificationList.value);
 };
 
 watch(notificationList, (newVal) => {

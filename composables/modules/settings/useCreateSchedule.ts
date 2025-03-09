@@ -138,7 +138,7 @@ export const useCreateSchedule = () => {
                 toastType: "success",
                 duration: 3000
             });
-            window.location.href = "/dashboard/settings/notification-success";
+            window.location.href = "/admin/dashboard/settings/notification-success";
         } else {
             showToast({
                 title: "Error",

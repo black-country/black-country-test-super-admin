@@ -1,9 +1,9 @@
 <template>
     <div 
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" 
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 "  
       @click.self="closeModal"
     >
-      <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full">
+      <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full max-h-[60%] overflow-auto custom-scrollbar">
         <h2 class="text-lg font-semibold mb-4">Filter</h2>
         <div class="space-y-6">
           <div class="grid grid-cols-2 gap-4">
@@ -246,4 +246,26 @@ onBeforeUnmount(() => {
     document.removeEventListener('click', handleClickOutside);
 });
   </script>
+
+<style scoped>
+.custom-scrollbar {
+    scrollbar-width: thin; 
+    scrollbar-color: #cccccc #f1f1f1; 
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px; 
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #cccccc;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #cccccc; 
+    border-radius: 4px; 
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #cccccc; 
+  }
+</style>
   

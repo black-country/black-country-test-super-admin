@@ -124,11 +124,8 @@
       <div class="bg-[#F0F2F5] p-6 rounded-md">
         <div class="flex items-center justify-between space-x-4">
           <div class="flex items-center space-x-4">
-            <img
-              :src="dynamicImage(propertyManagerImage)"
-              alt="Property Manager"
-              class="w-10 h-10 rounded-full"
-            />
+            <img class="w-10 h-10 rounded-full" v-if="propertyObj?.agent?.profilePicture" :src="propertyObj.agent.profilePicture" />
+            <img v-else  src="@/assets/icons/users-avatar.svg" alt="Property Manager" class="w-14 h-14 rounded-full">
             <div>
               <h3 class="font-bold text-[#1D2739]">
                 <span v-if="propertyObj.agent">

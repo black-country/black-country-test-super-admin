@@ -25,6 +25,9 @@
       </div>
       <div class="mb-4">
         <h3 class="mb-2">Interior area</h3>
+        <!-- {{ filteredRoomFeatures }} -->
+          <!-- {{ furnishedFeatures }} -->
+            <!-- {{ unfurnishedFeatures }} -->
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
           <label v-for="item in filteredRoomFeatures" :key="item" :for="item"
             class="flex text-sm block cursor-pointer pl-3 py-3.5 items-start gap-4 rounded-lg border transition" :class="{
@@ -213,14 +216,62 @@ const furnishedFeatures = [
   'Window coverings',
   'Air conditioning',
   'Ceiling/Standing fan',
-  'Water heating'
+  'Water heating',
+  'Living Room',
+  'Dining Area',
+  'Kitchen',
+  'Laundry Area',
+  'Study/Office Area',
+  'Garden',
+  'Swimming Pool',
+  'Fitness Center',
+  'Rooftop Terrace',
+  'Courtyard',
+  'Parking area',
+  'Balcony',
+  'Patio',
+  'Recreational area'
 ];
 
 const unfurnishedFeatures = [
   'Bathroom/Restroom',
   'Wardrobes/Closet',
-  'Air conditioning space'
+  'Air conditioning space',
+  'Living Room',
+  'Dining Area',
+  'Kitchen',
+  'Laundry Area',
+  'Study/Office Area',
+  'Garden',
+  'Swimming Pool',
+  'Fitness Center',
+  'Rooftop Terrace',
+  'Courtyard',
+  'Parking area',
+  'Balcony',
+  'Patio',
+  'Recreational area'
 ];
+
+
+// const furnishedFeatures = [
+//   'Bedframe',
+//   'Mattress',
+//   'Desk & Chair',
+//   'Shelves/bookcases',
+//   'Wardrobes/Closet',
+//   'Bathroom/Restroom',
+//   'Window coverings',
+//   'Air conditioning',
+//   'Ceiling/Standing fan',
+//   'Water heating'
+// ];
+
+// const unfurnishedFeatures = [
+//   'Bathroom/Restroom',
+//   'Wardrobes/Closet',
+//   'Air conditioning space'
+// ];
 
 
 const minDate = computed(() => {
@@ -311,25 +362,6 @@ const isAnyRoomMaster = computed(() => {
   return roomData.value.some(room => room.isMaster);
 });
 
-// Initialize room data
-// const initializeRoomData = () => {
-//   roomData.value = props.payload.rooms.value.length
-//     ? [...props.payload.rooms.value]
-//     : Array.from({ length: props.payload.bedroomCount.value }, (_, i) => ({
-//       name: `Room ${i + 1}`,
-//       availability: 'available_now',
-//       availableFrom: null,
-//       occupantName: '',
-//       isMaster: false,
-//       rentAmount: '',
-//       rentFrequency: 'monthly',
-//       isFurnished: true,
-//       features: [],
-//       images: [],
-//       additionalCharges: [] // Initialize with empty additional charges array
-//     }));
-//   rooms.value = roomData.value;
-// };
 const initializeRoomData = () => {
   const bedroomCount = props.payload.bedroomCount.value;
   
@@ -383,25 +415,6 @@ const initializeRoomData = () => {
       }
     };
 
-// const saveRoomData = (roomName: string) => {
-//   const roomIndex = roomData.value.findIndex((room) => room?.name === roomName);
-//   if (roomIndex !== -1) {
-//     // Ensure additional charges are saved for the room
-//     roomData.value[roomIndex] = {
-//       ...roomData.value[roomIndex],
-//       availability: availability.value,
-//       availableFrom: availabilityDate.value,
-//       occupantName: occupantsName.value,
-//       rentAmount: parseInt(rentAmount.value?.toString() || '0', 10) || 0,
-//       rentFrequency: rentFrequency.value,
-//       isFurnished: isRoomFurnished.value,
-//       isMaster: setAsMasterBedroom.value,
-//       features: roomFeatures.value,
-//       additionalCharges: [...additionalCharges.value] // Ensure charges are copied
-//     };
-//   }
-//   emit('emitRoomData', roomData.value);
-// };
 
     // Enhanced room data loading
     const loadRoomData = (roomName: string) => {
@@ -423,26 +436,6 @@ const initializeRoomData = () => {
       }
     };
 
-
-// const loadRoomData = (roomName: string) => {
-//   // Retrieve the room data from localStorage
-//   const currentRoomData = JSON.parse(localStorage.getItem('property_rooms') || '[]');
-  
-//   const room = currentRoomData.find((room: any) => room.name === roomName);
-
-//   if (room) {
-//     // Load the room data into the component's reactive state
-//     availability.value = room.availability;
-//     availabilityDate.value = room.availableFrom || '';
-//     occupantsName.value = room.occupantName || '';
-//     rentAmount.value = room.rentAmount || '';
-//     rentFrequency.value = room.rentFrequency || 'monthly';
-//     isRoomFurnished.value = room.isFurnished;
-//     setAsMasterBedroom.value = room.isMaster;
-//     roomFeatures.value = room.features || [];
-//     additionalCharges.value = room.additionalCharges || []; // Load additional charges from the saved room data
-//   }
-// };
 
 
 // Filter features based on the furnished status

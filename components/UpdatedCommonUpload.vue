@@ -160,20 +160,229 @@ const persistToLocalStorage = debounce(() => {
 watch(commonAreas, persistToLocalStorage, { deep: true });
 
 // Handle multiple file upload for each common area
+// const handleFileUpload = async (event: Event, areaId: string) => {
+//   const files = (event.target as HTMLInputElement).files;
+//   if (!files) return;
+
+//   const formData = new FormData();
+
+//   // Check each file size and append valid files to the FormData object
+//   for (let i = 0; i < files.length; i++) {
+//     const file = files[i];
+//     if (file.size > MAX_FILE_SIZE) {
+//       alert(`File ${file.name} exceeds 2MB limit. Please choose a smaller file.`);
+//       continue; // Skip files that exceed the size limit
+//     }
+//     formData.append('images', file); // Add each image to FormData
+//   }
+
+//   // Only proceed if there are valid files
+//   if (formData.has('images')) {
+//     isLoading.value[areaId] = true;
+
+//     try {
+//       // Use the batch upload composable to upload the files
+//       await uploadFiles(formData, (progressEvent) => {
+//         // Track upload progress for the current common area
+//         const total = progressEvent.total ?? 1;
+//         uploadProgress.value[areaId] = Math.round((progressEvent.loaded / total) * 100);
+//       });
+
+//       // Extract secure URLs from the response and add them to the area images
+//       const areaIndex = commonAreas.value.findIndex((area: any) => area.id === areaId);
+//       if (areaIndex !== -1) {
+//         const uploadedImages = uploadResponse.value.map((response: { url: string }) => response.url);
+//         const updatedImages = [...commonAreas.value[areaIndex].images, ...uploadedImages];
+
+//         // Replace the images array with the updated one (ensures reactivity)
+//         commonAreas.value[areaIndex].images = updatedImages;
+//       }
+//     } catch (error) {
+//       console.error("Failed to upload images", error);
+//     } finally {
+//       isLoading.value[areaId] = false;
+//       uploadProgress.value[areaId] = 0; // Reset progress after completion
+//     }
+//   }
+// };
+
 const handleFileUpload = async (event: Event, areaId: string) => {
   const files = (event.target as HTMLInputElement).files;
   if (!files) return;
 
   const formData = new FormData();
+  
+  // Target file size in bytes (100KB)
+  const TARGET_SIZE_KB = 100;
+  const TARGET_SIZE = TARGET_SIZE_KB * 1024;
 
-  // Check each file size and append valid files to the FormData object
+  // Function to compress image with iterative quality reduction
+  const compressImage = async (file: File, maxSizeBytes: number): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          // Calculate scaled dimensions - more aggressive reduction
+          let width = img.width;
+          let height = img.height;
+          
+          // Maximum dimensions - reduced for smaller file sizes
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+          
+          // Scale down dimensions
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width = Math.round((width * MAX_HEIGHT) / height);
+              height = MAX_HEIGHT;
+            }
+          }
+          
+          // Further reduce dimensions for larger images
+          if (file.size > 1024 * 1024) { // If original is > 1MB
+            width = Math.round(width * 0.8);
+            height = Math.round(height * 0.8);
+          }
+          
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Compression strategy with iterative quality reduction
+          // const compressWithQuality = (quality: number) => {
+          //   canvas.toBlob(
+          //     (blob) => {
+          //       if (!blob) {
+          //         reject(new Error('Canvas to Blob conversion failed'));
+          //         return;
+          //       }
+                
+          //       // If blob is still too large and quality can be reduced further
+          //       if (blob.size > maxSizeBytes && quality > 0.1) {
+          //         // Reduce quality and try again
+          //         compressWithQuality(quality - 0.1);
+          //       } else {
+          //         // Create new file from the compressed blob
+          //         const compressedFile = new File(
+          //           [blob], 
+          //           file.name.replace(/\.[^/.]+$/, "") + ".jpg", // Force .jpg extension
+          //           { type: 'image/jpeg', lastModified: Date.now() }
+          //         );
+                  
+          //         console.log(`Compressed ${file.name} from ${(file.size/1024).toFixed(2)}KB to ${(compressedFile.size/1024).toFixed(2)}KB`);
+          //         resolve(compressedFile);
+          //       }
+          //     },
+          //     'image/jpeg',
+          //     quality
+          //   );
+          // };
+
+          const compressWithQuality = (quality: number) => {
+  // Get file extension to determine format
+  const fileExtension = file.name.split('.').pop()?.toLowerCase();
+  let mimeType = 'image/jpeg'; // Default MIME type
+
+  // Set MIME type based on file extension
+  if (fileExtension === 'png') {
+    mimeType = 'image/png';
+  } else if (fileExtension === 'jpeg' || fileExtension === 'jpg') {
+    mimeType = 'image/jpeg';
+  } else if (fileExtension === 'webp') {
+    mimeType = 'image/webp';
+  } else {
+    reject(new Error('Unsupported file format'));
+    return;
+  }
+
+  // Convert canvas to blob and compress image
+  canvas.toBlob(
+    (blob) => {
+      if (!blob) {
+        reject(new Error('Canvas to Blob conversion failed'));
+        return;
+      }
+
+      // If blob is still too large and quality can be reduced further
+      if (blob.size > maxSizeBytes && quality > 0.1) {
+        // Reduce quality and try again
+        compressWithQuality(quality - 0.1);
+      } else {
+        // Create new file from the compressed blob
+        const compressedFile = new File(
+          [blob],
+          file.name.replace(/\.[^/.]+$/, "") + `.${fileExtension}`, // Preserve original file extension
+          { type: mimeType, lastModified: Date.now() }
+        );
+
+        console.log(`Compressed ${file.name} from ${(file.size / 1024).toFixed(2)}KB to ${(compressedFile.size / 1024).toFixed(2)}KB`);
+        resolve(compressedFile);
+      }
+    },
+    mimeType, // Use the correct MIME type based on the format
+    quality
+  );
+};
+
+          
+          // Start with middle quality (0.5 = 50%)
+          compressWithQuality(0.5);
+        };
+        img.onerror = () => {
+          reject(new Error('Image loading failed'));
+        };
+      };
+      reader.onerror = () => {
+        reject(new Error('File reading failed'));
+      };
+    });
+  };
+
+  // Show progress indicator for the area
+  uploadProgress.value[areaId] = 1; // Set to 1% to show it's starting
+  
+  // Process and compress each file
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    if (file.size > MAX_FILE_SIZE) {
-      alert(`File ${file.name} exceeds 2MB limit. Please choose a smaller file.`);
-      continue; // Skip files that exceed the size limit
+    
+    try {
+      // Only compress images
+      if (file.type.startsWith('image/')) {
+        // Update progress to show compression is happening
+        uploadProgress.value[areaId] = Math.round((i / files.length) * 10); // Use first 10% for compression process
+        
+        const compressedFile = await compressImage(file, TARGET_SIZE);
+        
+        // Check if still too large after compression
+        if (compressedFile.size > MAX_FILE_SIZE) {
+          alert(`File ${file.name} still exceeds 2MB limit after compression. Please choose a smaller file.`);
+          continue;
+        }
+        
+        formData.append('images', compressedFile);
+      } else {
+        // For non-image files, add original if within size limit
+        if (file.size > MAX_FILE_SIZE) {
+          alert(`File ${file.name} exceeds 2MB limit and cannot be compressed. Please choose a smaller file.`);
+          continue;
+        }
+        formData.append('images', file);
+      }
+    } catch (error) {
+      console.error(`Error processing file ${file.name}:`, error);
+      alert(`Failed to process file ${file.name}. Please try again.`);
     }
-    formData.append('images', file); // Add each image to FormData
   }
 
   // Only proceed if there are valid files
@@ -181,12 +390,18 @@ const handleFileUpload = async (event: Event, areaId: string) => {
     isLoading.value[areaId] = true;
 
     try {
-      // Use the batch upload composable to upload the files
+      const startTime = performance.now();
+      
+      // Use the batch upload composable to upload the files with progress tracking
       await uploadFiles(formData, (progressEvent) => {
-        // Track upload progress for the current common area
+        // Track upload progress for the current common area (scale from 10% to 100%)
         const total = progressEvent.total ?? 1;
-        uploadProgress.value[areaId] = Math.round((progressEvent.loaded / total) * 100);
+        const uploadPercentage = Math.round((progressEvent.loaded / total) * 90);
+        uploadProgress.value[areaId] = 10 + uploadPercentage; // Start from 10% (after compression)
       });
+      
+      const uploadTime = performance.now() - startTime;
+      console.log(`Upload completed in ${uploadTime.toFixed(2)}ms`);
 
       // Extract secure URLs from the response and add them to the area images
       const areaIndex = commonAreas.value.findIndex((area: any) => area.id === areaId);
@@ -199,10 +414,14 @@ const handleFileUpload = async (event: Event, areaId: string) => {
       }
     } catch (error) {
       console.error("Failed to upload images", error);
+      alert("Failed to upload images. Please try again.");
     } finally {
       isLoading.value[areaId] = false;
       uploadProgress.value[areaId] = 0; // Reset progress after completion
     }
+  } else {
+    // Reset progress if no files were valid
+    uploadProgress.value[areaId] = 0;
   }
 };
 

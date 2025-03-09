@@ -2,7 +2,9 @@
     <div class="space-y-6">
       <!-- Gallery Section -->
       <div @click="previewCommonAreaImages" class="flex cursor-pointer items-center border-[0.5px] border-gray-50 space-x-4 bg-white p-4 rounded-lg">
-        <img :src="dynamicImage('placeholder.png')" alt="Gallery" class="w-12 h-12 rounded-full">
+        <!-- <img :src="dynamicImage('placeholder.png')" alt="Gallery" class="w-12 h-12 rounded-full"> -->
+        <img v-if="!property?.images?.length" :src="dynamicImage('placeholder.png')" alt="Gallery" class="w-12 h-12 rounded-full">
+        <img v-else :src="property?.images[0]" class="w-12 h-12 rounded-full" />
         <div class="flex-1">
           <h3 class="text-lg font-medium">Gallery</h3>
           <p class="text-gray-500 text-sm">Click to view photos of all common areas</p>

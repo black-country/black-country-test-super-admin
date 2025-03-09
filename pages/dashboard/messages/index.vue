@@ -359,50 +359,9 @@
                   stroke-linejoin="round" />
               </svg>
             </button>
-            <!-- <div
-              v-if="showMembersList"
-              class="fixed inset-0 z-50 bg-black/50"
-              @click="showMembersList = false"
-            >
-              <div
-                class="absolute bg-white border-[0.5px] border-gray-100 rounded-xl ml-72 mt-16 w-80"
-                :style="popoverStyle"
-                @click.stop
-              >
-                <div class="divide-y divide-gray-50">
-                  <div
-                    class="space-y-4 max-h-96 divide-y divide-gray-100 overflow-y-auto scrollbar-visible py-4"
-                  >
-                    <div
-                      @click="handleSelectedMember(member)"
-                      v-for="member in membersList"
-                      :key="member.id"
-                      class="flex cursor-pointer px-4 items-center gap-4 pt-3 first:pt-0"
-                    >
-                      <img
-                        src="@/assets/icons/users-avatar.svg"
-                        :alt="member.name"
-                        class="w-10 h-10 rounded-full object-cover"
-                      />
-                      <div>
-                        <h3 class="font-medium text-gray-900 text-sm">
-                          {{
-                            `${member.firstName ?? "--"} ${
-                              member.lastName ?? "--"
-                            }`
-                          }}
-                        </h3>
-                        <p class="text-gray-500 text-sm lowercase">
-                          {{ member?.group }}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-            <button @click="toggleDropdown" class="bg-[#EAEAEA] p-3 rounded-lg transition-colors">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div class="relative">
+                    <button @click="toggleFilterModal"  class="bg-[#EAEAEA] p-3 rounded-lg transition-colors">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M10.8333 3.33398H2.5" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round"
                   stroke-linejoin="round" />
                 <path d="M9.16667 15.834H2.5" stroke="#1D2739" stroke-width="1.5" stroke-linecap="round"
@@ -425,33 +384,36 @@
                   d="M7.91675 7.91602C8.30503 7.91602 8.49917 7.91602 8.65233 7.97945C8.8565 8.06402 9.01875 8.22626 9.10333 8.43043C9.16675 8.5836 9.16675 8.77777 9.16675 9.16602V9.99935C9.16675 10.3876 9.16675 10.5818 9.10333 10.7349C9.01875 10.9391 8.8565 11.1013 8.65233 11.1859C8.49917 11.2493 8.30503 11.2493 7.91675 11.2493C7.52846 11.2493 7.33432 11.2493 7.18118 11.1859C6.97699 11.1013 6.81476 10.9391 6.73018 10.7349C6.66675 10.5818 6.66675 10.3876 6.66675 9.99935V9.16602C6.66675 8.77777 6.66675 8.5836 6.73018 8.43043C6.81476 8.22626 6.97699 8.06402 7.18118 7.97945C7.33432 7.91602 7.52846 7.91602 7.91675 7.91602Z"
                   stroke="#1D2739" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
-            </button>
-            <!-- <div
-              v-if="showDropdown"
-              class="fixed inset-0 z-50 bg-black/50"
-              @click="toggleDropdown"
-            >
-              <div
-                class="absolute ml-72 mt-4 top-10 w-80 bg-white rounded-lg border-[0.5px] border-gray-100 shadow"
-              >
-                <ul>
-                  <li
-                    class="flex items-center justify-between text-sm px-4 py-2 mb-2 border-b text-[#1D2739] last:border-b-0 border-gray-100 cursor-pointer"
-                  >
-                    Read
-                  </li>
-                  <li
-                    class="flex items-center justify-between text-sm px-4 py-1 mb-2 border-b text-[#1D2739] last:border-b-0 border-gray-100 cursor-pointer"
-                  >
-                    Unread
-                  </li>
-                </ul>
-              </div>
-            </div> -->
+                    </button>
+
+                    <div v-if="showFilterModal" class="absolute right-0 mt-2 w-44 bg-white rounded-lg border-[0.5px] border-gray-25 z-20 shadow">
+                      <ul>
+                        <li
+                          @click="filterChats('all')"
+                          class="flex items-center justify-between text-sm px-4 py-2 mb-2 border-b text-[#1D2739] last:border-b-0 border-gray-100 cursor-pointer hover:bg-gray-100"
+                        >
+                          All
+                        </li>
+                        <li
+                          @click="filterChats('read')"
+                          class="flex items-center justify-between text-sm px-4 py-2 mb-2 border-b text-[#1D2739] last:border-b-0 border-gray-100 cursor-pointer hover:bg-gray-100"
+                        >
+                          Read
+                        </li>
+                        <li
+                          @click="filterChats('unread')"
+                          class="flex items-center justify-between text-sm px-4 py-2 mb-2 border-b text-[#1D2739] last:border-b-0 border-gray-100 cursor-pointer hover:bg-gray-100"
+                        >
+                          Unread
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+           
           </div>
           <div v-if="!loadingActiveChats && activeChatsList.length" class="overflow-auto flex-1">
-            <ChatUserList class="p-3" :loading="loadingActiveChats" :users="activeChatsList"
-              :filteredUsers="filteredUserList" @selectUser="selectUser" />
+            <ChatUserList class="p-3" :loading="loadingActiveChats" :users="filteredChats"
+              :filteredUsers="filteredChats" @selectUser="selectUser" />
           </div>
           <div v-else class="flex flex-col items-center justify-center flex-1 p-4">
             <img src="@/assets/icons/conversation-illustration.svg" />
@@ -491,7 +453,7 @@
         <div class="absolute bg-white border-[0.5px] border-gray-100 rounded-xl ml-10 lg:ml-72 mt-16 w-80"
           :style="popoverStyle" @click.stop>
           <div class="flex items-center justify-center">
-            <input type="text" placeholder="Searchh" v-model="payload.search"
+            <input type="text" placeholder="Search" v-model="payload.search"
               class=" w-full mr-3 border my-2 px-2 py-1.5 bg-[#EAEAEA] text-gray-600 text-sm ml-2 focus:outline-none rounded-md">
           </div>
           <div class="divide-y divide-gray-50">
@@ -524,21 +486,6 @@
           </div>
         </div>
       </div>
-
-      <div v-if="showDropdown" class="fixed inset-0 z-50 bg-black/50" @click="toggleDropdown">
-        <div class="absolute ml-10 lg:ml-72 mt-4 top-10 w-80 bg-white rounded-lg border-[0.5px] border-gray-100 shadow">
-          <ul>
-            <li
-              class="flex items-center justify-between text-sm px-4 py-2 mb-2 border-b text-[#1D2739] last:border-b-0 border-gray-100 cursor-pointer">
-              Read
-            </li>
-            <li
-              class="flex items-center justify-between text-sm px-4 py-1 mb-2 border-b text-[#1D2739] last:border-b-0 border-gray-100 cursor-pointer">
-              Unread
-            </li>
-          </ul>
-        </div>
-      </div>
     </div>
   </MessagingView>
 </template>
@@ -564,7 +511,8 @@ const { loadingTenants, tenantsList, } = useGetTenants();
 const { loadingMembers, membersList, // searchQuery, filters, metadata, getMembers, applyFilters,
 } = useGetMembers();
 // const { messages, newMessage, isConnected, sendMessage } = useWebSocket();
-const { messagesByRoom, currentRoomMessages, setActiveRoom, socket, newMessage, isConnected, sendMessage } = useWebSocket();
+const { messagesByRoom, currentRoomMessages, setActiveRoom, socket, newMessage, isConnected, sendMessage, markMessageAsRead } = useWebSocket();
+// const { messagesByRoom, messages, setActiveRoom, socket, newMessage, isConnected, sendMessage, markMessageAsRead } = useWebSocket();
 const { fetchAllUsers, loading, payload, usersList, loadMore, hasMore } = useFetchAllUsers();
 
 const openSideNav = ref(false);
@@ -610,70 +558,30 @@ const goBack = () => {
 
 // Reactive variable for the search query
 const searchQuery = ref("");
-const filteredUserList = computed(() => {
-  // Trim and lowercase search query for case-insensitive comparison
-  const query = searchQuery.value.trim().toLowerCase();
+const filteredChats = computed(() => {
+  let filtered = activeChatsList.value;
 
-  // If search query is empty, return all chats with duplicates removed
-  if (!query) {
-    const activeChatsNames = new Set(
-      activeChatsList.value.map(
-        (chat) =>
-          `${chat.participant.firstName.toLowerCase()} ${chat.participant.lastName.toLowerCase()}`
-      )
-    );
-
-    // Return active chats and members not found in active chats
-    return [
-      ...activeChatsList.value.map((chat) => ({
-        ...chat,
-        type: "activeChat",
-      })),
-      ...membersList.value
-        .filter(
-          (member) =>
-            !activeChatsNames.has(
-              `${member?.firstName?.toLowerCase()} ${member?.lastName?.toLowerCase()}`
-            )
-        )
-        .map((member) => ({ ...member, type: "member" })),
-    ];
+  // Filter chats by search term if provided
+  if (searchQuery.value) {
+    const lowerSearchTerm = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(chat => {
+      return (
+        chat.participant?.firstName.toLowerCase().includes(lowerSearchTerm) ||
+        chat.participant?.lastName.toLowerCase().includes(lowerSearchTerm) ||
+        chat.lastMessage?.content.toLowerCase().includes(lowerSearchTerm) ||
+        chat.participant?.email.toLowerCase().includes(lowerSearchTerm) 
+      );
+    });
   }
 
-  // Filter activeChatsList
-  const filteredActiveChats = activeChatsList.value.filter((chat) => {
-    const { firstName, lastName, email } = chat.participant;
-    return (
-      firstName.toLowerCase().includes(query) ||
-      lastName.toLowerCase().includes(query) ||
-      email?.toLowerCase().includes(query)
+  // Filter chats by read/unread status if not 'all'
+  if (filterStatus.value !== 'all') {
+    filtered = filtered.filter(chat =>
+      filterStatus.value === 'read' ? chat?.unreadMessagesCount <= 0 : chat?.unreadMessagesCount > 0
     );
-  });
+  }
 
-  // Filter membersList, excluding names already in filteredActiveChats
-  const filteredActiveNames = new Set(
-    filteredActiveChats.map(
-      (chat) =>
-        `${chat.participant.firstName.toLowerCase()} ${chat.participant.lastName.toLowerCase()}`
-    )
-  );
-
-  const filteredMembers = membersList.value.filter((member) => {
-    const { firstName, lastName, email } = member;
-    const fullName = `${firstName.toLowerCase()} ${lastName.toLowerCase()}`;
-    return (
-      (firstName.toLowerCase().includes(query) ||
-        email?.toLowerCase().includes(query) ||
-        lastName.toLowerCase().includes(query)) &&
-      !filteredActiveNames.has(fullName)
-    );
-  });
-
-  // Combine both filtered lists and return
-  return [
-    ...filteredActiveChats.map((chat) => ({ ...chat, type: "activeChat" })),
-    ...filteredMembers.map((member) => ({ ...member, type: "member" })),
-  ];
+  return filtered;
 });
 
 definePageMeta({
@@ -685,14 +593,34 @@ const route = useRoute();
 const selectedUser = ref(null);
 const messageStatus = ref("idle");
 
-const selectUser = (user: any) => {
+// const selectUser = (user: any) => {
+//   selectedUser.value = user;
+//   openSideNav.value = false;
+//   const userId = user?.participant?.id || user?.id;
+//   if (userId) {
+//     setActiveRoom(userId);
+//     router.push({ query: { userId } });
+//   }
+// };
+
+const selectUser = async (user: any) => {
+  console.log(user, 'selected user');
   selectedUser.value = user;
   openSideNav.value = false;
-  // router.push({ query: { userId: user?.participant?.id } });
-  const userId = user?.participant?.id || user?.id;
+
+  // Mark as read
+  if (user?.lastMessage?.roomId && user?.lastMessage?.recipientId) {
+    await markMessageAsRead(user.lastMessage.roomId, user.lastMessage.recipientId);
+  }
+
+  // Wait for the DOM to update before continuing
+  await nextTick();
+
+  await getRoomChats(selectedUser.value?.id);
+  const userId = user?.participant?.id || user?.id 
   if (userId) {
-    setActiveRoom(userId);
-    router.push({ query: { userId } });
+    // setActiveRoom(userId);
+    router.push({ query: { userId: userId} });
   }
 };
 
@@ -719,9 +647,9 @@ watch(selectedUser, async (newVal: any) => {
     try {
       await getRoomChats(newVal.id);
       const userId = newVal.participant?.id || newVal.id;
-      if (userId) {
-        setActiveRoom(userId);
-      }
+      // if (userId) {
+      //   setActiveRoom(userId);
+      // }
     } catch (error) {
       console.error("Failed to fetch room chats:", error);
     }
@@ -785,14 +713,14 @@ const sendMessageToUser = async (content: string) => {
   }
 
   messageStatus.value = "sending";
-  setActiveRoom(userId);
+  // setActiveRoom(userId);
 
   try {
     const socketPayload = {
       content,
       recipientId: userId,
       recipientType:
-        selectedUser.value.participant?.role || selectedUser.value.group,
+        selectedUser.value.participant?.role || selectedUser.value.role,
       messageType: "private",
       room: userId, // Include room ID if needed
     };
@@ -832,7 +760,7 @@ onMounted(() => {
   //   }
   // }
   if (userId) {
-    setActiveRoom(userId as string);
+    // setActiveRoom(userId as string);
     if (activeChatsList.value?.length > 0) {
       const user = activeChatsList.value.find((u) => u.id === userId || u?.participant?.id === userId);
       if (user) {
@@ -886,7 +814,7 @@ watch(
   (oldVal, newVal) => {
     console.log("id updated");
     if (newVal) {
-      setActiveRoom(newVal as string);
+      // setActiveRoom(newVal as string);
     }
   }
 );
@@ -905,6 +833,20 @@ const filteredMembersList = computed(() => {
     member.email?.toLowerCase().includes(query)
   );
 });
+
+
+const showFilterModal = ref(false)
+
+const filterStatus = ref('all')
+
+const toggleFilterModal = () => {
+  showFilterModal.value = !showFilterModal.value
+}
+
+const filterChats = (status: 'all' | 'read' | 'unread') => {
+  filterStatus.value = status
+  showFilterModal.value = false
+}
 
 
 </script>

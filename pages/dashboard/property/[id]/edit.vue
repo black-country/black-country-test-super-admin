@@ -10,24 +10,24 @@
             @click="router.push('/dashboard')"
             class="flex items-center space-x-2"
           >
-            <img src="@/assets/icons/logo.svg" alt="Logo" class="h-8 w-auto" />
-            <span class="text-lg font-semibold">BlackCountry</span>
+            <img src="@/assets/icons/logo.svg" alt="Logo" class="h-6 md:h-8 w-auto" />
+            <span class="md:text-lg font-semibold">BlackCountry</span>
           </div>
           <div class="flex space-x-4 items-center">
-            <NuxtLink :to="`/dashboard/property/${route.params.id}/edit-review-progress`" class="text-[#326543] py-3 font-semibold text-sm hover:text-[#326543]">
+            <NuxtLink :to="`/dashboard/property/${route.params.id}/edit-review-progress`" class="text-[#326543] py-3 font-semibold text-xs md:text-sm hover:text-[#326543]">
               Preview
             </NuxtLink>
             <button
               @click="openCancelModal = true"
               type="button"
-              class="bg-white border text-sm border-gray-100 text-gray-700 px-4 py-3 rounded-md hover:bg-gray-100"
+              class="bg-white border text-xs md:text-sm border-gray-100 text-gray-700 px-4 py-3 rounded-md hover:bg-gray-100"
             >
               Cancel
             </button>
             <button
               @click="handleSaveAndExit"
               :disabled="saving"
-              class="text-gray-900 bg-[#F9FAFB] disabled:cursor-not-allowed border-gray-100 border disabled:opacity-25 text-sm font-semibold px-4 py-3 rounded-md"
+              class="text-gray-900 bg-[#F9FAFB] disabled:cursor-not-allowed border-gray-100 border disabled:opacity-25 text-xs md:text-sm font-semibold px-4 py-3 rounded-md"
             >
               {{ saving ? "saving..." : "Save & exit" }}
             </button>

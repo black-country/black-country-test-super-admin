@@ -11,24 +11,24 @@
                 @click="router.push('/dashboard')"
                 class="flex items-center space-x-2"
               >
-                <img src="@/assets/icons/logo.svg" alt="Logo" class="h-8 w-auto" />
-                <span class="text-lg font-semibold">BlackCountry</span>
+                <img src="@/assets/icons/logo.svg" alt="Logo" class="h-6 md:h-8 w-auto" />
+                <span class="md:text-lg font-semibold">BlackCountry</span>
               </div>
               <div class="flex space-x-4 items-center">
-                <button @click="router.push('/dashboard/property/review-progress')" class="text-[#1D2739] border-[0.5px] py-2.5 px-6 rounded-lg border-gray-200 font-semibold text-sm">
+                <button @click="router.push('/dashboard/property/review-progress')" class="text-[#1D2739] border-[0.5px] py-2.5 md:px-6 px-2 rounded-lg border-gray-200 font-semibold text-xs md:text-sm">
                   Preview
                 </button>
                 <button
                   @click="openCancelModal = true"
                   type="button"
-                  class="bg-white border text-sm border-gray-300 text-gray-700 px-4 py-2.5 rounded-md hover:bg-gray-100"
+                  class="bg-white border text-xs md:text-sm border-gray-300 text-gray-700 px-2 md:px-4 py-2.5 rounded-md hover:bg-gray-100"
                 >
                   Cancel
                 </button>
                 <button
                   @click="handleSaveAndExAssiit"
                   :disabled="saving"
-                  class="bg-gray-900 disabled:cursor-not-allowed disabled:opacity-25 text-sm text-white px-4 py-2.5 rounded-md hover:bg-gray-800"
+                  class="bg-gray-900 disabled:cursor-not-allowed disabled:opacity-25 text-xs md:text-sm text-white px-4 py-2.5 rounded-md hover:bg-gray-800"
                 >
                   {{ saving ? "saving..." : "Save & exit" }}
                 </button>
@@ -265,7 +265,7 @@
           </main>
           <main class="pb-20" v-if="isReviewMode">
             <div class="max-w-3xl mx-auto py-10 border border-gray-100 rounded-xl mt-6 p-10">
-              <p class="text-[#1D2739] font-normal  text-2xl max-w-lg pb-10">Review property details and proceed to publish to the public</p>
+              <p class="text-[#1D2739] font-normal text-lg  md:text-2xl max-w-lg pb-10">Review property details and proceed to publish to the public</p>
               <div class="flex justify-between items-center mb-10">
                 <p class="text-[#1D2739] font-normal">Basic property information</p>
                 <button @click="handleFirstSectionEdit('basic-property-information')" class="text-[#326543] font-semibold">Edit</button>

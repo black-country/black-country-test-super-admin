@@ -1,6 +1,6 @@
 <template>
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div class="bg-white rounded-lg p-6 max-w-6xl w-[700px]">
+      <div class="bg-white rounded-lg p-6 max-w-6xl w-[700px] max-h-[60%] overflow-auto custom-scrollbar">
         <h2 class="text-xl font-semibold text-[#1D2739] mb-6">Filters</h2>
         
         <div class="grid grid-cols-2 gap-4 mb-6">
@@ -76,6 +76,24 @@
   </script>
   
   <style scoped>
-  /* Additional custom styles if needed */
-  </style>
+.custom-scrollbar {
+    scrollbar-width: thin; 
+    scrollbar-color: #cccccc #f1f1f1; 
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px; 
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #cccccc;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #cccccc; 
+    border-radius: 4px; 
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #cccccc; 
+  }
+</style>
   

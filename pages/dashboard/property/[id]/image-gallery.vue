@@ -10,13 +10,14 @@
             Back</button>
         </div>
         <div class="flex items-center gap-x-4 lg:gap-x-6">
-          <NuxtLink to="/dashboard/notification" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+          <NuxtLink to="/dashboard/notification" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500 relative">
             <span class="sr-only">View notifications</span>
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
               aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
             </svg>
+            <div v-if="notificationCount > 0" class="h-2 w-2 bg-red-600 absolute rounded-full top-2.5 right-2.5"></div>
           </NuxtLink>
           <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" aria-hidden="true"></div>
           <div class="relative">
@@ -88,10 +89,12 @@ import { useUser } from '@/composables/auth/user'
 import Layout from '@/layouts/dashboard.vue';
 import { useFetchProperty } from "@/composables/modules/property/fetchProperty";
 import { useImageExtractor } from '@/composables/core/useExtractImages'; 
+import { useFetchNotificationCount } from '~/composables/modules/notification/fetchCount';
 const { propertyObj, loading } = useFetchProperty();
 const router = useRouter()
 const { user } = useUser()
 const { extractImages } = useImageExtractor();
+const {notificationCount} = useFetchNotificationCount()
 const allImages = computed(() => extractImages(propertyObj.value));
 
 definePageMeta({

@@ -29,8 +29,8 @@
 
         <section>
           <label class="text-xs mb-2 text-[#1D2739]">Street *</label>
-          <input :value="payload.address.value"
-            class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100" />
+          <input :value="getStreetAddress(payload.address.value)"
+    class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100" />
         </section>
         <!-- {{ states[0] }} -->
         <section>
@@ -354,8 +354,17 @@ function initializeGoogleServices() {
           if (place.geometry) {
             console.log(place, 'places here')
             currentLocation.value = place
+            const addressDetails = parseAddressComponents(place) //i addede this
             props.payload.latitude.value = place.geometry.location.lat()
             props.payload.longitude.value = place.geometry.location.lng()
+            props.payload.address.value = addressDetails.street
+            selectedCountry.value = 'NG' 
+            const stateCode = findStateCode(addressDetails.state)
+            if (stateCode) {
+              selectedState.value = stateCode
+              handleStateChange(stateCode)
+            }
+            currentLocation.value = place //added this and ^ to strret
             currentCoordinates.value = {
               lat: place.geometry.location.lat(),
               lng: place.geometry.location.lng()
@@ -443,13 +452,24 @@ function handleLocationError(browserHasGeolocation: boolean) {
 }
 
 function reverseGeocode(latLng: google.maps.LatLngLiteral) {
-  const geocoder = new google.maps.Geocoder()
+  const geocoder = new google.maps.Geocoder();
   geocoder.geocode({ location: latLng }, (results, status) => {
     if (status === 'OK' && results && results[0]) {
-      console.log(results, 'my location')
-      currentLocation.value = results[0]
-      updateMap(results[0], true)
-      searchNearbyPlaces()
+      const place = results[0];
+      const addressDetails = parseAddressComponents(place);
+      
+      // Update the street address and other location details
+      props.payload.address.value = addressDetails.street;
+      selectedCountry.value = 'NG';
+      
+      const stateCode = findStateCode(addressDetails.state);
+      if (stateCode) {
+        selectedState.value = stateCode;
+        handleStateChange(stateCode);
+      }
+      
+      updateMap(place, true);
+      searchNearbyPlaces();
     } else {
       console.error('Geocoder failed due to: ' + status)
       // If reverse geocoding fails, still update the map with coordinates
@@ -619,6 +639,62 @@ function highlightMarker(place: google.maps.places.PlaceResult) {
     google.maps.event.trigger(marker, 'click')
   }
 }
+
+//from here down added to separate data
+function parseAddressComponents(place: google.maps.places.PlaceResult) {
+  const addressComponents = place.address_components || [];
+  const componentTypes = {
+    street_number: 'streetNumber',
+    route: 'street',
+    locality: 'city',
+    administrative_area_level_1: 'state',
+    country: 'country',
+    postal_code: 'postalCode'
+  };
+  const parsedAddress: { [key: string]: string } = {};
+  addressComponents.forEach(component => {
+    component.types.forEach(type => {
+      if (componentTypes[type]) {
+        parsedAddress[componentTypes[type]] = component.long_name;
+      }
+    });
+  });
+
+  return {
+    street: parsedAddress.streetNumber ? `${parsedAddress.streetNumber} ${parsedAddress.street || ''}`.trim() : parsedAddress.street || '',
+    city: parsedAddress.city || '',
+    state: parsedAddress.state || '',
+    country: parsedAddress.country || '',
+    postalCode: parsedAddress.postalCode || ''
+  };
+}
+
+  
+  function findStateCode(stateName: string) {
+    return states.value.find(state => 
+      state.name.toLowerCase() === stateName.toLowerCase()
+    )?.stateCode;
+  }
+  
+  function findCityId(cityName: string) {
+    return cities.value.find(city => 
+      city.name.toLowerCase() === cityName.toLowerCase()
+    )?.id;
+  }
+
+  function getStreetAddress(fullAddress: string): string { //replace this with appopriate function tir
+  if (!fullAddress || !states.value) return ''
+  for (let state of states.value) {
+    const stateIndex = fullAddress.indexOf(state.name)  
+    if (stateIndex !== -1) {
+      return fullAddress.substring(0, stateIndex).trim()
+    }
+  }
+  return fullAddress.trim()
+}
+
+
+
 </script>
 
 <style scoped>

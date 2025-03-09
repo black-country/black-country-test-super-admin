@@ -22,7 +22,7 @@
 
     <div v-for="(category, index) in visibleCategories" :key="index" class="mb-8">
       <h2 class="text-base font-medium mb-2">{{ category.title }}</h2>
-      <div class="grid grid-cols-3 gap-4">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
         <div
           v-for="area in getUniqueAreas(category.areas)"
           :key="area.id"
@@ -33,8 +33,8 @@
           }"
           class="p-4 border rounded-xl cursor-pointer flex items-center space-x-2"
         >
-          <img src="@/assets/img/roomBg.png" alt="Icon" class="w-6 h-6" />
-          <span class="text-sm">{{ area.name }}</span>
+          <img src="@/assets/img/roomBg.png" alt="Icon" class="md:w-6 w-5 md:h-6 h-5" />
+          <span class="text-xs md:text-sm">{{ area.name }}</span>
         </div>
       </div>
       <input
@@ -274,6 +274,7 @@ function toggleAreaSelection(area: CommonArea) {
   } else {
     // Add the item if it doesn't exist
     selectedCommonAreas.value.push(area);
+    console.log(selectedCommonAreas.value)
   }
 }
 

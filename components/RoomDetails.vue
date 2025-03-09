@@ -34,8 +34,8 @@
             <input type="checkbox" class="hidden rounded border-gray-300" :id="item"
               :checked="isSelected(item, 'interior')" @change="toggleSelection(item, 'interior')" />
             <div class="flex items-center gap-x-2">
-              <img src="@/assets/img/roomBg.png" alt="Icon" class="w-6 h-6" />
-              <span class="text-sm">{{ item }}</span>
+              <img src="@/assets/img/roomBg.png" alt="Icon" class="md:w-6 w-5 md:h-6 h-5"  />
+              <span class="text-xs md:text-sm">{{ item }}</span>
             </div>
           </label>
         </div>
@@ -49,10 +49,10 @@
       </div>
       <div class="mb-4">
         <h3 class="text-sm">When is the room available?</h3>
-        <div class="flex space-x-2 pt-3">
+        <div class="md:flex space-x-2 pt-3 grid grid-cols-2 md:gap-0 gap-2">
           <button v-for="option in availabilityOptions" :key="option.value" @click="setAvailability(option.value)"
             :class="{ 'border-[#5B8469] text-[#5B8469] border-2 bg-white': availability === option.value, 'border-gray-200 border': availability !== option.value }"
-            class="rounded-lg text-sm px-6 py-2 cursor-pointer">
+            class="rounded-lg text-sm px-6 py-2 cursor-pointer w-full md:w-auto">
             {{ option.label }}
           </button>
         </div>

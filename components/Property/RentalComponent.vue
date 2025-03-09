@@ -3,34 +3,34 @@
     <div v-if="!loadingRentals " class="border-[0.5px] border-gray-100 rounded-lg">
     <!-- <div v-if="!loadingRentals && rentalsList.length" class="border-[0.5px] border-gray-100 rounded-lg"> -->
       <nav class="mb-4">
-        <ul class="flex space-x-4 border-b border-gray-100 py-4 px-6">
+        <ul class="flex space-x-4 border-b border-gray-100 py-4 px-6 overflow-x-scroll">
           <li>
-            <a class="pb-3" href="#" @click="setActiveTab('ALL')" :class="activeTab === 'ALL' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
+            <a class="pb-3" href="#" @click="setActiveTab('ALL')" :class="activeTab === 'ALL' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-sm md:text-base text-[#475367] font-medium'">
               All Applications
             </a>
           </li>
           <li>
-            <a class="pb-3" href="#" @click="setActiveTab('RENT_ACTIVE')" :class="activeTab === 'RENT_ACTIVE' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
+            <a class="pb-3" href="#" @click="setActiveTab('RENT_ACTIVE')" :class="activeTab === 'RENT_ACTIVE' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-sm md:text-base text-[#475367] font-medium'">
               Latest
             </a>
           </li>
           <li>
-            <a class="pb-3" href="#" @click="setActiveTab('PENDING')" :class="activeTab === 'PENDING' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
+            <a class="pb-3" href="#" @click="setActiveTab('PENDING')" :class="activeTab === 'PENDING' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-sm md:text-base text-[#475367] font-medium'">
               Pending
             </a>
           </li>
           <li>
-            <a class="pb-3" href="#" @click="setActiveTab('APPROVED')" :class="activeTab === 'APPROVED' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
+            <a class="pb-3" href="#" @click="setActiveTab('APPROVED')" :class="activeTab === 'APPROVED' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-sm md:text-base text-[#475367] font-medium'">
               Approved
             </a>
           </li>
           <li>
-            <a class="pb-3" href="#" @click="setActiveTab('CANCELLED')" :class="activeTab === 'CANCELLED' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
+            <a class="pb-3" href="#" @click="setActiveTab('CANCELLED')" :class="activeTab === 'CANCELLED' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-sm md:text-base text-[#475367] font-medium'">
               Cancelled
             </a>
           </li>
           <li>
-            <a class="pb-3" href="#" @click="setActiveTab('REJECTED')" :class="activeTab === 'REJECTED' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-[#475367] font-medium'">
+            <a class="pb-3" href="#" @click="setActiveTab('REJECTED')" :class="activeTab === 'REJECTED' ? 'text-green-700 font-medium border-b-4 border-[#326543] pb-1' : 'text-sm md:text-base text-[#475367] font-medium'">
               Declined
             </a>
           </li>

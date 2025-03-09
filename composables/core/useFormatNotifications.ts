@@ -24,6 +24,7 @@ interface NotificationData {
 interface FormattedNotification {
   id: string;
   createdAt: string;
+  readAt: string | null;
   notification: {
     title: string;
     content: string;
@@ -55,6 +56,7 @@ export const useFormatNotifications = () => {
       const formattedNotification: FormattedNotification = {
         id: notification.id,
         createdAt: notification.createdAt,
+        readAt: notification.readAt,
         notification: {
           title: notification.notification.title,
           content: notification.notification.content,

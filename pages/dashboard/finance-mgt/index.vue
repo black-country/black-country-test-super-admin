@@ -149,7 +149,7 @@
             @page-changed="handlePageChange" />
         </section>
 
-        <section id="loader" class="w-full" v-else-if="loadingTtansactions && !loadingTtansactions">
+        <section id="loader" class="w-full" v-else-if="loadingTtansactions ">
           <div class="rounded-md p-4 w-full">
             <div class="animate-pulse flex space-x-4 w-full">
               <div class="h-44 w-full bg-slate-200 rounded"></div>
@@ -173,6 +173,7 @@ import moment from "moment";
 import { useFetchTransactionSummaries } from '@/composables/modules/finance/useFetchTransactionSummaries'
 import { useGetTransactions } from '@/composables/modules/finance/useFetchTransactions'
 import { useUserInitials } from '@/composables/core/useUserInitials'
+import { useFetchNotificationCount } from "~/composables/modules/notification/fetchCount";
 const { loading: fetchingSummaries, transactionSummaries } = useFetchTransactionSummaries()
 const { notificationCount } = useFetchNotificationCount();
 const {
@@ -189,8 +190,8 @@ import { useUser } from '@/composables/auth/user'
 const { user } = useUser()
 import Layout from "@/layouts/dashboard.vue";
 import { dynamicIcons } from '@/utils/assets';
-import { useFetchNotificationCount } from "~/composables/modules/notification/fetchCount";
 const isDownloadModalOpen = ref(false);
+const router = useRouter();
 
 const toggleDownloadModal = () => {
   isDownloadModalOpen.value = !isDownloadModalOpen.value;

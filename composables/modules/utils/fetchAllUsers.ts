@@ -26,7 +26,6 @@ export const useFetchAllUsers = () => {
                 totalUsers.value = res.data.metadata.total;
                 
                 let filteredUsers = newUsers;
-                console.log(newUsers, 'ggggk')
                 if (payload.value.search) {
                     filteredUsers = newUsers.filter((user) =>
                         (user.firstName + " " + user.lastName + " " + user.email)

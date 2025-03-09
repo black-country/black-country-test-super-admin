@@ -8,7 +8,7 @@ export const notification_api = {
     let url = `/users/${id}/notifications/in-app/count?isRead=false`;
     return GATEWAY_ENDPOINT.get(url);
   },
-  $_read_notifcation: (id: string, notificationId: string) => {
+  $_read_notification: (id: string, notificationId: string) => {
     let url = `/users/${id}/notifications/in-app/${notificationId}/read`;
     return GATEWAY_ENDPOINT.patch(url);
   },

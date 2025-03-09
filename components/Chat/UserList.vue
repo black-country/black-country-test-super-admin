@@ -232,8 +232,7 @@ const props = defineProps({
   users: Array,
   loading: Boolean
 });
-
-console.log(props.users)
+const route = useRoute();
 
 const emit = defineEmits(['selectUser']);
 

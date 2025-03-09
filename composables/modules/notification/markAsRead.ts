@@ -8,7 +8,7 @@ export const useMarkNotificationAsRead = () => {
     const markNotificationAsRead = async (notificationId:string) => {
         loading.value = true;
         try {
-            const response = await notification_api.$_read_notifcation(user.value.id, notificationId);
+            const response = await notification_api.$_read_notification(user.value.id, notificationId);
             return response;
         } catch (error: any) {
             console.log("Error", error)

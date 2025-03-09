@@ -84,6 +84,27 @@ const newAreaNames = ref<string[]>([]);
 const selectedCommonAreas = ref<CommonArea[]>(persistedCommonAreas.value);
 
 // Define mandatory areas that should always be included
+// const mandatoryInteriorAreas = [
+//   'Living Room',
+//   'Dining Area',
+//   'Kitchen',
+//   'Bathroom/Restroom',
+//   'Laundry Area',
+//   'Study/Office Area',
+// ];
+// const mandatoryExteriorAreas = [
+//   'Garden',
+//   'Swimming Pool',
+//   'Fitness Center',
+//   'Rooftop Terrace',
+//   'Courtyard',
+//   'Parking Area',
+//   'Balcony',
+//   'Patio',
+//   'Recreational area',
+// ];
+
+// Define mandatory areas that should always be included
 const mandatoryInteriorAreas = [
   'Living Room',
   'Dining Area',
@@ -91,7 +112,17 @@ const mandatoryInteriorAreas = [
   'Bathroom/Restroom',
   'Laundry Area',
   'Study/Office Area',
+  'Bedframe',
+  'Mattress',
+  'Desk & Chair',
+  'Shelves/bookcases',
+  'Wardrobes/Closet',
+  'Window coverings',
+  'Air conditioning',
+  'Ceiling/Standing fan',
+  'Water heating',
 ];
+
 const mandatoryExteriorAreas = [
   'Garden',
   'Swimming Pool',
@@ -103,6 +134,7 @@ const mandatoryExteriorAreas = [
   'Patio',
   'Recreational area',
 ];
+
 
 function mergeWithMandatoryAreas(
   filteredAreas: CommonArea[],

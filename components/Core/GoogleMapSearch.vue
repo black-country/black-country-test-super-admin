@@ -104,7 +104,7 @@ interface Coordinates {
   lng: number
 }
 
-const selectedCountry = ref('Nigeria')
+const selectedCountry = ref('NG')
 
 // Replace with your actual API key
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg'

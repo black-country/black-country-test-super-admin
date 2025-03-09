@@ -22,7 +22,7 @@
           fill="#F0F2F5" />
       </svg>
 
-      <h2 v-if="selectedUser?.participant?.id" class="ml-3 font-medium text-lg">
+      <h2 class="ml-3 font-medium text-lg">
         {{
           selectedUser?.participant
             ? `${selectedUser.participant.firstName || ""} ${selectedUser.participant.lastName || ""
@@ -31,7 +31,7 @@
               }`.trim()
         }}
       </h2>
-      <h2 v-else class="ml-1 font-semibold text-lg">Deleted User</h2>
+      <!-- <h2 v-else class="ml-1 font-semibold text-lg">Deleted User</h2> -->
 
       <!-- <h2 class="ml-3 font-semibold text-lg">
           {{`${selectedUser?.participant?.firstName} ${selectedUser?.participant?.lastName}` || `${selectedUser?.firstName} ${selectedUser?.lastName}`}}

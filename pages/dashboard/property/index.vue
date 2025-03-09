@@ -11,7 +11,7 @@
             <div class="hidden lg:flex gap-x-4">
               <button @click="setActiveTab('listings')"
                 :class="[activeTab === 'listings' ? 'bg-[#5B8469] text-white' : 'text-[#292929] text-sm bg-[#F0F2F5]']"
-                class="font-medium text-sm px-4 py-2 rounded-md ">Listngs</button>
+                class="font-medium text-sm px-4 py-2 rounded-md ">Listings</button>
               <button @click="setActiveTab('rental-applications')"
                 :class="[activeTab === 'rental-applications' ? 'bg-[#5B8469] text-white' : 'text-[#292929] text-sm bg-[#F0F2F5]']"
                 class=" px-4 py-2 text-sm rounded-md">Rental applications</button>

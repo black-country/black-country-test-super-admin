@@ -657,7 +657,6 @@ const proceedSaveAndSend = async () => {
       toastType: "error",
       duration: 3000,
     });
-    console.log(leaseSignature, user?.value?.signatureUrl)
     return;
   }
 

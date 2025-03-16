@@ -282,8 +282,8 @@ const onConfirm = () => {
   setTimeout(() => {
     // loading.value = false
     showBLogoutModal.value = false
-    router.push('/login')
-    window.location.href = "/login"
+    // router.push('/admin/login')
+    window.location.href = "/admin/login"
   }), 3000
   console.log("Logging out...");
 };

@@ -453,7 +453,7 @@
                     : 'bg-[#F0F2F5]',
                 ]"
               >
-                {{ type }}
+                {{ formatAmenities(type) }}
               </button>
             </div>
           </div>
@@ -572,6 +572,7 @@
     });
     
     import { useCurrencyFormatter } from '@/composables/core/useCurrencyFormatter';
+import { formatAmenities } from '~/composables/core/useFormatAmenities';
     const { formatCurrency } = useCurrencyFormatter('en-NG', 'NGN');
     
     // Generate tabs based on bedroom count

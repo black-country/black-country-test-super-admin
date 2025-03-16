@@ -13,10 +13,9 @@ interface AdditionalChargeData {
 }
 
 interface ChargeItem {
-  id: string;
-  amount: string;
-  frequency: string | null;
-  additionalCharge: AdditionalChargeData;
+  additionalChargeId: string;
+  amount: number | string;
+  additionalCharge?: AdditionalChargeData;
 }
 
 const props = defineProps({
@@ -35,46 +34,43 @@ const isServiceEnabled = ref(false);
 const serviceFrequency = ref('Monthly');
 const additionalCharges = ref<Record<string, string>>({});
 
-// onMounted(() => {
-//   props.value.forEach(item => {
-//     if (item.additionalCharge && item.additionalCharge.id) {
-//       const chargeId = item.additionalCharge.id;
-//       additionalCharges.value[chargeId] = formatCurrency(item.amount);
-//       if (item.additionalCharge.name === 'Caution Fee') {
-//         isCautionEnabled.value = true;
-//       }
-//       if (item.additionalCharge.name === 'Service Charge') {
-//         isServiceEnabled.value = true;
-//       }
-//     }
-//   });
-// });
-
-
 onMounted(() => {
-  const storedCharges = JSON.parse(localStorage.getItem('charges') || '{}');
+  additionalCharges.value = {};
+  
   props.value.forEach(item => {
-    if (item.additionalCharge && item.additionalCharge.id) {
-      const chargeId = item.additionalCharge.id;
-      additionalCharges.value[chargeId] = formatCurrency(item.amount);
-      if (item.additionalCharge.name === 'Caution Fee') {
+    if (item.additionalChargeId) {
+      additionalCharges.value[item.additionalChargeId] = formatCurrency(String(item.amount || 0));
+    }
+    
+    const chargeInfo = additionalChargesList.value.find(charge => charge.id === item.additionalChargeId);
+    if (chargeInfo) {
+      if (chargeInfo.name.toLowerCase() === 'caution fee') {
         isCautionEnabled.value = true;
       }
-      if (item.additionalCharge.name === 'Service Charge') {
+      if (chargeInfo.name.toLowerCase() === 'service charge') {
         isServiceEnabled.value = true;
       }
     }
   });
-  Object.keys(storedCharges).forEach(chargeId => {
-    if (storedCharges[chargeId]) {
-      additionalCharges.value[chargeId] = storedCharges[chargeId];
-    }
-  });
 });
 
-
-watch(additionalCharges, (newCharges) => {
-  localStorage.setItem('charges', JSON.stringify(newCharges));
+watch(() => props.value, (newValue) => {
+  additionalCharges.value = {};
+  newValue.forEach(item => {
+    if (item.additionalChargeId) {
+      additionalCharges.value[item.additionalChargeId] = formatCurrency(String(item.amount || 0));
+    }
+    
+    const chargeInfo = additionalChargesList.value.find(charge => charge.id === item.additionalChargeId);
+    if (chargeInfo) {
+      if (chargeInfo.name.toLowerCase() === 'caution fee') {
+        isCautionEnabled.value = true;
+      }
+      if (chargeInfo.name.toLowerCase() === 'service charge') {
+        isServiceEnabled.value = true;
+      }
+    }
+  });
 }, { deep: true });
 
 watch(additionalChargesList, () => {
@@ -87,14 +83,13 @@ watch(additionalChargesList, () => {
 
 const formatCurrency = (value: string) => {
   if (!value) return '';
-  return value.replace(/\D/g, '') // Remove non-numeric characters
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas for thousands
+  return value.replace(/\D/g, '') 
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ','); 
 };
 
 const unformatCurrency = (value: string): number => {
   return parseInt(value.replace(/[^\d]/g, ''), 10) || 0;
 };
-
 
 const orderedCharges = computed(() => {
   return additionalChargesList.value.sort((a, b) => {
@@ -104,7 +99,6 @@ const orderedCharges = computed(() => {
   });
 });
 
-
 const mappedAdditionalCharges = computed(() => {
   return orderedCharges.value
     .map(charge => ({
@@ -112,14 +106,19 @@ const mappedAdditionalCharges = computed(() => {
       amount: unformatCurrency(additionalCharges.value[charge.id] || '0')
     }))
     .filter(charge => {
-      const chargeType = additionalChargesList.value.find(c => c.id === charge.additionalChargeId)?.name;
-      if (chargeType === 'Caution Fee') return isCautionEnabled.value;
-      if (chargeType === 'Service Charge') return isServiceEnabled.value;
+      const chargeInfo = additionalChargesList.value.find(c => c.id === charge.additionalChargeId);
+      if (!chargeInfo) return false;
+      
+      if (chargeInfo.name.toLowerCase() === 'caution fee') {
+        return isCautionEnabled.value;
+      }
+      if (chargeInfo.name.toLowerCase() === 'service charge') {
+        return isServiceEnabled.value;
+      }
       return true;
     });
 });
 
-// Update parent when changes occur
 watch([mappedAdditionalCharges, isCautionEnabled, isServiceEnabled], () => {
   emit("update:additionalCharges", mappedAdditionalCharges.value);
 }, { deep: true });
@@ -133,7 +132,7 @@ const handleInputChange = (chargeId: string, value: string) => {
   <div class="w-full space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div v-for="charge in orderedCharges" :key="charge.id" class="space-y-1">
-        <template v-if="charge.name === 'Caution fee'">
+        <template v-if="charge.name.toLowerCase() === 'caution fee'">
           <div class="flex flex-col space-y-2">
             <div class="flex justify-between items-center">
               <label class="block text-[#1D2739] font-medium text-sm capitalize">{{ charge.name }}</label>
@@ -150,7 +149,7 @@ const handleInputChange = (chargeId: string, value: string) => {
               class="w-full px-3 py-3.5 bg-[#F0F2F5] border-[0.5px] border-gray-100 outline-none rounded-lg text-gray-900 disabled:opacity-50">
           </div>
         </template>
-        <template v-else-if="charge.name === 'Service Charge'">
+        <template v-else-if="charge.name.toLowerCase() === 'service charge'">
           <div class="flex flex-col space-y-2">
             <div class="flex justify-between items-center">
               <label class="block text-[#1D2739] font-medium text-sm capitalize">{{ charge.name }}</label>

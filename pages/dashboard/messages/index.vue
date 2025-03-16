@@ -602,6 +602,12 @@ const messageStatus = ref("idle");
 //     router.push({ query: { userId } });
 //   }
 // };
+watch(messagesByRoom, (newVal) => {
+  const currentRoomId = selectedUser.value?.id;
+  if (currentRoomId && newVal[currentRoomId]) {
+    getRoomChats(currentRoomId);
+  }
+}, { deep: true });
 
 const selectUser = async (user: any) => {
   console.log(user, 'selected user');

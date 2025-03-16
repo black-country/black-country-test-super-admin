@@ -50,12 +50,16 @@ export const useGetMembers = () => {
     
             if (res.type !== 'ERROR') {
                 // Sort properties by 'createdAt' in descending order
-                membersList.value = (res?.data?.allMembers ?? []).sort((a: any, b: any) => {
+                membersList.value = (res?.data?.result ?? []).sort((a: any, b: any) => {
                     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
                 });
-                serviceProviders.value = res?.data?.result.serviceProviders
-                agents.value = res?.data?.result.agents
-                admins.value = res?.data?.result.admins
+                // serviceProviders.value = res?.data?.result.serviceProviders
+                // agents.value = res?.data?.result.agents
+                // admins.value = res?.data?.result.admins
+                // metadata.value = res?.data?.metadata;
+                serviceProviders.value = membersList.value.filter(user => user.group === 'SERVICE_PROVIDER');
+                agents.value = membersList.value.filter(user => user.group === 'AGENT');
+                admins.value = membersList.value.filter(user => user.group === 'ADMIN');
                 metadata.value = res?.data?.metadata;
             }
         } catch (error) {

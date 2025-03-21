@@ -119,9 +119,20 @@ const mappedAdditionalCharges = computed(() => {
     });
 });
 
-watch([mappedAdditionalCharges, isCautionEnabled, isServiceEnabled], () => {
-  emit("update:additionalCharges", mappedAdditionalCharges.value);
+// watch([mappedAdditionalCharges, isCautionEnabled, isServiceEnabled], () => {
+//   emit("update:additionalCharges", mappedAdditionalCharges.value);
+// }, { deep: true });
+
+
+watch([mappedAdditionalCharges, isCautionEnabled, isServiceEnabled], (newValues, oldValues) => {
+  const newMappedCharges = newValues[0];
+  const oldMappedCharges = oldValues[0];
+
+  if (JSON.stringify(newMappedCharges) !== JSON.stringify(oldMappedCharges)) {
+    emit("update:additionalCharges", newMappedCharges);
+  }
 }, { deep: true });
+
 
 const handleInputChange = (chargeId: string, value: string) => {
   additionalCharges.value[chargeId] = formatCurrency(value);

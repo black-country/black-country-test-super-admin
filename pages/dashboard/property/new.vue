@@ -26,7 +26,7 @@
                   Cancel
                 </button>
                 <button
-                  @click="handleSaveAndExAssiit"
+                  @click="handleSaveAndExit"
                   :disabled="saving"
                   class="bg-gray-900 disabled:cursor-not-allowed disabled:opacity-25 text-xs md:text-sm text-white px-4 py-2.5 rounded-md hover:bg-gray-800"
                 >

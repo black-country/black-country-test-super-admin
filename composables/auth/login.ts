@@ -3,7 +3,6 @@ import { useRouter } from 'vue-router';
 import { useUser } from "@/composables/auth/user";
 import { auth_api } from "@/api_factory/modules/auth";
 import { useCustomToast } from '@/composables/core/useCustomToast'
-const { showToast } = useCustomToast();
 
 const credential = {
   email: ref(""),
@@ -13,6 +12,8 @@ const credential = {
 export const use_auth_login = () => {
   const router = useRouter();
   const loading = ref(false);
+  const { showToast } = useCustomToast();
+
 
   const isFormDisabled = computed(() => {
     return (
@@ -28,9 +29,8 @@ export const use_auth_login = () => {
         password: credential.password.value,
         app: 'admin-app'
       });
-      // window.location.href = "/dashboard"
 
-      if(res.status == 200 || res.status == 201){
+      if (res.status == 200 || res.status == 201) {
         console.log(res, 'res here');
         useUser().createUser(res.data);
         showToast({
@@ -39,8 +39,17 @@ export const use_auth_login = () => {
           toastType: "success",
           duration: 3000
         });
-        router.push("/dashboard");
-        window.location.href = "/admin/dashboard"
+        setTimeout(() => {
+          router.push("/dashboard");
+          window.location.href = "/admin/dashboard"
+        }, 1500);
+      } else {
+        showToast({
+          title: "Error",
+          message: res?.data?.error || "Something went wrong",
+          toastType: "error",
+          duration: 3000
+        });
       }
 
     } catch (error) {

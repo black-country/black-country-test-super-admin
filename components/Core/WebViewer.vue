@@ -1,28 +1,38 @@
 <template>
   <div>
     <div class="bg-gray-100">
-      <div class="flex flex-wrap justify-between items-center bg-white border shadow px-3 lg:px-10">
-        <div class="flex items-center space-x-4 py-3">
+      <div class="flex flex-wrap items-center justify-between px-3 bg-white border shadow lg:px-10">
+        <div class="flex items-center py-3 space-x-4">
           <button @click="router.back()"
-            class="flex items-center text-gray-600 bg-gray-100 text-xs py-3 font-semibold px-4 rounded-md hover:bg-gray-200 hover:text-black">
+            class="flex items-center px-4 py-3 text-xs font-semibold text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 hover:text-black">
             <span>&larr;</span>
             <span class="ml-2">Back</span>
           </button>
-          <h1 class="text-sm font-semibold mt-2">{{ leasePayload?.documentName ?? 'Nil' }}</h1>
+          <h1 class="mt-2 text-sm font-semibold">{{ leasePayload?.documentName ?? 'Nil' }}</h1>
         </div>
-        <div class="flex justify-between items-center py-3 lg:p-0 text-xs gap-x-3 -mt-4">
+        <div class="flex items-center justify-between py-3 -mt-4 text-xs lg:p-0 gap-x-3">
           <button
-          class="flex items-center px-4 text-sm py-3 text-xs bg-[#5B8469] text-white text-sm font-medium gap-x-3 rounded-md shadow-md cursor-pointer"
-          v-if="isDocumentEdited" @click="submitLeaseDocument('save-and-send')">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-           {{  uploading ? 'processing' : 'Save and send' }}
-        </button>
-        <button
-          class="flex items-center px-4 text-sm py-3 text-xs bg-[#5B8469] text-white text-sm font-medium gap-x-3 rounded-md shadow-md cursor-pointer"
-          v-if="isDocumentEdited" @click="submitLeaseDocument('save-and-exit')">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-           {{  uploading ? 'processing' : 'Save and Exit' }}
-        </button>
+            class="flex items-center px-4 text-sm py-3 text-xs bg-[#5B8469] text-white text-sm font-medium gap-x-3 rounded-md shadow-md cursor-pointer"
+            v-if="isDocumentEdited" @click="submitLeaseDocument('save-and-send')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            {{ uploading ? 'processing' : 'Save and send' }}
+          </button>
+          <button
+            class="flex items-center px-4 text-sm py-3 text-xs bg-[#5B8469] text-white text-sm font-medium gap-x-3 rounded-md shadow-md cursor-pointer"
+            v-if="isDocumentEdited" @click="submitLeaseDocument('save-and-exit')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            {{ uploading ? 'processing' : 'Save and Exit' }}
+          </button>
         </div>
         <label
           class="flex items-center px-4 text-sm py-3 text-xs bg-[#5B8469] text-white text-sm font-medium gap-x-3 rounded-md shadow-md cursor-pointer">
@@ -39,7 +49,8 @@
     </div>
     <div id="webViewer" ref="viewerDiv"></div>
     <p v-if="submissionMessage">{{ submissionMessage }}</p>
-    <CoreFullScreenLoader :visible="uploading || assigning" text="Processing lease agreement" logo="/path-to-your-logo.png" />
+    <CoreFullScreenLoader :visible="uploading || assigning" text="Processing lease agreement"
+      logo="/path-to-your-logo.png" />
   </div>
 </template>
 
@@ -55,11 +66,12 @@ const { user } = useUser();
 export default {
   name: "LeaseDocument",
   setup() {
+    const router = useRouter();
     const viewerDiv = ref(null);
     const instance = ref(null);
     const isDocumentEdited = ref(false);
     const submissionMessage = ref("");
-    const { pdfUploadFile, uploadResponse, loading: uploading, processing: assigning } =  useUploadFile()
+    const { pdfUploadFile, uploadResponse, loading: uploading, processing: assigning } = useUploadFile()
 
     const handleFileUpload = (event) => {
       const file = event.target.files[0];
@@ -77,97 +89,97 @@ export default {
 
     const payloadObj = JSON.parse(localStorage.getItem('lease-template-payload') || '{}')
 
-const submitLeaseDocument = async (item) => {
-  if (!instance.value) return
+    const submitLeaseDocument = async (item) => {
+      if (!instance.value) return
 
-  try {
-    const docViewer = instance.value.getDocument()
-    const annotManager = instance.value.getAnnotationManager()
-    const xfdfString = await annotManager.exportAnnotations()
+      try {
+        const docViewer = instance.value.getDocument()
+        const annotManager = instance.value.getAnnotationManager()
+        const xfdfString = await annotManager.exportAnnotations()
 
-    // Get the edited PDF file as Uint8Array with annotations
-    const fileData = await docViewer.getFileData({
-      xfdfString,
-      downloadType: 'pdf'
-    })
+        // Get the edited PDF file as Uint8Array with annotations
+        const fileData = await docViewer.getFileData({
+          xfdfString,
+          downloadType: 'pdf'
+        })
 
-    // Convert Uint8Array to File object
-    const pdfBlob = new Blob([fileData], { type: 'application/pdf' })
-    const pdfFile = new File([pdfBlob], 'edited-lease.pdf', {
-      type: 'application/pdf',
-      lastModified: Date.now()
-    })
+        // Convert Uint8Array to File object
+        const pdfBlob = new Blob([fileData], { type: 'application/pdf' })
+        const pdfFile = new File([pdfBlob], 'edited-lease.pdf', {
+          type: 'application/pdf',
+          lastModified: Date.now()
+        })
 
-    const agreementObj = {
-      startDate: payloadObj?.startDate,
-      endDate: payloadObj?.endDate,
-      houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
-      agreementName: leasePayload.value.documentName,
-      isPublished: item === 'save-and-send' ? true : false
+        const agreementObj = {
+          startDate: payloadObj?.startDate,
+          endDate: payloadObj?.endDate,
+          houseOwnerSigneeName: `${user?.value?.firstName} ${user?.value?.lastName}` || "",
+          agreementName: leasePayload.value.documentName,
+          isPublished: item === 'save-and-send' ? true : false
+        }
+
+        // Upload the file using our composable
+        const { url, error } = await pdfUploadFile(pdfFile, agreementObj)
+
+        if (error) {
+          console.error('Upload failed:', error)
+        } else if (url) {
+          console.log('File uploaded successfully:', url)
+        }
+      } catch (error) {
+        console.error('Error processing document:', error)
+        uploadError.value = error instanceof Error ? error.message : 'An unexpected error occurred'
+      }
     }
 
-    // Upload the file using our composable
-    const { url, error } = await pdfUploadFile(pdfFile, agreementObj)
 
-    if (error) {
-      console.error('Upload failed:', error)
-    } else if (url) {
-      console.log('File uploaded successfully:', url)
-    }
-  } catch (error) {
-    console.error('Error processing document:', error)
-    uploadError.value = error instanceof Error ? error.message : 'An unexpected error occurred'
-  }
-}
+    /**
+     * Converts a PDF file (Blob) into an image (first page).
+     * @param {Blob} pdfBlob - PDF file as a Blob.
+     * @returns {Promise<File>} - Image file (PNG) converted from the first PDF page.
+     */
+    const convertPdfToImage = async (pdfBlob) => {
+      // Configure the worker
+      pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
+      // Load the PDF
+      const pdf = await pdfjsLib.getDocument({ data: await pdfBlob.arrayBuffer() }).promise;
 
-/**
- * Converts a PDF file (Blob) into an image (first page).
- * @param {Blob} pdfBlob - PDF file as a Blob.
- * @returns {Promise<File>} - Image file (PNG) converted from the first PDF page.
- */
-const convertPdfToImage = async (pdfBlob) => {
-  // Configure the worker
-  pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+      // Render the first page
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({ scale: 2 }); // Adjust scale for better resolution
 
-  // Load the PDF
-  const pdf = await pdfjsLib.getDocument({ data: await pdfBlob.arrayBuffer() }).promise;
+      // Create a canvas to draw the PDF page
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
 
-  // Render the first page
-  const page = await pdf.getPage(1);
-  const viewport = page.getViewport({ scale: 2 }); // Adjust scale for better resolution
+      await page.render({ canvasContext: context, viewport }).promise;
 
-  // Create a canvas to draw the PDF page
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d");
-  canvas.width = viewport.width;
-  canvas.height = viewport.height;
+      // Convert canvas to Blob
+      const imageBlob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
 
-  await page.render({ canvasContext: context, viewport }).promise;
+      // Convert Blob to File
+      return new File([imageBlob], "converted-image.png", { type: "image/png" });
+    };
 
-  // Convert canvas to Blob
-  const imageBlob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
-
-  // Convert Blob to File
-  return new File([imageBlob], "converted-image.png", { type: "image/png" });
-};
-
-const leasePayload = ref('')
+    const leasePayload = ref('')
 
 
     onMounted(() => {
       const storedData = localStorage.getItem('lease-template-payload');
-        // Safely parse the data only if it exists
-        if (storedData) {
-          try {
-            leasePayload.value = JSON.parse(storedData);
-          } catch (error) {
-            console.error("Error parsing lease-template-payload:", error);
-            leasePayload.value = {}; // Provide a default value if parsing fails
-          }
-        } else {
-          leasePayload.value = {}; // Provide a default value if nothing is stored
+      // Safely parse the data only if it exists
+      if (storedData) {
+        try {
+          leasePayload.value = JSON.parse(storedData);
+        } catch (error) {
+          console.error("Error parsing lease-template-payload:", error);
+          leasePayload.value = {}; // Provide a default value if parsing fails
         }
+      } else {
+        leasePayload.value = {}; // Provide a default value if nothing is stored
+      }
 
       const path = "/webviewer";
       WebViewer({ path }, viewerDiv.value).then((webviewerInstance) => {
@@ -181,7 +193,7 @@ const leasePayload = ref('')
       });
     });
 
-    return { viewerDiv, handleFileUpload, submitLeaseDocument, isDocumentEdited, submissionMessage, leasePayload, uploading, assigning, uploadResponse };
+    return { viewerDiv, handleFileUpload, submitLeaseDocument, isDocumentEdited, submissionMessage, leasePayload, uploading, assigning, uploadResponse, router };
   },
 };
 </script>

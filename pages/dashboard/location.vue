@@ -86,7 +86,7 @@
   import { ref, onMounted } from 'vue'
   
   // Replace with your actual API key
-  const GOOGLE_MAPS_API_KEY = 'AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg'
+  const GOOGLE_MAPS_API_KEY = 'AIzaSyCa0Rx0TJ9BGkQ9NC23BZc51zCql_Xrhs0'
   
   const searchInput = ref<HTMLInputElement | null>(null)
   const mapContainer = ref<HTMLElement | null>(null)

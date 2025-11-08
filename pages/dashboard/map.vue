@@ -136,7 +136,7 @@ const handleSearch = async () => {
     const response = await axios.get(`https://maps.googleapis.com/maps/api/place/autocomplete/json`, {
       params: {
         input: searchQuery.value,
-        key: 'AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg',
+        key: 'AIzaSyCa0Rx0TJ9BGkQ9NC23BZc51zCql_Xrhs0',
       },
     });
 
@@ -197,7 +197,7 @@ const selectLocation = async (suggestion) => {
     const response = await axios.get(`https://maps.googleapis.com/maps/api/place/details/json`, {
       params: {
         place_id: suggestion.place_id, // Get place_id from the suggestion
-        key: 'AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg',
+        key: 'AIzaSyCa0Rx0TJ9BGkQ9NC23BZc51zCql_Xrhs0',
       },
     });
 

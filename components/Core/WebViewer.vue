@@ -48,6 +48,7 @@
 import { useUploadFile } from '@/composables/core/pdfUpload'
 import { ref, onMounted } from "vue";
 import WebViewer from "@pdftron/webviewer";
+import { useRouter } from "vue-router"
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf"; // Use legacy build for better compatibility
 import { useUser } from "@/composables/auth/user";
 const { user } = useUser();
@@ -57,6 +58,7 @@ export default {
   setup() {
     const viewerDiv = ref(null);
     const instance = ref(null);
+    const router = useRouter()   
     const isDocumentEdited = ref(false);
     const submissionMessage = ref("");
     const { pdfUploadFile, uploadResponse, loading: uploading, processing: assigning } =  useUploadFile()

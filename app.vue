@@ -1,6 +1,7 @@
 <template>
   <main>
     <!-- Position the toast fixed to ensure it's always on top and aligned to the right -->
+      <NetworkStatus />
     <UiToast class="z-[9999999]" />
 
     <NuxtLayout class="z-10">

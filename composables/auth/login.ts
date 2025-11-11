@@ -3,7 +3,6 @@ import { useRouter } from 'vue-router';
 import { useUser } from "@/composables/auth/user";
 import { auth_api } from "@/api_factory/modules/auth";
 import { useCustomToast } from '@/composables/core/useCustomToast'
-const { showToast } = useCustomToast();
 
 const credential = {
   email: ref(""),
@@ -13,6 +12,7 @@ const credential = {
 export const use_auth_login = () => {
   const router = useRouter();
   const loading = ref(false);
+  const { showToast } = useCustomToast();
 
   const isFormDisabled = computed(() => {
     return (
@@ -40,13 +40,15 @@ export const use_auth_login = () => {
           duration: 3000
         });
         router.push("/dashboard");
+        navigateTo('/dashboard')
         window.location.href = "/admin/dashboard"
       }
 
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error, 'eror here')
       showToast({
         title: "Error",
-        message: "Login Error",
+        message: error?.response?.data?.error,
         toastType: "error",
         duration: 3000
       });

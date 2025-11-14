@@ -3,7 +3,7 @@
     <div class="container mx-auto px-4">
       <div class="md:col-span-2 space-y-1">
         <div class="relative">
-          <input ref="searchInput" type="text" v-model="payload.address.value" placeholder="Enter a location"
+          <input ref="searchInput" type="text" v-model="localAddress" placeholder="Enter a location"
             class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
 
@@ -21,18 +21,15 @@
           <select v-model="selectedCountry"
             class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100">
             <option value="NG">Nigeria</option>
-            <!-- <option value="US">United States</option>
-            <option value="CA">Canada</option> -->
-            <!-- Add more options or dynamically load them -->
           </select>
         </section>
 
         <section>
           <label class="text-xs mb-2 text-[#1D2739]">Street *</label>
-          <input :value="getStreetAddress(payload.address.value)"
-    class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100" />
+          <input v-model="streetAddress"
+            class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100" />
         </section>
-        <!-- {{ states[0] }} -->
+
         <section>
           <label class="text-xs mb-2 text-[#1D2739]">State *</label>
           <select class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100"
@@ -42,7 +39,7 @@
             </option>
           </select>
         </section>
-        <!-- {{ cities[0] }} -->
+
         <section v-if="!loadingCities">
           <label class="text-xs mb-2 text-[#1D2739]">City/Town *</label>
           <select v-model="selectedCity"
@@ -52,18 +49,14 @@
             </option>
           </select>
         </section>
-        <!-- {{ selectedCity }} -->
+
         <div v-if="loadingCities" class="h-10 animate-pulse w-full bg-slate-200 rounded"></div>
-        <!-- <section>
-          <label class="text-xs mb-2">Postcode (Optional)</label>
-          <input type="tel" class="w-full py-3 text-sm pl-3 border rounded-lg outline-none border-gray-100" />
-        </section> -->
 
         <div class="w-full pt-6 flex justify-between items-center gap-x-6">
           <button type="button" @click="isLocationModalOpen = false"
-            class="bg-[#EBE5E0] text-[#292929] w-full  text-sm rounded-md py-3">Cancel</button>
-          <button type="button" @click="isLocationModalOpen = false"
-            class="bg-[#292929] text-white w-full  text-sm rounded-md py-3">Save & Continue</button>
+            class="bg-[#EBE5E0] text-[#292929] w-full text-sm rounded-md py-3">Cancel</button>
+          <button type="button" @click="saveAndContinue"
+            class="bg-[#292929] text-white w-full text-sm rounded-md py-3">Save & Continue</button>
         </div>
       </div>
     </CoreModal>
@@ -71,9 +64,9 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
 import { useGetLocation } from "@/composables/core/useGetLocation";
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
+
 const {
   states,
   cities,
@@ -84,30 +77,15 @@ const {
   handleStateChange,
 } = useGetLocation();
 
-
-// Define props with proper types for ref values
 const props = defineProps<{ payload: any }>()
 
 const isLocationModalOpen = ref(false)
-
-interface Amenity {
-  name: string
-  address: string
-  description: string
-  latitude: number
-  longitude: number
-  type: string
-}
-
-interface Coordinates {
-  lat: number
-  lng: number
-}
-
 const selectedCountry = ref('NG')
+const streetAddress = ref('')
+const localAddress = ref('')
 
-// Replace with your actual API key
-const GOOGLE_MAPS_API_KEY = 'AIzaSyCTBVK36LVNlXs_qBOC4RywX_Ihf765lDg'
+// CRITICAL FIX: Replace with your actual API key
+const GOOGLE_MAPS_API_KEY = 'AIzaSyCa0Rx0TJ9BGkQ9NC23BZc51zCql_Xrhs0'
 
 const searchInput = ref<HTMLInputElement | null>(null)
 const mapContainer = ref<HTMLElement | null>(null)
@@ -132,15 +110,38 @@ let currentLocationMarker: google.maps.Marker | null = null
 let infoWindow: google.maps.InfoWindow
 let googleServicesInitialized = false
 
+// Watch for changes in localAddress and sync with payload
+watch(localAddress, (newVal) => {
+  if (props.payload?.address?.value !== undefined) {
+    props.payload.address.value = newVal
+  }
+})
+
+// Initialize localAddress from payload
+watch(() => props.payload?.address?.value, (newVal) => {
+  if (newVal && localAddress.value !== newVal) {
+    localAddress.value = newVal
+  }
+}, { immediate: true })
+
 onMounted(() => {
+  // Check if API key is set
+  if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === 'YOUR_GOOGLE_MAPS_API_KEY_HERE') {
+    console.error('⚠️ GOOGLE_MAPS_API_KEY is not set! Please add your API key.')
+    return
+  }
+
   if (!(window as any).google) {
     const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&loading=async`
     script.async = true
     script.defer = true
     script.onload = () => {
       initializeGoogleServices()
       checkExistingLocation()
+    }
+    script.onerror = () => {
+      console.error('Failed to load Google Maps API. Check your API key and billing status.')
     }
     document.head.appendChild(script)
   } else {
@@ -149,14 +150,12 @@ onMounted(() => {
   }
 })
 
-// Check if we have existing location data in the payload
 function checkExistingLocation() {
-  const hasLatitude = props.payload.latitude && props.payload.latitude.value
-  const hasLongitude = props.payload.longitude && props.payload.longitude.value
-  const hasAddress = props.payload.address && props.payload.address.value
+  const hasLatitude = props.payload?.latitude?.value
+  const hasLongitude = props.payload?.longitude?.value
+  const hasAddress = props.payload?.address?.value
   
   if (hasLatitude && hasLongitude) {
-    // We have existing coordinates, use them
     const existingCoords = {
       lat: parseFloat(props.payload.latitude.value),
       lng: parseFloat(props.payload.longitude.value)
@@ -165,7 +164,6 @@ function checkExistingLocation() {
     currentCoordinates.value = existingCoords
     
     if (googleServicesInitialized) {
-      // If we have an address, create a place object directly
       if (hasAddress) {
         const place = {
           geometry: {
@@ -176,20 +174,18 @@ function checkExistingLocation() {
         } as google.maps.places.PlaceResult
         
         currentLocation.value = place
+        localAddress.value = props.payload.address.value
         updateMap(place, true)
         searchNearbyPlaces()
       } else {
-        // Otherwise, reverse geocode to get the address
         reverseGeocode(existingCoords)
       }
     }
   } else if (hasAddress) {
-    // We have an address but no coordinates, geocode it
     if (googleServicesInitialized) {
       geocodeAddress(props.payload.address.value)
     }
   } else {
-    // No existing location data, get user location
     getUserLocation()
   }
 }
@@ -205,15 +201,19 @@ function geocodeAddress(address: string) {
         lng: location.lng()
       }
       
-      props.payload.latitude.value = location.lat()
-      props.payload.longitude.value = location.lng()
+      if (props.payload?.latitude?.value !== undefined) {
+        props.payload.latitude.value = location.lat()
+      }
+      if (props.payload?.longitude?.value !== undefined) {
+        props.payload.longitude.value = location.lng()
+      }
       
       currentLocation.value = results[0]
       updateMap(results[0], true)
       searchNearbyPlaces()
     } else {
       console.error('Geocoder failed due to: ' + status)
-      getUserLocation() // Fall back to user location
+      getUserLocation()
     }
   })
 }
@@ -279,50 +279,39 @@ watch(places, (newAmenities) => {
 
   const amenitiesArray = filteredAmenities.slice(0, 50000).map((place: any) => {
     const mainType = place.types?.find((type: any) => typeMapping[type]);
-    const fallbackType = place.types?.[0] || "Unknown"; // Fallback to first type if no mapped type
+    const fallbackType = place.types?.[0] || "Unknown";
     return {
       name: place.name,
       address: place.vicinity,
       description: place.vicinity,
       latitude: place.geometry.location.lat(),
       longitude: place.geometry.location.lng(),
-      type: typeMapping[mainType] || fallbackType, // Use mapped type or fallback type
+      type: typeMapping[mainType] || fallbackType,
     };
   }).filter(Boolean);
 
-  console.log(amenitiesArray, 'new amenities here poooo');
-  props.payload.neighbouringLandmarks.value = amenitiesArray
-});
-
-
-interface LocationPayload {
-  address: { value: string }
-  latitude: { value: string }
-  longitude: { value: string }
-  value?: {
-    latitude: string
-    longitude: string
-    address: string
+  if (props.payload?.neighbouringLandmarks?.value !== undefined) {
+    props.payload.neighbouringLandmarks.value = amenitiesArray
   }
-}
+});
 
 watch(currentLocation, (newLocation) => {
   if (!newLocation?.formatted_address) return;
 
-  console.log(newLocation.formatted_address, 'my location');
-
-  // Since the payload properties are refs, we can access their .value
-  props.payload.address.value = newLocation.formatted_address;
+  localAddress.value = newLocation.formatted_address;
   
   if (newLocation.geometry?.location) {
-    props.payload.latitude.value = newLocation.geometry.location.lat();
-    props.payload.longitude.value = newLocation.geometry.location.lng();
+    if (props.payload?.latitude?.value !== undefined) {
+      props.payload.latitude.value = newLocation.geometry.location.lat();
+    }
+    if (props.payload?.longitude?.value !== undefined) {
+      props.payload.longitude.value = newLocation.geometry.location.lng();
+    }
   }
 });
 
 function initializeGoogleServices() {
   try {
-    // Initialize the map with default location (will be updated later)
     if (mapContainer.value) {
       map = new google.maps.Map(mapContainer.value, {
         center: defaultLocation,
@@ -336,35 +325,36 @@ function initializeGoogleServices() {
         ]
       })
 
-      // Initialize InfoWindow
       infoWindow = new google.maps.InfoWindow()
-
-      // Initialize Places Service
       placesService = new google.maps.places.PlacesService(map)
 
-      // Initialize Autocomplete
       if (searchInput.value) {
         autocomplete = new google.maps.places.Autocomplete(searchInput.value, {
           types: ['geocode']
         })
 
-        // Add listener for place selection
         autocomplete.addListener('place_changed', () => {
           const place = autocomplete.getPlace()
           if (place.geometry) {
-            console.log(place, 'places here')
-            currentLocation.value = place
-            const addressDetails = parseAddressComponents(place) //i addede this
-            props.payload.latitude.value = place.geometry.location.lat()
-            props.payload.longitude.value = place.geometry.location.lng()
-            props.payload.address.value = addressDetails.street
-            selectedCountry.value = 'NG' 
+            const addressDetails = parseAddressComponents(place)
+            
+            if (props.payload?.latitude?.value !== undefined) {
+              props.payload.latitude.value = place.geometry.location.lat()
+            }
+            if (props.payload?.longitude?.value !== undefined) {
+              props.payload.longitude.value = place.geometry.location.lng()
+            }
+            
+            streetAddress.value = addressDetails.street
+            selectedCountry.value = 'NG'
+            
             const stateCode = findStateCode(addressDetails.state)
             if (stateCode) {
               selectedState.value = stateCode
               handleStateChange(stateCode)
             }
-            currentLocation.value = place //added this and ^ to strret
+            
+            currentLocation.value = place
             currentCoordinates.value = {
               lat: place.geometry.location.lat(),
               lng: place.geometry.location.lng()
@@ -377,10 +367,8 @@ function initializeGoogleServices() {
       
       googleServicesInitialized = true
       
-      // If we already have coordinates, use them
       if (currentCoordinates.value) {
-        if (props.payload.address.value) {
-          // If we have an address, create a place object directly
+        if (props.payload?.address?.value) {
           const place = {
             geometry: {
               location: new google.maps.LatLng(currentCoordinates.value.lat, currentCoordinates.value.lng)
@@ -393,7 +381,6 @@ function initializeGoogleServices() {
           updateMap(place, true)
           searchNearbyPlaces()
         } else {
-          // Otherwise, reverse geocode to get the address
           reverseGeocode(currentCoordinates.value)
         }
       }
@@ -412,21 +399,26 @@ function getUserLocation() {
           lng: position.coords.longitude,
         }
         currentCoordinates.value = pos
-        props.payload.latitude.value = pos.lat
-        props.payload.longitude.value = pos.lng
+        
+        if (props.payload?.latitude?.value !== undefined) {
+          props.payload.latitude.value = pos.lat
+        }
+        if (props.payload?.longitude?.value !== undefined) {
+          props.payload.longitude.value = pos.lng
+        }
         
         if (googleServicesInitialized) {
           reverseGeocode(pos)
         }
       },
       (error) => {
-        console.error('Geolocation error:', error)
+        console.warn('Geolocation error:', error.message)
         handleLocationError(true)
       },
       { 
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 60000
       }
     )
   } else {
@@ -435,15 +427,19 @@ function getUserLocation() {
 }
 
 function handleLocationError(browserHasGeolocation: boolean) {
-  console.error(browserHasGeolocation ?
-    'Error: The Geolocation service failed.' :
-    'Error: Your browser doesn\'t support geolocation.')
+  console.warn(browserHasGeolocation ?
+    'Geolocation failed. Using default location.' :
+    'Browser doesn\'t support geolocation. Using default location.')
   
-  // Use default location only if we don't have existing coordinates
   if (!currentCoordinates.value) {
     currentCoordinates.value = defaultLocation
-    props.payload.latitude.value = defaultLocation.lat
-    props.payload.longitude.value = defaultLocation.lng
+    
+    if (props.payload?.latitude?.value !== undefined) {
+      props.payload.latitude.value = defaultLocation.lat
+    }
+    if (props.payload?.longitude?.value !== undefined) {
+      props.payload.longitude.value = defaultLocation.lng
+    }
     
     if (googleServicesInitialized) {
       reverseGeocode(defaultLocation)
@@ -458,8 +454,8 @@ function reverseGeocode(latLng: google.maps.LatLngLiteral) {
       const place = results[0];
       const addressDetails = parseAddressComponents(place);
       
-      // Update the street address and other location details
-      props.payload.address.value = addressDetails.street;
+      streetAddress.value = addressDetails.street;
+      localAddress.value = place.formatted_address || '';
       selectedCountry.value = 'NG';
       
       const stateCode = findStateCode(addressDetails.state);
@@ -468,11 +464,11 @@ function reverseGeocode(latLng: google.maps.LatLngLiteral) {
         handleStateChange(stateCode);
       }
       
+      currentLocation.value = place;
       updateMap(place, true);
       searchNearbyPlaces();
     } else {
       console.error('Geocoder failed due to: ' + status)
-      // If reverse geocoding fails, still update the map with coordinates
       const dummyPlace = {
         geometry: {
           location: new google.maps.LatLng(latLng.lat, latLng.lng)
@@ -491,14 +487,10 @@ function reverseGeocode(latLng: google.maps.LatLngLiteral) {
 function updateMap(place: google.maps.places.PlaceResult, isCurrentLocation: boolean = false) {
   if (!place.geometry?.location) return
 
-  // Clear existing markers
   clearMarkers()
-
-  // Center map on selected location
   map.setCenter(place.geometry.location)
   map.setZoom(14)
 
-  // Add marker for location
   const markerIcon = isCurrentLocation ?
     'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' :
     'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
@@ -512,13 +504,12 @@ function updateMap(place: google.maps.places.PlaceResult, isCurrentLocation: boo
     animation: google.maps.Animation.DROP
   })
 
-  // Add info window for location
   const infoContent = `
-      <div class="p-2">
-        <h3 class="font-semibold">${place.name || 'Selected Location'}</h3>
-        <p>${place.formatted_address || ''}</p>
-      </div>
-    `
+    <div class="p-2">
+      <h3 class="font-semibold">${place.name || 'Selected Location'}</h3>
+      <p>${place.formatted_address || ''}</p>
+    </div>
+  `
 
   locationMarker.addListener('click', () => {
     infoWindow.setContent(infoContent)
@@ -532,14 +523,13 @@ function updateMap(place: google.maps.places.PlaceResult, isCurrentLocation: boo
   }
 }
 
-
 async function searchNearbyPlaces() {
   if (!currentCoordinates.value) return
 
   try {
     const request = {
       location: currentCoordinates.value,
-      radius: 2000, // 2km radius
+      radius: 2000,
       type: selectedType.value || undefined
     }
 
@@ -558,16 +548,17 @@ async function searchNearbyPlaces() {
                 description: place.vicinity,
                 latitude: place.geometry.location.lat(),
                 longitude: place.geometry.location.lng(),
-                type: typeMapping[mainType], // Mapped type
+                type: typeMapping[mainType],
               };
             }
-          })
-            .filter(Boolean); // Remove any undefined entries
+          }).filter(Boolean);
 
-          props.payload.neighbouringLandmarks.value = amenitiesArray
+          if (props.payload?.neighbouringLandmarks?.value !== undefined) {
+            props.payload.neighbouringLandmarks.value = amenitiesArray
+          }
 
           places.value = results
-          amenities.value = results.slice(0, 5000) // Store first 10 results as amenities
+          amenities.value = results.slice(0, 5000)
           isLocationModalOpen.value = true;
           addPlaceMarkers(results)
         } else {
@@ -597,17 +588,17 @@ function addPlaceMarkers(places: google.maps.places.PlaceResult[]) {
     })
 
     const infoContent = `
-        <div class="p-2">
-          <h3 class="font-semibold">${place.name}</h3>
-          <p>${place.vicinity}</p>
-          ${place.rating ? `
-            <div class="flex items-center mt-1">
-              <span class="text-yellow-500 mr-1">★</span>
-              <span>${place.rating} (${place.user_ratings_total} reviews)</span>
-            </div>
-          ` : ''}
-        </div>
-      `
+      <div class="p-2">
+        <h3 class="font-semibold">${place.name}</h3>
+        <p>${place.vicinity}</p>
+        ${place.rating ? `
+          <div class="flex items-center mt-1">
+            <span class="text-yellow-500 mr-1">★</span>
+            <span>${place.rating} (${place.user_ratings_total} reviews)</span>
+          </div>
+        ` : ''}
+      </div>
+    `
 
     marker.addListener('click', () => {
       infoWindow.setContent(infoContent)
@@ -623,24 +614,6 @@ function clearMarkers() {
   markers = []
 }
 
-function highlightMarker(place: google.maps.places.PlaceResult) {
-  if (!place.geometry?.location) return
-
-  // Center map on selected place
-  map.panTo(place.geometry.location)
-
-  // Find and trigger click on corresponding marker
-  const marker = markers.find(m =>
-    m.getPosition()?.lat() === place.geometry?.location?.lat() &&
-    m.getPosition()?.lng() === place.geometry?.location?.lng()
-  )
-
-  if (marker) {
-    google.maps.event.trigger(marker, 'click')
-  }
-}
-
-//from here down added to separate data
 function parseAddressComponents(place: google.maps.places.PlaceResult) {
   const addressComponents = place.address_components || [];
   const componentTypes = {
@@ -650,8 +623,10 @@ function parseAddressComponents(place: google.maps.places.PlaceResult) {
     administrative_area_level_1: 'state',
     country: 'country',
     postal_code: 'postalCode'
-  };
+  } as any;
+  
   const parsedAddress: { [key: string]: string } = {};
+  
   addressComponents.forEach(component => {
     component.types.forEach(type => {
       if (componentTypes[type]) {
@@ -669,32 +644,19 @@ function parseAddressComponents(place: google.maps.places.PlaceResult) {
   };
 }
 
-  
-  function findStateCode(stateName: string) {
-    return states.value.find(state => 
-      state.name.toLowerCase() === stateName.toLowerCase()
-    )?.stateCode;
-  }
-  
-  function findCityId(cityName: string) {
-    return cities.value.find(city => 
-      city.name.toLowerCase() === cityName.toLowerCase()
-    )?.id;
-  }
-
-  function getStreetAddress(fullAddress: string): string { //replace this with appopriate function tir
-  if (!fullAddress || !states.value) return ''
-  for (let state of states.value) {
-    const stateIndex = fullAddress.indexOf(state.name)  
-    if (stateIndex !== -1) {
-      return fullAddress.substring(0, stateIndex).trim()
-    }
-  }
-  return fullAddress.trim()
+function findStateCode(stateName: string) {
+  return states.value.find(state => 
+    state.name.toLowerCase() === stateName.toLowerCase()
+  )?.stateCode;
 }
 
-
-
+function saveAndContinue() {
+  // Update payload with modal values
+  if (props.payload?.address?.value !== undefined) {
+    props.payload.address.value = streetAddress.value
+  }
+  isLocationModalOpen.value = false
+}
 </script>
 
 <style scoped>

@@ -1,7 +1,7 @@
 
 <template>
-    <div>
-      <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+    <div class="p-6 lg:p-0">
+      <div class="sm:mx-auto sm:w-full sm:max-w-sm mt-32">
         <img class="mx-auto h-16 w-auto" src="@/assets/icons/logo.svg" alt="Your Company" />
         <h2 class="mt-4 text-center text-2xl font-bold leading-9 tracking-tight text-[#1D2739] max-w-sm mx-auto">Welcome back admin@blackcountry.com</h2>
       </div>

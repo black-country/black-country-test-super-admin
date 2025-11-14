@@ -59,6 +59,7 @@
     "leaflet": "^1.9.4",
     "lodash-es": "^4.17.21",
     "lodash.debounce": "^4.0.8",
+    "lucide-vue-next": "^0.553.0",
     "mammoth": "^1.8.0",
     "mapbox-gl": "^3.6.0",
     "mitt": "^3.0.1",

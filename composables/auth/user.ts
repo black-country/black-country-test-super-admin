@@ -63,8 +63,8 @@ export const useUser = () => {
   const logOut = () => {
     localStorage.clear();
     runtimeData.user.value = null;
-    window.location.href = '/login'
-    useRouter().push("/login");
+    window.location.href = '/admin/login'
+    useRouter().push("/admin/login");
 
   };
 

@@ -156,8 +156,8 @@ const onConfirm = () => {
   setTimeout(() => {
     // loading.value = false
     showBLogoutModal.value = false
-    router.push('/login')
-    window.location.href = "/login"
+    // router.push('/admin/login')
+    window.location.href = "/admin/login"
   }), 3000
   console.log("Logging out...");
 };
@@ -184,10 +184,15 @@ const sidebarItems = ref([
     icon: "property-mgt",
     url: "/dashboard/property",
   },
+  // {
+  //   name: "Tenants Management",
+  //   icon: "tenants-mgt",
+  //   url: "/dashboard/tenant-mgt",
+  // },
   {
-    name: "Tenants Management",
-    icon: "tenants-mgt",
-    url: "/dashboard/tenant-mgt",
+    name: "User Management",
+    icon: "users-mgt",
+    url: "/dashboard/users-mgt",
   },
   {
     name: "Messages",

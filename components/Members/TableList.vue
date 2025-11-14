@@ -352,7 +352,7 @@ const emit = defineEmits(["delete", "deactivate", "duplicate"]);
 const handleDropdownClick = (action: any, item: any) => {
   console.log(item)
   if (action === "view") {
-    return router.push(`/dashboard/members/${item.id}`);
+    return router.push(`/dashboard/members/${item.id}?group=${item.group}`);
   }
 
   if (action === "deactivate") {

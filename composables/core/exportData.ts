@@ -148,7 +148,7 @@ async function exportAsCSV(data: Array<Record<string, any>>, fileName: string, h
         reject(error);
       }
     });
-    promptToast('CSV', 'success');
+    // promptToast('CSV', 'success');
   } catch (error) {
     promptToast('CSV', 'error');
     console.error('Error exporting CSV:', error);
@@ -179,7 +179,7 @@ async function exportAsPDF(data: Array<Record<string, any>>, fileName: string, h
         reject(error);
       }
     });
-    promptToast('PDF', 'success');
+    // promptToast('PDF', 'success');
   } catch (error) {
     promptToast('PDF', 'error');
     console.error('Error exporting PDF:', error);
@@ -200,7 +200,7 @@ async function exportAsExcel(data: Array<Record<string, any>>, fileName: string,
         reject(error);
       }
     });
-    promptToast('EXCEL', 'success');
+    // promptToast('EXCEL', 'success');
   } catch (error) {
     promptToast('EXCEL', 'error');
     console.error('Error exporting Excel:', error);

@@ -11,7 +11,9 @@ export const useFetchMemberDetails = () => {
     const { $_member_details } = member_api
 
     // Get the property ID from the route parameter
-    const queryId = ref(route.params.id as string || '')
+    const queryId = ref(route.params.id as string || '') 
+    const group = ref(route.query.group as string || '') 
+
 
     const getMemberDetails = async () => {
         if (!queryId.value) {
@@ -22,7 +24,7 @@ export const useFetchMemberDetails = () => {
         loading.value = true
         error.value = null // Reset error state
         try {
-            const res = await $_member_details(queryId.value) as any
+            const res = await $_member_details(queryId.value, group.value) as any
             console.log(res, 'here')
             memberObj.value = res.data
         } catch (e) {

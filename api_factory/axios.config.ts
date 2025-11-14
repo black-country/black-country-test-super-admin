@@ -85,7 +85,7 @@ instanceArray.forEach((instance) => {
     },
     (err: any) => {
       console.log(err, 'error here')
-      if (typeof err.response === "undefined") {
+      if (typeof err.response === undefined) {
         showToast({
           title: "Error",
           message: "kindly check your network connection",
@@ -98,6 +98,19 @@ instanceArray.forEach((instance) => {
         };
       }
       if (err.response.status === 401) {
+        console.log(err.response.data.error)
+        logOut();
+        showToast({
+          title: "Error",
+          message: err?.response?.data?.message || err?.response?.data?.error || "An error occured",
+          toastType: "error",
+          duration: 3000
+        });
+        return {
+          type: "ERROR",
+          ...err.response,
+        };
+      } else if (err.response.status === 404) {
         console.log(err.response.data.error)
         logOut();
         showToast({

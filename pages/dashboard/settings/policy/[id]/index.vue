@@ -22,7 +22,7 @@
         </div>
         <!-- Action Buttons -->
         <div class="flex items-center gap-2">
-          <span class="px-3 py-1 text-sm font-medium text-[#292929] bg-gray-100 rounded-full md:text-base">
+          <span v-if="policyObj?.status === 'draft'" class="px-3 py-1 text-sm font-medium text-[#292929] bg-gray-100 rounded-full md:text-base">
             Draft
           </span>
           <button @click="handleDeletePolicy" :disabled="loading"

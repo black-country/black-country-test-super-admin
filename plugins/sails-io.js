@@ -1,19 +1,27 @@
-const io = require("sails.io.js")(require("socket.io-client"));
+import sailsIO from "sails.io.js";
+import socketIOClient from "socket.io-client";
 
-io.sails.url = `${process.env.NUXT_ENV_API_URL}`;
+export default defineNuxtPlugin((nuxtApp) => {
+  // Initialize sails.io
+  const io = sailsIO(socketIOClient);
+  
+  // Configure the socket URL
+  io.sails.url = process.env.NUXT_ENV_API_URL || "";
 
-// export default (context, inject) => {
-//   // You can listen to WebSocket events here
-//   inject("io", io);
-// };
+  // Listen to WebSocket events
+  io.socket.on("user", (message) => {
+    switch (message.new) {
+      case "followed":
+        // Access store via nuxtApp
+        nuxtApp.$store?.dispatch("userFollowed", message.notification);
+        break;
+    }
+  });
 
-export default (context, inject) => {
-    io.socket.on("user", (message) => {
-      switch (message.new) {
-        case "followed":
-          context.store.dispatch("userFollowed", message.notification);
-          break;
-      }
-    });
-    inject("io", io);
-  }
+  // Provide io to the app (accessible as $io)
+  return {
+    provide: {
+      io: io
+    }
+  };
+});

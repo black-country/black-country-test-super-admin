@@ -129,7 +129,4 @@ const { credential, login, loading, isFormDisabled } = use_auth_login()
 
   const showPassword = ref(false);
 const router = useRouter()
-// definePageMeta({
-//     layout: 'auth'
-// })
 </script>

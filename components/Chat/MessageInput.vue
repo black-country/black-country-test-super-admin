@@ -1,52 +1,194 @@
- <template>
-    <main>
-      <div class="flex items-center p-4 border-gray-25  border-t-[0.5px] relative border-gray-200">
-        <button
-          class="bg-gray-200 p-3 rounded-full hover:bg-gray-300 transition-colors absolute top-7 left-12"
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3.33325 10.0005V12.1206C3.33325 14.8247 3.33325 16.1769 4.07164 17.0926C4.22082 17.2776 4.38934 17.4462 4.57436 17.5954C5.49018 18.3338 6.84227 18.3338 9.54642 18.3338C10.1344 18.3338 10.4283 18.3338 10.6976 18.2388C10.7536 18.219 10.8084 18.1963 10.862 18.1706C11.1196 18.0475 11.3274 17.8396 11.7432 17.4239L15.6903 13.4767C16.172 12.9951 16.4128 12.7541 16.5398 12.4479C16.6666 12.1416 16.6666 11.801 16.6666 11.1197V8.3338C16.6666 5.19107 16.6666 3.61973 15.6903 2.64341C14.8077 1.76078 13.4387 1.67609 10.862 1.66797M10.8333 17.9171V17.5005C10.8333 15.1434 10.8333 13.9649 11.5655 13.2326C12.2978 12.5005 13.4763 12.5005 15.8333 12.5005H16.2499" stroke="white" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M9.99992 4.99935H3.33325M6.66659 1.66602V8.33268" stroke="white" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </button>
-        <input
-          type="text"
-          v-model="localMessage"
-          @keydown.enter="emitMessage"
-          class="flex-1 ml-4 p-2 py-6 text-[#E4E7EC] pl-20 bg-[#292929] rounded-full focus:outline-none"
-          placeholder="Type a message here..."
-        />
-        <button
-          @click="emitMessage"
-          class="ml-4 text-white p-3 transition-colors absolute top-5 right-6"
-        >
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="36" height="36" rx="18" fill="#5B8469"/>
-            <path d="M15.9247 11.5258L23.0581 15.0925C26.2581 16.6925 26.2581 19.3092 23.0581 20.9092L15.9247 24.4758C11.1247 26.8758 9.1664 24.9092 11.5664 20.1175L12.2914 18.6758C12.4747 18.3092 12.4747 17.7008 12.2914 17.3342L11.5664 15.8842C9.1664 11.0925 11.1331 9.12584 15.9247 11.5258Z" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12.5332 18H17.0332" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </button>
+<template>
+  <div class="border-t bg-white p-3 sm:p-4 flex-shrink-0 sticky bottom-0 left-0 right-0 z-20">
+    <!-- Error message -->
+    <div v-if="uploadError" class="mb-3 bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
+      <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+      </svg>
+      <div class="flex-1">
+        <p class="text-sm text-red-700">{{ uploadError }}</p>
       </div>
-    </main>
-  </template>
-  
-  <script setup lang="ts">
-  const props = defineProps({
-    modelValue: String // v-model in parent is bound to 'modelValue'
-  });
-  
-  const emit = defineEmits(['update:modelValue', 'sendMessage']); // Use the 'update:modelValue' convention for v-model
-  const localMessage = ref(props.modelValue);
-  
-  watch(() => props.modelValue, (newVal) => {
-    localMessage.value = newVal;
-  });
-  
-  const emitMessage = () => {
-    if (!localMessage.value.trim()) return; // Prevent sending empty messages
-    emit('sendMessage', localMessage.value); // Emit the sendMessage event
-    emit('update:modelValue', ''); // Reset the v-model value in the parent
-    localMessage.value = ''; // Clear local input
+      <button @click="uploadError = ''" class="text-red-400 hover:text-red-600">
+        <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Input container -->
+    <div class="relative flex items-center gap-2">
+      <!-- File upload button -->
+      <button
+        @click="triggerFileUpload"
+        :disabled="isUploading || isSending || !isConnected"
+        class="flex-shrink-0 p-2.5 sm:p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        title="Attach file">
+        <svg v-if="!isUploading" width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 5v10M5 10h10" stroke="#1D2739" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg v-else class="animate-spin w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+        </svg>
+      </button>
+
+      <!-- Hidden file input -->
+      <input
+        ref="fileInput"
+        type="file"
+        @change="handleFileSelect"
+        class="hidden"
+        accept="image/*,.pdf,.doc,.docx,.txt"
+      />
+
+      <!-- Message input -->
+      <input
+        v-model="localMessage"
+        @keydown.enter="handleSend"
+        :disabled="isUploading || isSending || !isConnected"
+        type="text"
+        class="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-100 rounded-full text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#5B8469] disabled:opacity-50 disabled:cursor-not-allowed"
+        :placeholder="getPlaceholder"
+      />
+
+      <!-- Send button -->
+      <button
+        @click="handleSend"
+        :disabled="!canSend"
+        class="flex-shrink-0 p-2.5 sm:p-3 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        :class="canSend ? 'bg-[#5B8469] hover:bg-[#4a6d56]' : 'bg-gray-300'">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M18 2L9 11M18 2l-5 16-4-7-7-4 16-5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue';
+import { useUploadFile } from '@/composables/core/upload';
+
+const props = defineProps({
+  modelValue: {
+    type: String,
+    default: ''
+  },
+  isSending: {
+    type: Boolean,
+    default: false
+  },
+  isConnected: {
+    type: Boolean,
+    default: true
   }
-  </script>
+});
+
+const emit = defineEmits(['update:modelValue', 'sendMessage']);
+
+const { uploadFile, loading: isUploading, uploadResponse } = useUploadFile();
+
+const localMessage = ref(props.modelValue);
+const fileInput = ref<HTMLInputElement | null>(null);
+const uploadError = ref('');
+
+watch(() => props.modelValue, (val) => {
+  localMessage.value = val;
+});
+
+watch(localMessage, (val) => {
+  emit('update:modelValue', val);
+});
+
+const getPlaceholder = computed(() => {
+  if (!props.isConnected) return 'Not connected...';
+  if (isUploading.value) return 'Uploading file...';
+  if (props.isSending) return 'Sending...';
+  return 'Type a message...';
+});
+
+const canSend = computed(() => {
+  const hasText = localMessage.value.trim().length > 0;
+  const notBusy = !isUploading.value && !props.isSending && props.isConnected;
+  return hasText && notBusy;
+});
+
+const triggerFileUpload = () => {
+  if (!isUploading.value && !props.isSending && props.isConnected) {
+    uploadError.value = '';
+    fileInput.value?.click();
+  }
+};
+
+const handleFileSelect = async (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
   
+  if (!file) return;
+
+  // Validate file size (10MB)
+  const maxSize = 10 * 1024 * 1024;
+  if (file.size > maxSize) {
+    uploadError.value = 'File must be smaller than 10MB';
+    target.value = '';
+    return;
+  }
+
+  try {
+    await uploadFile(file);
+    
+    if (uploadResponse.value?.url) {
+      uploadError.value = '';
+      await sendFile();
+    }
+  } catch (error: any) {
+    uploadError.value = error.message || 'Failed to upload file';
+    console.error('Upload error:', error);
+  } finally {
+    target.value = '';
+  }
+};
+
+const sendFile = async () => {
+  if (!uploadResponse.value) return;
+
+  const content = JSON.stringify({
+    type: 'file',
+    file: {
+      url: uploadResponse.value.url,
+      fileName: uploadResponse.value.fileName,
+      mimetype: uploadResponse.value.mimetype
+    },
+    message: localMessage.value.trim()
+  });
+
+  emit('sendMessage', content);
+  localMessage.value = '';
+  uploadResponse.value = null;
+};
+
+const handleSend = () => {
+  if (!canSend.value) return;
+  
+  const message = localMessage.value.trim();
+  if (!message) return;
+
+  emit('sendMessage', message);
+  localMessage.value = '';
+};
+</script>
+
+<style scoped>
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>

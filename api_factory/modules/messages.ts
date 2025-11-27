@@ -12,4 +12,8 @@ export const message_api = {
         let url = `/users/${id}/messages`;
         return GATEWAY_ENDPOINT.get(url);
       },
+      $_create_room: (payload: any) => {
+        let url = '/private-rooms';
+        return GATEWAY_ENDPOINT.post(url, payload);
+      }
 }

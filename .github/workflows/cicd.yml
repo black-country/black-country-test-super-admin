@@ -26,16 +26,18 @@ jobs:
           docker build -t ghcr.io/${{ github.repository_owner }}/bc-admin-app:latest .
           docker push ghcr.io/${{ github.repository_owner }}/bc-admin-app:latest
 
-  deploy:
+  deploy-develop:
     needs: build-and-push
     runs-on: ubuntu-latest
+    # Condition: Only run this job when the push is to the 'main' branch
+    if: github.ref == 'refs/heads/develop'
 
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Deploy to SSH Server
+      - name: Deploy to Dev Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -44,6 +46,34 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ~/bc_main/black-country-test-super-admin/
+            sudo git pull
+            cd ..
+            echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker-compose up -d admin
+            echo "Prod image deployed and running..."
+            docker system prune --force
+            echo "Cleanup complete"
+
+  deploy-prod:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    # Condition: Only run this job when the push is to the 'main' branch
+    if: github.ref == 'refs/heads/main'
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Deploy to Prod Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_PROD }}
+          username: ${{ secrets.SSH_USER_PROD }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_PROD }}
+          script: |
+            cd ~/black-country-test-super-admin/
             sudo git pull
             cd ..
             echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
